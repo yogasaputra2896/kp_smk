@@ -9,8 +9,8 @@
       <div class="auth-logo">
         <a href="#"><img src="<?= base_url('assets/images/logo/logo.png') ?>" alt="Logo"></a>
       </div>
-      <h1 class="auth-title">TMSK</h1>
-	  <p class="auth-subtitle mb-5">Trustway Management System Kepabeanan</p>
+      <h1 class="auth-title">TSMK</h1>
+	  <p class="auth-subtitle mb-5">Trustway System Management Kepabeanan</p>
 
       <?= view('Myth\Auth\Views\_message_block') ?>
 

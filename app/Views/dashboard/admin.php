@@ -5,7 +5,7 @@
 <?= $this->section('pageTitle') ?>
 <div class="page-heading">
     <h3>Dashboard Admin</h3>
-    <p class="text-subtitle text-muted">Selamat Datang Di Dashboard Admin - Trustway Management System Kepabeanan</p>
+    <p class="text-subtitle text-muted">Selamat Datang Di Dashboard Admin - Trustway System Management Kepabeanan</p>
 </div>
 <?= $this->endSection() ?>
 
@@ -223,15 +223,16 @@
 <div class="row mt-4 g-3">
     <div class="col-md-6">
         <div class="card stat-card">
-            <div class="card-header"><h5><i class="bi bi-bar-chart-fill me-2"> Grafik Booking Job</i></h5></div>
-            <div class="card-body"><canvas id="chartBookingJob"></canvas></div>
+            <div class="card-header"><h5><i class="bi bi-bar-chart-fill me-2"> Visualisasi Booking Job</i></h5></div>
+            <div class="card-body">
+                <canvas id="chartBookingJob"></canvas></div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card stat-card">
-            <div class="card-header"><h5><i class="bi bi-bar-chart-fill me-2"> Grafik Worksheet Import vs Export</i></h5></div>
+            <div class="card-header"><h5><i class="bi bi-pie-chart-fill"> Visualisasi Worksheet Import vs Export</i></h5></div>
             <div class="card-body d-flex justify-content-center">
-                <canvas id="chartWorksheet" style="max-width: 250px; max-height: 250px;"></canvas>
+                <canvas id="chartWorksheet" style="max-width: 200px; max-height: 225px;"></canvas>
             </div>
 
         </div>
@@ -257,7 +258,7 @@
         options: { 
             responsive: true, 
             scales: { y: { beginAtZero: true } },
-            plugins: { legend: { display: false } } // optional: hilangkan legend
+            plugins: { legend: { display: true } } // optional: hilangkan legend
         }
     });
 
