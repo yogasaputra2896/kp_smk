@@ -29,6 +29,7 @@ class WorkSheetImportModel extends Model
         'party',
         'jenis_con',
         'qty',
+        'kemasan',
         'net',
         'gross',
         'bl',

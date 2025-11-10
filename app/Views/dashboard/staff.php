@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="page-heading">
     <h3>Dashboard Staff Export-Import</h3>
-    <p class="text-subtitle text-muted">Selamat Datang Di Dashboard Staff - Trustway Management System Kepabeanan</p>
+    <p class="text-subtitle text-muted">Selamat Datang Di Dashboard Staff - Trustway System Management Kepabeanan</p>
 </div>
 
 <style>

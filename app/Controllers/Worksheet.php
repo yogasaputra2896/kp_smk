@@ -5,16 +5,19 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\WorkSheetImportModel;
 use App\Models\WorkSheetExportModel;
+use App\Models\WorksheetContainerModel;
 
 class Worksheet extends BaseController
 {
     protected $importModel;
     protected $exportModel;
+    protected $containerModel;
 
     public function __construct()
     {
         $this->importModel = new WorkSheetImportModel();
         $this->exportModel = new WorkSheetExportModel();
+        $this->containerModel = new WorksheetContainerModel();
     }
 
     /**
@@ -106,14 +109,18 @@ class Worksheet extends BaseController
             return redirect()->back()->with('error', 'Data worksheet import tidak ditemukan.');
         }
 
+        // Ambil data kontainer (jika ada)
+        $containers = $this->containerModel->where('id_ws', $id)->findAll();
+
         return view('worksheet/edit_import', [
-            'worksheet' => $worksheet
+            'worksheet'  => $worksheet,
+            'containers' => $containers
         ]);
     }
 
     /**
      * ==========================
-     * UPDATE WORKSHEET IMPORT
+     * UPDATE WORKSHEET IMPORT (FINAL)
      * ==========================
      */
     public function updateImport($id)
@@ -137,8 +144,9 @@ class Worksheet extends BaseController
             'shipping_line' => $this->request->getPost('shipping_line'),
             'commodity'     => $this->request->getPost('commodity'),
             'party'         => $this->request->getPost('party'),
-            'jenis_con'     => $this->request->getPost('jenis_con'),
+            'jenis_con'     => $this->request->getPost('jenis_con'), // VARCHAR FCL/LCL
             'qty'           => $this->request->getPost('qty'),
+            'kemasan'       => $this->request->getPost('kemasan'),
             'net'           => $this->request->getPost('net'),
             'gross'         => $this->request->getPost('gross'),
             'bl'            => $this->request->getPost('bl'),
@@ -156,52 +164,22 @@ class Worksheet extends BaseController
             'updated_at'    => date('Y-m-d H:i:s')
         ];
 
-        // Hilangkan nilai kosong/null agar tidak overwrite data lama
         $data = array_filter($data, fn($v) => $v !== null);
 
-        // Field wajib untuk status Completed
+        // Ambil data lama
+        $existing = $this->importModel->find($id);
+        $merged   = array_merge($existing, $data);
+
+        // Field wajib untuk status "completed"
         $requiredFields = [
-            'no_ws',
-            'no_aju',
-            'tgl_aju',
-            'no_po',
-            'pib_nopen',
-            'tgl_nopen',
-            'tgl_sppb',
-            'shipper',
-            'consignee',
-            'notify_party',
-            'vessel',
-            'no_voyage',
-            'pol',
-            'terminal',
-            'shipping_line',
-            'commodity',
-            'party',
-            'qty',
-            'net',
-            'gross',
-            'bl',
-            'tgl_bl',
-            'master_bl',
-            'tgl_master',
-            'no_invoice',
-            'tgl_invoice',
-            'eta',
-            'do',
-            'tgl_mati_do',
-            'asuransi',
-            'top',
-            'berita_acara'
+            'no_ws', 'no_aju', 'tgl_aju', 'no_po', 'pib_nopen', 'tgl_nopen',
+            'tgl_sppb', 'shipper', 'consignee', 'notify_party', 'vessel',
+            'no_voyage', 'pol', 'terminal', 'shipping_line', 'commodity',
+            'party', 'qty', 'kemasan', 'net', 'gross', 'bl', 'tgl_bl',
+            'master_bl', 'tgl_master', 'no_invoice', 'tgl_invoice', 'eta',
+            'do', 'tgl_mati_do', 'asuransi', 'top', 'berita_acara'
         ];
 
-        // Ambil data lama dari database
-        $existing = $this->importModel->find($id);
-
-        // Gabungkan data lama dan data baru
-        $merged = array_merge($existing, $data);
-
-        // Cek kelengkapan field wajib
         $allFilled = true;
         foreach ($requiredFields as $field) {
             if (empty($merged[$field])) {
@@ -210,18 +188,59 @@ class Worksheet extends BaseController
             }
         }
 
-        // Ubah status otomatis berdasarkan kelengkapan
+        /**
+         * ==========================
+         * SIMPAN DATA CONTAINER
+         * ==========================
+         */
+        $containerModel = new \App\Models\WorkSheetContainerModel();
+        $jenisCon = $this->request->getPost('jenis_con');
+        $noContainer = $this->request->getPost('no_container');
+        $tipe = $this->request->getPost('tipe');
+
+        // Hapus data lama agar tidak duplikat
+        $containerModel->where('id_ws', $id)->delete();
+
+        // Jika FCL → wajib simpan container
+        if ($jenisCon === 'FCL' && !empty($noContainer)) {
+            $hasContainer = false;
+
+            foreach ($noContainer as $i => $no) {
+                if (!empty(trim($no))) {
+                    $containerModel->insert([
+                        'id_ws'        => $id,
+                        'no_container' => trim($no),
+                        'tipe'         => isset($tipe[$i]) ? trim($tipe[$i]) : null,
+                        'created_at'   => date('Y-m-d H:i:s')
+                    ]);
+                    $hasContainer = true;
+                }
+            }
+
+            if (!$hasContainer) {
+                $allFilled = false; // Tidak ada container valid diinput
+            }
+        }
+
+        // Jika LCL → tidak perlu isi kontainer (skip)
+        // Jika FCL tapi kosong → otomatis status "not completed"
+
         $data['status'] = $allFilled ? 'completed' : 'not completed';
 
-        // Update data ke database
+        // Update ke database utama
         $this->importModel->update($id, $data);
 
-        // Set pesan flash untuk SweetAlert
         session()->setFlashdata('success', 'Data worksheet import berhasil diperbarui.');
-
         return redirect()->to('/worksheet?type=import');
     }
 
+
+
+    /**
+     * ==========================
+     * CEK KELENGKAPAN IMPORT
+     * ==========================
+     */
     public function checkImport($id)
     {
         $data = $this->importModel->find($id);
@@ -233,7 +252,6 @@ class Worksheet extends BaseController
             ]);
         }
 
-        // Daftar kolom wajib (key = name di input, value = label tampil)
         $requiredFields = [
             'no_ws'         => 'Nomor Worksheet',
             'no_aju'        => 'Nomor AJU',
@@ -253,6 +271,7 @@ class Worksheet extends BaseController
             'commodity'     => 'Commodity',
             'party'         => 'Party',
             'qty'           => 'Quantity',
+            'kemasan'       => 'Kemasan',
             'net'           => 'Net Weight',
             'gross'         => 'Gross Weight',
             'bl'            => 'Bill of Lading (BL)',
@@ -273,22 +292,34 @@ class Worksheet extends BaseController
         foreach ($requiredFields as $field => $label) {
             if (empty($data[$field])) {
                 $incomplete[] = [
-                    'name' => $field, // untuk pencarian input di form
-                    'label' => $label // untuk tampilan di SweetAlert
+                    'name'  => $field,
+                    'label' => $label
+                ];
+            }
+        }
+
+        // Cek container jika FCL
+        if ($data['jenis_con'] === 'FCL') {
+            $containerModel = new \App\Models\WorkSheetContainerModel();
+            $containers = $containerModel->where('id_ws', $id)->countAllResults();
+            if ($containers == 0) {
+                $incomplete[] = [
+                    'name'  => 'container',
+                    'label' => 'Data Kontainer Belum Diisi'
                 ];
             }
         }
 
         if (empty($incomplete)) {
             return $this->response->setJSON([
-                'status' => 'complete',
+                'status'  => 'complete',
                 'message' => 'Semua data wajib sudah terisi.'
             ]);
         }
 
         return $this->response->setJSON([
-            'status' => 'incomplete',
-            'message' => 'Beberapa data belum diisi.',
+            'status'         => 'incomplete',
+            'message'        => 'Beberapa data belum diisi.',
             'missing_fields' => $incomplete
         ]);
     }
