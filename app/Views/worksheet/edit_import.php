@@ -46,11 +46,6 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label>Nama Shipper</label>
-                <input type="text" name="shipper" class="form-control" value="<?= esc($worksheet['shipper']) ?>">
-            </div>
-
-            <div class="col-md-6 mb-3">
                 <label>Consignee</label>
                 <input type="text" name="consignee" class="form-control" value="<?= esc($worksheet['consignee']) ?>" required>
             </div>
@@ -58,6 +53,11 @@
             <div class="col-md-6 mb-3">
                 <label>Notify Party (Opsional)</label>
                 <input type="text" name="notify_party" class="form-control" value="<?= esc($worksheet['notify_party']) ?>">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Nama Shipper</label>
+                <input type="text" name="shipper" class="form-control" value="<?= esc($worksheet['shipper']) ?>">
             </div>
 
             <div class="col-md-6 mb-3">
@@ -74,6 +74,16 @@
                 <label>Tanggal SPPB</label>
                 <input type="date" name="tgl_sppb" class="form-control" value="<?= esc($worksheet['tgl_sppb']) ?>">
             </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Pengurusan PIB</label>
+                <select name="pengurusan_pib" class="form-select">
+                    <option value="">-- Pilih Pengurusan PIB  --</option>
+                    <option value="Pembuatan PIB" <?= $worksheet['pengurusan_pib'] === 'Pembuatan PIB' ? 'selected' : '' ?>>Pembuatan PIB</option>
+                    <option value="PIB Sendiri" <?= $worksheet['pengurusan_pib'] === 'PIB Sendiri' ? 'selected' : '' ?>>PIB Sendiri</option>
+                </select>
+            </div>
+
         </div>
 
         <!-- ================= INFORMASI PENGIRIMAN ================= -->
@@ -143,20 +153,8 @@
                 <input type="date" name="tgl_invoice" class="form-control" value="<?= esc($worksheet['tgl_invoice']) ?>">
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label>Delivery Order (DO)</label>
-                <select name="do" class="form-select">
-                    <option value="">-- Pilih Status DO --</option>
-                    <option value="Sudah Ada DO" <?= $worksheet['do'] === 'Sudah Ada DO' ? 'selected' : '' ?>>Sudah Ada DO</option>
-                    <option value="Belum Ada DO" <?= $worksheet['do'] === 'Belum Ada DO' ? 'selected' : '' ?>>Belum Ada DO</option>
-                </select>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label>Tanggal Mati (DO)</label>
-                <input type="date" name="tgl_mati_do" class="form-control" value="<?= esc($worksheet['tgl_mati_do']) ?>">
-            </div>
         </div>
+
 
         <!-- ================= INFORMASI BARANG ================= -->
         <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Barang</h5>
@@ -192,30 +190,31 @@
             </div>
         </div>
 
-       <!-- ================= JENIS CONTAINER ================= -->
-        <div class="form-group mt-3">
-            <label for="jenis_con">Jenis Container</label>
-            <select name="jenis_con" id="jenis_con" class="form-control" required>
-                <option value="">-- Pilih Jenis Container --</option>
-                <option value="FCL" <?= $worksheet['jenis_con'] == 'FCL' ? 'selected' : '' ?>>FCL</option>
-                <option value="LCL" <?= $worksheet['jenis_con'] == 'LCL' ? 'selected' : '' ?>>LCL</option>
-            </select>
+        <!-- ================= JENIS CONTAINER ================= -->
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Container</h5>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Jenis Container</label>
+                <select name="jenis_con" id="jenis_con" class="form-select" required>
+                    <option value="">-- Pilih Jenis Container --</option>
+                    <option value="FCL" <?= $worksheet['jenis_con'] == 'FCL' ? 'selected' : '' ?>>FCL</option>
+                    <option value="LCL" <?= $worksheet['jenis_con'] == 'LCL' ? 'selected' : '' ?>>LCL</option>
+                </select>
+            </div>
         </div>
 
-        <hr>
-
         <!-- ================= INFORMASI CONTAINER ================= -->
+        <br>
         <div id="container-info-section">
-            <h5>Informasi Container</h5>
-
             <button type="button" class="btn btn-sm btn-success mb-2" id="addRow">+ Tambah Container</button>
 
             <div class="table-responsive">
                 <table class="table table-bordered" id="containerTable">
                     <thead>
-                        <tr>
+                        <tr class="table-secondary">
                             <th>No Container</th>
-                            <th>Ukuran (Tipe)</th>
+                            <th>Ukuran</th>
+                            <th>Tipe</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -223,30 +222,46 @@
                         <?php if (!empty($containers)) : ?>
                             <?php foreach ($containers as $c) : ?>
                                 <tr>
-                                    <td><input type="text" name="no_container[]" class="form-control" value="<?= $c['no_container'] ?>"></td>
+                                    <td><input type="text" name="no_container[]" class="form-control" value="<?= esc($c['no_container']) ?>"></td>
                                     <td>
-                                        <select name="tipe[]" class="form-control">
+                                        <select name="ukuran[]" class="form-control">
                                             <option value="">-- Pilih Ukuran --</option>
-                                            <option value="20" <?= $c['tipe'] == '20' ? 'selected' : '' ?>>20</option>
-                                            <option value="40" <?= $c['tipe'] == '40' ? 'selected' : '' ?>>40</option>
-                                            <option value="45" <?= $c['tipe'] == '45' ? 'selected' : '' ?>>45</option>
+                                            <option value="20" <?= $c['ukuran'] == '20' ? 'selected' : '' ?>>20</option>
+                                            <option value="40" <?= $c['ukuran'] == '40' ? 'selected' : '' ?>>40</option>
+                                            <option value="45" <?= $c['ukuran'] == '45' ? 'selected' : '' ?>>45</option>
                                         </select>
                                     </td>
-                                    <td><button type="button" class="btn btn-danger btn-sm removeRow">Hapus</button></td>
+                                    <td>
+                                        <select name="tipe[]" class="form-control">
+                                            <option value="">-- Pilih Tipe --</option>
+                                            <option value="DRY" <?= $c['tipe'] == 'DRY' ? 'selected' : '' ?>>DRY</option>
+                                            <option value="REEFER" <?= $c['tipe'] == 'REEFER' ? 'selected' : '' ?>>REEFER</option>
+                                            <option value="ISO TANK" <?= $c['tipe'] == 'ISO TANK' ? 'selected' : '' ?>>ISO TANK</option>
+                                        </select>
+                                    </td>
+                                    <td><button type="button" class="btn btn-danger btn-sm removeRow"><i class="bi bi-trash"></i></button></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else : ?>
                             <tr>
                                 <td><input type="text" name="no_container[]" class="form-control"></td>
                                 <td>
-                                    <select name="tipe[]" class="form-control">
+                                    <select name="ukuran[]" class="form-control">
                                         <option value="">-- Pilih Ukuran --</option>
                                         <option value="20">20</option>
                                         <option value="40">40</option>
                                         <option value="45">45</option>
                                     </select>
                                 </td>
-                                <td><button type="button" class="btn btn-danger btn-sm removeRow">Hapus</button></td>
+                                <td>
+                                    <select name="tipe[]" class="form-control">
+                                        <option value="">-- Pilih Tipe --</option>
+                                        <option value="DRY">DRY</option>
+                                        <option value="REEFER">REEFER</option>
+                                        <option value="ISO TANK">ISO TANK</option>
+                                    </select>
+                                </td>
+                                <td><button type="button" class="btn btn-danger btn-sm removeRow"><i class="bi bi-trash"></i></button></td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
@@ -254,14 +269,112 @@
             </div>
         </div>
 
-        <!-- ================= CATATAN ================= -->
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Catatan & Lainnya</h5>
+        <!-- ================= Informasi DO ================= -->
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi DO</h5>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Pengurusan DO</label>
+                <select name="pengurusan_do" id="pengurusan_do" class="form-select" required>
+                    <option value="">-- Pilih Jenis Pengurusan DO --</option>
+                    <option value="Pengambilan DO" <?= $worksheet['pengurusan_do'] === 'Pengambilan DO' ? 'selected' : '' ?>>Pengambilan DO</option>
+                    <option value="DO Sendiri" <?= $worksheet['pengurusan_do'] === 'DO Sendiri' ? 'selected' : '' ?>>DO Sendiri</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ================= Tabel DO ================= -->
+        <div id="do-info-section" class="mt-3">
+            <button type="button" id="addDoRow" class="btn btn-sm btn-success mb-2">+ Tambah Data DO</button>
+            <table class="table table-bordered" id="doTable">
+                <thead>
+                    <tr class="table-secondary">
+                        <th>Tipe DO</th>
+                        <th>Pengambil DO</th>
+                        <th>Tanggal Mati DO</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($dos)) : ?>
+                        <?php foreach ($dos as $d) : ?>
+                            <tr>
+                                <td>
+                                    <select name="tipe_do[]" class="form-select">
+                                        <option value="">-- Pilih Tipe DO --</option>
+                                        <option value="DO" <?= $d['tipe_do'] === 'DO' ? 'selected' : '' ?>>DO</option>
+                                        <option value="PENGANTAR DO" <?= $d['tipe_do'] === 'PENGANTAR DO' ? 'selected' : '' ?>>PENGANTAR DO</option>
+                                        <option value="PERPANJANGAN DO" <?= $d['tipe_do'] === 'PERPANJANGAN DO' ? 'selected' : '' ?>>PERPANJANGAN DO</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" name="pengambil_do[]" value="<?= esc($d['pengambil_do']) ?>" class="form-control" placeholder="Nama Pengambil DO"></td>
+                                <td><input type="date" name="tgl_mati_do[]" value="<?= esc($d['tgl_mati_do']) ?>" class="form-control"></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm removeDoRow">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ================= Jenis Trucking ================= -->
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Trucking</h5>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Jenis Trucking</label>
+                <select name="jenis_trucking" id="jenis_trucking" class="form-select" required>
+                    <option value="">-- Pilih Jenis Trucking --</option>
+                    <option value="Pengurusan Trucking" <?= $worksheet['jenis_trucking'] === 'Pengurusan Trucking' ? 'selected' : '' ?>>Pengurusan Trucking</option>
+                    <option value="Trucking Sendiri" <?= $worksheet['jenis_trucking'] === 'Trucking Sendiri' ? 'selected' : '' ?>>Trucking Sendiri</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ================= Tabel Trucking ================= -->
+        <div id="trucking-info-section" class="mt-3">
+        <button type="button" id="addTruckingRow" class="btn btn-sm btn-success mb-2">+ Tambah Trucking</button>
+            <table class="table table-bordered" id="truckingTable">
+                <thead>
+                    <tr class="table-secondary">
+                        <th>No. Mobil</th>
+                        <th>Tipe Mobil</th>
+                        <th>Nama Supir</th>
+                        <th>Telp Supir</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($truckings)) : ?>
+                        <?php foreach ($truckings as $t) : ?>
+                            <tr>
+                                <td><input type="text" name="no_mobil[]" value="<?= esc($t['no_mobil']) ?>" class="form-control"></td>
+                                <td><input type="text" name="tipe_mobil[]" value="<?= esc($t['tipe_mobil']) ?>" class="form-control"></td>
+                                <td><input type="text" name="nama_supir[]" value="<?= esc($t['nama_supir']) ?>" class="form-control"></td>
+                                <td><input type="text" name="telp_supir[]" value="<?= esc($t['telp_supir']) ?>" class="form-control"></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm removeTruckingRow">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ================= Informasi Asuransi ================= -->
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Asuransi</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Asuransi</label>
-                <select name="asuransi" class="form-select">
+                <select name="asuransi" class="form-select" required>
                     <option value="">-- Pilih Asuransi --</option>
-                    <option value="CIF / CIP" <?= $worksheet['asuransi'] === 'CIF / CIP' ? 'selected' : '' ?>>CIF / CIP</option>
                     <option value="BUAT ASURANSI" <?= $worksheet['asuransi'] === 'BUAT ASURANSI' ? 'selected' : '' ?>>BUAT ASURANSI</option>
                     <option value="ASURANSI SENDIRI" <?= $worksheet['asuransi'] === 'ASURANSI SENDIRI' ? 'selected' : '' ?>>ASURANSI SENDIRI</option>
                 </select>
@@ -269,13 +382,17 @@
 
             <div class="col-md-6 mb-3">
                 <label>TOP</label>
-                <select name="top" class="form-select">
+                <select name="top" class="form-select" required>
                     <option value="">-- Pilih TOP --</option>
                     <option value="PREPAID" <?= $worksheet['top'] === 'PREPAID' ? 'selected' : '' ?>>PREPAID</option>
                     <option value="COLLECT" <?= $worksheet['top'] === 'COLLECT' ? 'selected' : '' ?>>COLLECT</option>
                 </select>
             </div>
+        </div>                    
 
+        <!-- ================= CATATAN ================= -->
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Lainnya</h5>
+        <div class="row">                    
             <div class="col-md-12 mb-3">
                 <label>Berita Acara</label>
                 <textarea name="berita_acara" class="form-control" rows="3"><?= esc($worksheet['berita_acara']) ?></textarea>
@@ -290,22 +407,31 @@
     </form>
 </div>
 
+<!-- ================= SCRIPT ================= -->
 <script>
-    // Tambah baris baru container
+    // Tambah baris container baru
     document.getElementById('addRow').addEventListener('click', function() {
         const tbody = document.querySelector('#containerTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="text" name="no_container[]" class="form-control"></td>
             <td>
-                <select name="tipe[]" class="form-control">
+                <select name="ukuran[]" class="form-control">
                     <option value="">-- Pilih Ukuran --</option>
                     <option value="20">20</option>
                     <option value="40">40</option>
                     <option value="45">45</option>
                 </select>
             </td>
-            <td><button type="button" class="btn btn-danger btn-sm removeRow">Hapus</button></td>
+            <td>
+                <select name="tipe[]" class="form-control">
+                    <option value="">-- Pilih Tipe --</option>
+                    <option value="DRY">DRY</option>
+                    <option value="REEFER">REEFER</option>
+                    <option value="ISO TANK">ISO TANK</option>
+                </select>
+            </td>
+            <td><button type="button" class="btn btn-danger btn-sm removeRow"><i class="bi bi-trash"></i></button></td>
         `;
         tbody.appendChild(row);
     });
@@ -317,21 +443,102 @@
         }
     });
 
-    // Sembunyikan Informasi Container Jika LCL
+    // Sembunyikan section container jika jenis_con = LCL
     const jenisConSelect = document.getElementById('jenis_con');
     const containerSection = document.getElementById('container-info-section');
 
     function toggleContainerSection() {
-        if (jenisConSelect.value === 'LCL') {
-            containerSection.style.display = 'none';
-        } else {
-            containerSection.style.display = 'block';
-        }
+    const value = jenisConSelect.value;
+    if (value === '' || value === 'LCL') {
+        containerSection.style.display = 'none';
+    } else if (value === 'FCL') {
+        containerSection.style.display = 'block';
     }
+}
+
 
     jenisConSelect.addEventListener('change', toggleContainerSection);
-    window.addEventListener('DOMContentLoaded', toggleContainerSection)
+    window.addEventListener('DOMContentLoaded', toggleContainerSection);
 
+    // Tambah Trucking
+    document.getElementById('addTruckingRow').addEventListener('click', function() {
+        const tbody = document.querySelector('#truckingTable tbody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><input type="text" name="no_mobil[]" class="form-control"></td>
+            <td><input type="text" name="tipe_mobil[]" class="form-control"></td>
+            <td><input type="text" name="nama_supir[]" class="form-control"></td>
+            <td><input type="text" name="telp_supir[]" class="form-control"></td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm removeTruckingRow">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // Hapus baris trucking
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('removeTruckingRow')) {
+            e.target.closest('tr').remove();
+        }
+    });
+
+    // Toggle Trucking
+    const jenisTruckingSelect = document.getElementById('jenis_trucking');
+    const truckingSection = document.getElementById('trucking-info-section');
+
+    function toggleTruckingSection() {
+        truckingSection.style.display = jenisTruckingSelect.value === 'Pengurusan Trucking' ? 'block' : 'none';
+    }
+
+    jenisTruckingSelect.addEventListener('change', toggleTruckingSection);
+    window.addEventListener('DOMContentLoaded', toggleTruckingSection);
+
+    // Tambah DO
+    document.getElementById('addDoRow').addEventListener('click', function() {
+        const tbody = document.querySelector('#doTable tbody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <select name="tipe_do[]" class="form-select">
+                    <option value="">-- Pilih Tipe DO --</option>
+                    <option value="DO">DO</option>
+                    <option value="PENGANTAR DO">PENGANTAR DO</option>
+                    <option value="PERPANJANGAN DO">PERPANJANGAN DO</option>
+                </select>
+            </td>
+            <td><input type="text" name="pengambil_do[]" class="form-control"></td>
+            <td><input type="date" name="tgl_mati_do[]" class="form-control"></td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm removeDoRow">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // Hapus baris DO
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('removeDoRow')) {
+            e.target.closest('tr').remove();
+        }
+    });
+
+    // Toggle DO
+    const jenisDoSelect = document.getElementById('pengurusan_do');
+    const doSection = document.getElementById('do-info-section');
+
+    function toggleDoSection() {
+        doSection.style.display = jenisDoSelect.value === 'Pengambilan DO' ? 'block' : 'none';
+    }
+
+    jenisDoSelect.addEventListener('change', toggleDoSection);
+    window.addEventListener('DOMContentLoaded', toggleDoSection);
+
+    
     // =============== Tombol Cek Data (kode asli tetap) ===================
     document.getElementById('checkDataBtn').addEventListener('click', function(e) {
         e.preventDefault();

@@ -137,8 +137,8 @@
                     <!-- No PIB/PO -->
                     <div class="col-md-6">
                         <label for="noPibPo" class="form-label">No PIB/PEB/PO</label>
-                        <input type="text" name="no_pib_po" id="noPibPo" class="form-control"
-                            placeholder="Contoh : C25-XXXXXX / SSM25-XXXXXX / POIF-XXXX" required>
+                        <input type="text" name="no_pib_po" id="noPibPo" class="form-control" 
+                        placeholder="Nomor PIB/PEB/PO"required>
                     </div>
 
                     <!-- Consignee -->
@@ -151,8 +151,8 @@
                     <!-- Party -->
                     <div class="col-md-6">
                         <label for="party" class="form-label">Party</label>
-                        <input type="text" name="party" id="party" class="form-control"
-                            placeholder="Contoh: 1 x 20 / LCL : 1 PK" required>
+                        <input type="text" name="party" id="party" class="form-control" 
+                        placeholder="1 X 20 / LCL 1 PK"required>
                     </div>
 
                     <!-- ETA -->
@@ -165,7 +165,7 @@
                     <div class="col-md-6">
                         <label for="pol" class="form-label">POL/POD</label>
                         <input type="text" name="pol" id="pol" class="form-control"
-                            placeholder="Contoh: POL (Shanghai)/ POD (Tanjung Priok)" required>
+                            placeholder="Nama POL / POD" required>
                     </div>
 
                     <!-- Shipping Line -->
