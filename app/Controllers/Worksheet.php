@@ -8,6 +8,8 @@ use App\Models\WorkSheetExportModel;
 use App\Models\WorksheetContainerModel;
 use App\Models\WorksheetTruckingModel;
 use App\Models\WorksheetDoModel;
+use App\Models\WorksheetLartasModel;
+use App\Models\WorksheetInformasiTambahanModel;
 
 class Worksheet extends BaseController
 {
@@ -16,14 +18,18 @@ class Worksheet extends BaseController
     protected $containerModel;
     protected $truckingModel;
     protected $doModel;
+    protected $lartasModel;
+    protected $informasiTambahanModel;
 
     public function __construct()
     {
-        $this->importModel = new WorkSheetImportModel();
-        $this->exportModel = new WorkSheetExportModel();
-        $this->containerModel = new WorksheetContainerModel();
-        $this->truckingModel = new WorksheetTruckingModel();
-        $this->doModel       = new WorksheetDoModel();
+        $this->importModel              = new WorkSheetImportModel();
+        $this->exportModel              = new WorkSheetExportModel();
+        $this->containerModel           = new WorksheetContainerModel();
+        $this->truckingModel            = new WorksheetTruckingModel();
+        $this->doModel                  = new WorksheetDoModel();
+        $this->lartasModel              = new WorksheetLartasModel();
+        $this->informasiTambahanModel   = new WorksheetInformasiTambahanModel();
     }
 
     /**
@@ -54,7 +60,7 @@ class Worksheet extends BaseController
                 $data[] = [
                     'id'            => $r['id'],
                     'no_ws'         => $r['no_ws'],
-                    'no_aju'        => $r['no_aju'], // No PEB
+                    'no_aju'        => $r['no_aju'],
                     'shipper'       => $r['shipper'],
                     'party'         => $r['party'],
                     'etd'           => $r['etd'],
@@ -77,7 +83,7 @@ class Worksheet extends BaseController
             $data[] = [
                 'id'            => $r['id'],
                 'no_ws'         => $r['no_ws'],
-                'no_aju'        => $r['no_aju'], // No PIB
+                'no_aju'        => $r['no_aju'],
                 'consignee'     => $r['consignee'],
                 'party'         => $r['party'],
                 'eta'           => $r['eta'],
@@ -116,15 +122,20 @@ class Worksheet extends BaseController
         }
 
         // Ambil data kontainer & trucking (jika ada)
-        $containers = $this->containerModel->where('id_ws', $id)->findAll();
-        $truckings  = $this->truckingModel->where('id_ws', $id)->findAll();
-        $dos        = $this->doModel ->where('id_ws', $id)->findAll();
+        $containers         = $this->containerModel->where('id_ws', $id)->findAll();
+        $truckings          = $this->truckingModel->where('id_ws', $id)->findAll();
+        $dos                = $this->doModel ->where('id_ws', $id)->findAll();
+        $lartass            = $this->lartasModel ->where('id_ws', $id)->findAll();
+        $informasitambahans = $this->informasiTambahanModel ->where('id_ws', $id)->findAll();
+        
 
         return view('worksheet/edit_import', [
             'worksheet'  => $worksheet,
             'containers' => $containers,
             'truckings'  => $truckings,
-            'dos'        => $dos
+            'dos'        => $dos,
+            'lartass'    => $lartass,
+            'informasitambahans'  => $informasitambahans
         ]);
     }
 
@@ -169,6 +180,8 @@ class Worksheet extends BaseController
             'tgl_invoice'       => $this->request->getPost('tgl_invoice'),
             'eta'               => $this->request->getPost('eta'),
             'pengurusan_do'     => $this->request->getPost('pengurusan_do'),
+            'pengurusan_lartas' => $this->request->getPost('pengurusan_lartas'),
+            'jenis_tambahan'    => $this->request->getPost('jenis_tambahan'),
             'asuransi'          => $this->request->getPost('asuransi'),
             'top'               => $this->request->getPost('top'),
             'berita_acara'      => $this->request->getPost('berita_acara'),
@@ -189,7 +202,8 @@ class Worksheet extends BaseController
             'no_voyage','pol','terminal','shipping_line','commodity',
             'party','qty','kemasan','net','gross','bl','tgl_bl',
             'master_bl','tgl_master','no_invoice','tgl_invoice','eta',
-            'pengurusan_do','asuransi','top','berita_acara'
+            'pengurusan_do','asuransi','top','berita_acara', 'pengurusan_lartas',
+            'penjaluran','jenis_tambahan'
         ];
 
         $allFilled = true;
@@ -199,6 +213,23 @@ class Worksheet extends BaseController
                 break;
             }
         }
+
+        // ==========================
+        // SIMPAN DATA PENJALURAN PIB
+        // ==========================
+        $penjaluran = $this->request->getPost('penjaluran');
+        $tglSpjm    = $this->request->getPost('tgl_spjm');
+
+        // Jika SPPB → kosongkan tanggal SPJM
+        if ($penjaluran === 'SPPB') {
+            $tglSpjm = null;
+        }
+
+        // Update ke worksheet_import
+        $this->importModel->update($id, [
+            'penjaluran' => $penjaluran,
+            'tgl_spjm'   => $tglSpjm,
+        ]);
 
         /**
          * ==========================
@@ -247,6 +278,7 @@ class Worksheet extends BaseController
         $noMobil       = $this->request->getPost('no_mobil');
         $tipeMobil     = $this->request->getPost('tipe_mobil');
         $namaSupir     = $this->request->getPost('nama_supir');
+        $alamat        = $this->request->getPost('alamat');
         $telpSupir     = $this->request->getPost('telp_supir');
 
         // Hapus data trucking lama
@@ -261,6 +293,7 @@ class Worksheet extends BaseController
                         'no_mobil'   => trim($nopol),
                         'tipe_mobil' => $tipeMobil[$i] ?? null,
                         'nama_supir' => $namaSupir[$i] ?? null,
+                        'alamat'     => $alamat[$i] ?? null,
                         'telp_supir' => $telpSupir[$i] ?? null,
                         'created_at' => date('Y-m-d H:i:s')
                     ]);
@@ -290,7 +323,7 @@ class Worksheet extends BaseController
         $this->doModel->where('id_ws', $id)->delete();
 
         // Jika "Pengurusan DO" → wajib simpan data DO
-        if ($pengurusanDo === 'Pengambilan DO' && !empty($tipeDo)) {
+        if ($pengurusanDo === 'Pengambilan Delivery Order' && !empty($tipeDo)) {
             $hasDo = false;
 
             foreach ($tipeDo as $i => $tipe) {
@@ -309,10 +342,92 @@ class Worksheet extends BaseController
             if (!$hasDo) {
                 $allFilled = false; // Tidak ada data DO valid diinput
             }
-        } elseif ($pengurusanDo === 'DO Sendiri') {
+        } elseif ($pengurusanDo === 'Delivery Order Sendiri') {
             // Jika DO Sendiri → hapus semua data DO lama
             $this->doModel->where('id_ws', $id)->delete();
         }
+
+        /**
+         * ==========================
+         * SIMPAN DATA LARTAS
+         * ==========================
+         */
+        $pengurusanLartas = $this->request->getPost('pengurusan_lartas');
+        $namaLartas       = $this->request->getPost('nama_lartas');
+        $noLartas         = $this->request->getPost('no_lartas');
+        $tglLartas        = $this->request->getPost('tgl_lartas');
+
+        // Hapus data lama agar tidak duplikat
+        $this->lartasModel->where('id_ws', $id)->delete();
+
+        if ($pengurusanLartas === 'Pembuatan Lartas' && !empty($namaLartas)) {
+            $hasLartas = false;
+
+            foreach ($namaLartas as $i => $nama) {
+                if (
+                    !empty(trim($nama)) ||
+                    !empty(trim($noLartas[$i] ?? '')) ||
+                    !empty(trim($tglLartas[$i] ?? ''))
+                ) {
+                    $this->lartasModel->insert([
+                        'id_ws'        => $id,
+                        'nama_lartas'  => isset($namaLartas[$i]) ? trim($namaLartas[$i]) : null,
+                        'no_lartas'    => isset($noLartas[$i]) ? trim($noLartas[$i]) : null,
+                        'tgl_lartas'   => isset($tglLartas[$i]) ? trim($tglLartas[$i]) : null,
+                        'created_at'   => date('Y-m-d H:i:s')
+                    ]);
+                    $hasLartas = true;
+                }
+            }
+
+            if (!$hasLartas) {
+                $allFilled = false; // Tidak ada data Lartas valid yang diinput
+            }
+
+        } elseif ($pengurusanLartas === 'Lartas Sendiri') {
+            // Jika Lartas sendiri → hapus semua data lama
+            $this->lartasModel->where('id_ws', $id)->delete();
+        }
+
+        /**
+         * ==========================
+         * SIMPAN DATA INFORMASI TAMBAHAN
+         * ==========================
+         */
+        $jenisTambahan   = $this->request->getPost('jenis_tambahan');
+        $namaPengurusan  = $this->request->getPost('nama_pengurusan');
+        $tglPengurusan   = $this->request->getPost('tgl_pengurusan');
+
+        // Hapus data lama agar tidak duplikat
+        $this->informasiTambahanModel->where('id_ws', $id)->delete();
+
+        if ($jenisTambahan === 'Pengurusan Tambahan' && !empty($namaPengurusan)) {
+            $hasTambahan = false;
+
+            foreach ($namaPengurusan as $i => $nama) {
+                if (
+                    !empty(trim($nama)) ||
+                    !empty(trim($tglPengurusan[$i] ?? ''))
+                ) {
+                    $this->informasiTambahanModel->insert([
+                        'id_ws'           => $id,
+                        'nama_pengurusan' => isset($namaPengurusan[$i]) ? trim($namaPengurusan[$i]) : null,
+                        'tgl_pengurusan'  => isset($tglPengurusan[$i]) ? trim($tglPengurusan[$i]) : null,
+                        'created_at'      => date('Y-m-d H:i:s')
+                    ]);
+                    $hasTambahan = true;
+                }
+            }
+
+            if (!$hasTambahan) {
+                $allFilled = false; // Tidak ada data Informasi Tambahan valid diinput
+            }
+
+        } elseif ($jenisTambahan === 'Tidak Ada Tambahan') {
+            // Jika Tidak Ada Tambahan → hapus semua data lama (jika ada)
+            $this->informasiTambahanModel->where('id_ws', $id)->delete();
+        }
+
 
 
         // Set status akhir setelah semua cek
@@ -350,6 +465,7 @@ class Worksheet extends BaseController
             'pib_nopen'       => 'Nomor PIB / Nopen',
             'tgl_nopen'       => 'Tanggal Nopen',
             'tgl_sppb'        => 'Tanggal SPPB',
+            'penjaluran'      => 'Penjaluran',
             'shipper'         => 'Shipper',
             'consignee'       => 'Consignee',
             'notify_party'    => 'Notify Party',
@@ -374,6 +490,8 @@ class Worksheet extends BaseController
             'pengurusan_do'   => 'Pengurusan Delivery Order',
             'jenis_con'       => 'Jenis Container',
             'jenis_trucking'  => 'Pengurusan Trucking',
+            'pengurusan_lartas' => 'Pengurusan Lartas',
+            'jenis_tambahan'    => 'Jenis Tambahan',
             'asuransi'        => 'Asuransi',
             'top'             => 'TOP',
             'berita_acara'    => 'Berita Acara'
@@ -396,6 +514,19 @@ class Worksheet extends BaseController
         }
 
         // ==============================
+        // Cek data SPJM jika penjaluran SPJM
+        // ==============================
+        if (($data['penjaluran'] ?? '') === 'SPJM') {
+            if (empty($data['tgl_spjm']) || $data['tgl_spjm'] === '0000-00-00') {
+                $incomplete[] = [
+                    'name'  => 'tgl_spjm',
+                    'label' => 'Tanggal SPJM wajib diisi karena penjaluran = SPJM'
+                ];
+            }
+        }
+
+
+        // ==============================
         // Cek container jika FCL
         // ==============================
         if (($data['jenis_con'] ?? '') === 'FCL') {
@@ -412,8 +543,7 @@ class Worksheet extends BaseController
                     if (
                         empty($c['no_container']) ||
                         empty($c['ukuran']) ||
-                        empty($c['seal_no']) ||
-                        empty($c['commodity'])
+                        empty($c['tipe']) 
                     ) {
                         $incomplete[] = [
                             'name'  => 'container_detail',
@@ -442,11 +572,12 @@ class Worksheet extends BaseController
                         empty($t['no_mobil']) ||
                         empty($t['tipe_mobil']) ||
                         empty($t['nama_supir']) ||
+                        empty($t['alamat']) ||
                         empty($t['telp_supir'])
                     ) {
                         $incomplete[] = [
                             'name'  => 'trucking_detail',
-                            'label' => 'Beberapa kolom Trucking (No Mobil, Tipe Mobil, Nama Supir, atau Telp Supir) belum lengkap'
+                            'label' => 'Beberapa kolom Trucking (No Mobil, Tipe Mobil, Nama Supir, Alamat Pengiriman, atau Telp Supir) belum lengkap'
                         ];
                         break;
                     }
@@ -487,6 +618,69 @@ class Worksheet extends BaseController
             $this->doModel->where('id_ws', $id)->delete();
         }
 
+        // ==============================
+        // Cek data Lartas jika Pembuatan Lartas
+        // ==============================
+        if (($data['pengurusan_lartas'] ?? '') === 'Pembuatan Lartas') {
+            $lartas = $this->lartasModel->where('id_ws', $id)->findAll();
+
+            if (empty($lartas)) {
+                $incomplete[] = [
+                    'name'  => 'lartas',
+                    'label' => 'Data Lartas wajib diisi untuk Pembuatan Lartas'
+                ];
+            } else {
+                foreach ($lartas as $l) {
+                    // Cek semua kolom Lartas wajib diisi
+                    if (
+                        empty(trim($l['nama_lartas'] ?? '')) ||
+                        empty(trim($l['no_lartas'] ?? '')) ||
+                        empty(trim($l['tgl_lartas'] ?? '')) ||
+                        $l['tgl_lartas'] === '0000-00-00'
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'lartas_detail',
+                            'label' => 'Beberapa kolom Lartas (Nama Lartas, No Lartas, atau Tanggal Lartas) belum lengkap'
+                        ];
+                        break;
+                    }
+                }
+            }
+        } else {
+            // Jika Lartas Sendiri → hapus data lama (jika ada)
+            $this->lartasModel->where('id_ws', $id)->delete();
+        }
+
+        // ==============================
+        // Cek data Informasi Tambahan jika Pengurusan Tambahan
+        // ==============================
+        if (($data['jenis_tambahan'] ?? '') === 'Pengurusan Tambahan') {
+            $tambahans = $this->informasiTambahanModel->where('id_ws', $id)->findAll();
+
+            if (empty($tambahans)) {
+                $incomplete[] = [
+                    'name'  => 'informasi_tambahan',
+                    'label' => 'Data Informasi Tambahan wajib diisi untuk Pengurusan Tambahan'
+                ];
+            } else {
+                foreach ($tambahans as $t) {
+                    if (
+                        empty(trim($t['nama_pengurusan'] ?? '')) ||
+                        empty(trim($t['tgl_pengurusan'] ?? '')) ||
+                        $t['tgl_pengurusan'] === '0000-00-00'
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'informasi_tambahan_detail',
+                            'label' => 'Beberapa kolom Informasi Tambahan (Nama Pengurusan atau Tanggal Pengurusan) belum lengkap'
+                        ];
+                        break; // cukup satu kali error
+                    }
+                }
+            }
+        } else {
+            // Jika Tidak Ada Tambahan → hapus data tambahan lama (jika ada)
+            $this->informasiTambahanModel->where('id_ws', $id)->delete();
+        }
 
 
 

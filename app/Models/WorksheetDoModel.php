@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class WorksheetDoModel extends Model
 {
-    protected $table = 'worksheet_do';
+    protected $table = 'worksheet_do_import';
     protected $primaryKey = 'id';
     protected $allowedFields = [
         'id_ws', 'tipe_do', 'pengambil_do', 'tgl_mati_do', 'created_at'

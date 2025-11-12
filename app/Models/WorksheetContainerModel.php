@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class WorksheetContainerModel extends Model
 {
-    protected $table            = 'worksheet_container';
+    protected $table            = 'worksheet_container_import';
     protected $primaryKey       = 'id';
     protected $allowedFields    = [
         'id_ws',

@@ -6,13 +6,14 @@ use CodeIgniter\Model;
 
 class WorksheetTruckingModel extends Model
 {
-    protected $table            = 'worksheet_trucking';
+    protected $table            = 'worksheet_trucking_import';
     protected $primaryKey       = 'id';
     protected $allowedFields    = [
         'id_ws',
         'no_mobil',
         'tipe_mobil',
         'nama_supir',
+        'alamat',
         'telp_supir',
         'created_at'
     ];

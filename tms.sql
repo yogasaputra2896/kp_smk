@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 11, 2025 at 12:13 PM
+-- Generation Time: Nov 12, 2025 at 12:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -224,7 +224,15 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (115, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-11 04:40:28', 1),
 (116, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-11 07:00:22', 1),
 (117, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-11 08:42:25', 1),
-(118, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-11 11:10:24', 1);
+(118, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-11 11:10:24', 1),
+(119, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 01:44:01', 1),
+(120, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 02:47:35', 1),
+(121, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 04:07:20', 1),
+(122, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 04:29:26', 1),
+(123, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 07:42:48', 1),
+(124, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 08:55:06', 1),
+(125, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 09:48:49', 1),
+(126, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-12 10:44:20', 1);
 
 -- --------------------------------------------------------
 
@@ -439,10 +447,10 @@ CREATE TABLE `user_trash` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `worksheet_container`
+-- Table structure for table `worksheet_container_import`
 --
 
-CREATE TABLE `worksheet_container` (
+CREATE TABLE `worksheet_container_import` (
   `id` int(10) NOT NULL,
   `no_container` varchar(20) NOT NULL,
   `ukuran` varchar(5) DEFAULT NULL,
@@ -451,13 +459,21 @@ CREATE TABLE `worksheet_container` (
   `id_ws` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `worksheet_container_import`
+--
+
+INSERT INTO `worksheet_container_import` (`id`, `no_container`, `ukuran`, `tipe`, `created_at`, `id_ws`) VALUES
+(52, 'CSNU1181201', '20', 'DRY', '2025-11-12 04:08:07', 19),
+(53, 'ASNU7654321', '40', 'REEFER', '2025-11-12 04:08:07', 19);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `worksheet_do`
+-- Table structure for table `worksheet_do_import`
 --
 
-CREATE TABLE `worksheet_do` (
+CREATE TABLE `worksheet_do_import` (
   `id` int(11) NOT NULL,
   `tipe_do` varchar(50) NOT NULL,
   `pengambil_do` varchar(100) NOT NULL,
@@ -467,12 +483,11 @@ CREATE TABLE `worksheet_do` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `worksheet_do`
+-- Dumping data for table `worksheet_do_import`
 --
 
-INSERT INTO `worksheet_do` (`id`, `tipe_do`, `pengambil_do`, `tgl_mati_do`, `created_at`, `id_ws`) VALUES
-(31, 'DO', 'Aan', '2025-11-11', '2025-11-11 11:11:10', 11),
-(32, 'PERPANJANGAN DO', 'Arig', '2025-11-29', '2025-11-11 11:11:10', 11);
+INSERT INTO `worksheet_do_import` (`id`, `tipe_do`, `pengambil_do`, `tgl_mati_do`, `created_at`, `id_ws`) VALUES
+(97, 'Delivery Order', 'Aan', '2025-11-12', '2025-11-12 11:08:08', 19);
 
 -- --------------------------------------------------------
 
@@ -545,6 +560,8 @@ CREATE TABLE `worksheet_import` (
   `pib_nopen` varchar(6) DEFAULT NULL,
   `tgl_nopen` date DEFAULT NULL,
   `tgl_sppb` date DEFAULT NULL,
+  `penjaluran` varchar(50) DEFAULT NULL,
+  `tgl_spjm` date DEFAULT NULL,
   `shipper` varchar(255) DEFAULT NULL,
   `consignee` varchar(255) DEFAULT NULL,
   `notify_party` varchar(255) DEFAULT NULL,
@@ -571,6 +588,8 @@ CREATE TABLE `worksheet_import` (
   `asuransi` varchar(50) DEFAULT NULL,
   `top` varchar(10) DEFAULT NULL,
   `jenis_trucking` varchar(50) DEFAULT NULL,
+  `jenis_tambahan` varchar(50) DEFAULT NULL,
+  `pengurusan_lartas` varchar(50) DEFAULT NULL,
   `berita_acara` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
@@ -583,35 +602,82 @@ CREATE TABLE `worksheet_import` (
 -- Dumping data for table `worksheet_import`
 --
 
-INSERT INTO `worksheet_import` (`id`, `no_ws`, `no_aju`, `pengurusan_pib`, `tgl_aju`, `no_po`, `io_number`, `pib_nopen`, `tgl_nopen`, `tgl_sppb`, `shipper`, `consignee`, `notify_party`, `vessel`, `no_voyage`, `pol`, `terminal`, `shipping_line`, `commodity`, `party`, `jenis_con`, `qty`, `kemasan`, `net`, `gross`, `bl`, `tgl_bl`, `master_bl`, `tgl_master`, `no_invoice`, `tgl_invoice`, `eta`, `pengurusan_do`, `asuransi`, `top`, `jenis_trucking`, `berita_acara`, `created_at`, `updated_at`, `deleted_by`, `deleted_at`, `status`) VALUES
-(11, 'IM/25/100001', '00000000686820251018000001', 'Pembuatan PIB', '2025-10-18', 'POIF-25-0001', '-', '123456', '2025-10-18', '2025-11-11', 'SHELL OIL CO LTD', 'PT TESTER DATA', 'PT TESTER DATA GRUB', 'ONE MADRID', '0001W', 'KUALA LUMPUR', 'NPCT', 'WAN HAI LINE', 'BAHAN BAKAR SHELL', '1 PK', 'LCL', '1', 'Package', 1000, 1000, 'WAN123456', '2025-11-11', 'MWAN123456', '2025-10-18', 'INV123456', '2025-10-18', '2025-09-30', 'Pengambilan DO', 'BUAT ASURANSI', 'PREPAID', 'Pengurusan Trucking', '-', '2025-10-04 10:20:51', '2025-11-11 11:11:10', NULL, '0000-00-00 00:00:00', 'completed'),
-(19, 'IM/25/100002', '00000000686820251018000002', 'Pembuatan PIB', '2025-11-11', '-', '-', '123457', '2025-11-11', '2025-11-11', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '120E', 'PORT KELANG', 'JICT', 'KMTC LINE', 'ALUMINIUM ALLOY', '2 PK', 'LCL', '2', 'Package', 100, 100, 'KMTC000003', '2025-11-11', 'MKMTC000003', '2025-11-11', 'INV000003', '2025-11-11', '2025-09-29', 'DO Sendiri', 'BUAT ASURANSI', 'PREPAID', 'Trucking Sendiri', '-', '2025-11-11 02:11:19', '2025-11-11 11:11:44', NULL, '0000-00-00 00:00:00', 'completed'),
-(20, 'IM/25/400001', 'C25-001234', 'Pembuatan PIB', '0000-00-00', '', '', '', '0000-00-00', '0000-00-00', '', 'PT TESTER DATA', '', '', '', 'PORT KELANG', '', 'MCC LINE', '', '1 X 20', 'FCL', '', '', 0, 0, 'MCC123456', '0000-00-00', 'MMCC123456', '0000-00-00', '', '0000-00-00', '2025-09-23', '', '', '', '', '', '2025-11-11 02:11:37', '2025-11-11 11:12:38', NULL, '0000-00-00 00:00:00', 'not completed'),
-(21, 'IM/25/600001', 'C25-000014', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'SHEKOU', NULL, 'SITC', NULL, '2 x 20', 'FCL', NULL, NULL, NULL, NULL, 'SITC123456', NULL, 'MSITC123456', NULL, NULL, NULL, '2025-09-23', NULL, NULL, NULL, '', NULL, '2025-11-11 02:11:50', '2025-11-11 09:47:20', NULL, '0000-00-00 00:00:00', 'not completed'),
-(22, 'IM/25/500001', 'BUAT ASURANSI', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'INCHEON', NULL, 'OOCL LINE', NULL, '2 BAG', 'FCL', NULL, NULL, NULL, NULL, 'OOLU000001', NULL, '-', NULL, NULL, NULL, '2025-10-04', NULL, NULL, NULL, '', NULL, '2025-11-11 02:12:16', '2025-11-11 09:47:36', NULL, '0000-00-00 00:00:00', 'not completed');
+INSERT INTO `worksheet_import` (`id`, `no_ws`, `no_aju`, `pengurusan_pib`, `tgl_aju`, `no_po`, `io_number`, `pib_nopen`, `tgl_nopen`, `tgl_sppb`, `penjaluran`, `tgl_spjm`, `shipper`, `consignee`, `notify_party`, `vessel`, `no_voyage`, `pol`, `terminal`, `shipping_line`, `commodity`, `party`, `jenis_con`, `qty`, `kemasan`, `net`, `gross`, `bl`, `tgl_bl`, `master_bl`, `tgl_master`, `no_invoice`, `tgl_invoice`, `eta`, `pengurusan_do`, `asuransi`, `top`, `jenis_trucking`, `jenis_tambahan`, `pengurusan_lartas`, `berita_acara`, `created_at`, `updated_at`, `deleted_by`, `deleted_at`, `status`) VALUES
+(11, 'IM/25/100001', '00000000686820251018000001', 'Pembuatan Draft PIB', '2025-10-18', 'POIF-25-0001', '-', '123456', '2025-10-18', '2025-11-11', 'SPPB', NULL, 'SHELL OIL CO LTD', 'PT TESTER DATA', 'PT TESTER DATA GRUB', 'ONE MADRID', '0001W', 'KUALA LUMPUR', 'NPCT', 'WAN HAI LINE', 'BAHAN BAKAR SHELL', '1 PK', 'LCL', '1', 'Package', 1000, 1000, 'WAN123456', '2025-11-11', 'MWAN123456', '2025-10-18', 'INV123456', '2025-10-18', '2025-09-30', 'Pengambilan Delivery Order', 'Pembuatan Asuransi', 'PREPAID', 'Pengurusan Trucking', 'Pengurusan Tambahan', 'Pembuatan Lartas', '-', '2025-10-04 10:20:51', '2025-11-12 11:06:08', NULL, '0000-00-00 00:00:00', 'completed'),
+(19, 'IM/25/100002', '00000000686820251018000002', 'Pembuatan Draft PIB', '2025-11-11', '-', '-', '123457', '2025-11-11', '2025-11-11', 'SPJM', '2025-11-08', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '120E', 'PORT KELANG', 'JICT', 'KMTC LINE', 'ALUMINIUM ALLOY', '2 PK', 'FCL', '2', 'Package', 100, 100, 'KMTC000003', '2025-11-11', 'MKMTC000003', '2025-11-11', 'INV000003', '2025-11-11', '2025-09-29', 'Pengambilan Delivery Order', 'CIF', 'PREPAID', 'Pengurusan Trucking', 'Tidak Ada Tambahan', 'Pembuatan Lartas', '-', '2025-11-11 02:11:19', '2025-11-12 11:08:07', NULL, '0000-00-00 00:00:00', 'completed'),
+(20, 'IM/25/400001', 'C25-001234', 'Pembuatan PIB', '0000-00-00', '', '', '', '0000-00-00', '0000-00-00', NULL, NULL, '', 'PT TESTER DATA', '', '', '', 'PORT KELANG', '', 'MCC LINE', '', '1 X 20', 'FCL', '', '', 0, 0, 'MCC123456', '0000-00-00', 'MMCC123456', '0000-00-00', '', '0000-00-00', '2025-09-23', '', '', '', '', NULL, NULL, '', '2025-11-11 02:11:37', '2025-11-11 11:12:38', NULL, '0000-00-00 00:00:00', 'not completed'),
+(21, 'IM/25/600001', 'C25-000014', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'SHEKOU', NULL, 'SITC', NULL, '2 x 20', 'FCL', NULL, NULL, NULL, NULL, 'SITC123456', NULL, 'MSITC123456', NULL, NULL, NULL, '2025-09-23', NULL, NULL, NULL, '', NULL, NULL, NULL, '2025-11-11 02:11:50', '2025-11-11 09:47:20', NULL, '0000-00-00 00:00:00', 'not completed'),
+(22, 'IM/25/500001', 'BUAT ASURANSI', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'INCHEON', NULL, 'OOCL LINE', NULL, '2 BAG', 'FCL', NULL, NULL, NULL, NULL, 'OOLU000001', NULL, '-', NULL, NULL, NULL, '2025-10-04', NULL, NULL, NULL, '', NULL, NULL, NULL, '2025-11-11 02:12:16', '2025-11-11 09:47:36', NULL, '0000-00-00 00:00:00', 'not completed');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `worksheet_trucking`
+-- Table structure for table `worksheet_informasi_tambahan_import`
 --
 
-CREATE TABLE `worksheet_trucking` (
+CREATE TABLE `worksheet_informasi_tambahan_import` (
+  `id` int(11) NOT NULL,
+  `id_ws` int(11) NOT NULL,
+  `nama_pengurusan` varchar(255) DEFAULT NULL,
+  `tgl_pengurusan` date DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_informasi_tambahan_import`
+--
+
+INSERT INTO `worksheet_informasi_tambahan_import` (`id`, `id_ws`, `nama_pengurusan`, `tgl_pengurusan`, `created_at`) VALUES
+(6, 11, 'Redress Manifest', '2025-11-12', '2025-11-12 11:06:08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `worksheet_lartas_import`
+--
+
+CREATE TABLE `worksheet_lartas_import` (
+  `id` int(11) NOT NULL,
+  `id_ws` int(11) NOT NULL,
+  `nama_lartas` varchar(100) NOT NULL,
+  `no_lartas` varchar(100) NOT NULL,
+  `tgl_lartas` date DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_lartas_import`
+--
+
+INSERT INTO `worksheet_lartas_import` (`id`, `id_ws`, `nama_lartas`, `no_lartas`, `tgl_lartas`, `created_at`) VALUES
+(79, 11, 'Laporan Surveyor', 'LS123456789', '2025-11-12', '2025-11-12 11:06:08'),
+(80, 11, 'SURAT PERSETUJUAN MUAT BPOM', 'BPOM123456789', '2025-11-12', '2025-11-12 11:06:08'),
+(83, 19, 'Laporan Surveyor', 'LS123456789', '2025-11-12', '2025-11-12 11:08:08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `worksheet_trucking_import`
+--
+
+CREATE TABLE `worksheet_trucking_import` (
   `id` int(11) NOT NULL,
   `no_mobil` varchar(20) NOT NULL,
   `tipe_mobil` varchar(20) DEFAULT NULL,
   `nama_supir` varchar(100) DEFAULT NULL,
+  `alamat` varchar(255) DEFAULT NULL,
   `telp_supir` varchar(20) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `id_ws` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `worksheet_trucking`
+-- Dumping data for table `worksheet_trucking_import`
 --
 
-INSERT INTO `worksheet_trucking` (`id`, `no_mobil`, `tipe_mobil`, `nama_supir`, `telp_supir`, `created_at`, `id_ws`) VALUES
-(59, 'B 12345 UUF', 'WING BOX', 'Bagas', '088291954971', '2025-11-11 11:11:10', 11);
+INSERT INTO `worksheet_trucking_import` (`id`, `no_mobil`, `tipe_mobil`, `nama_supir`, `alamat`, `telp_supir`, `created_at`, `id_ws`) VALUES
+(113, 'B 12345 UUF', 'WING BOX', 'Bagas', 'Gudang Tigaraksa', '088291954971', '2025-11-12 11:06:08', 11),
+(116, 'B 12345 UUF', 'TRAILER', 'Budi', 'Gudang Marunda', '088291954971', '2025-11-12 11:08:07', 19);
 
 --
 -- Indexes for dumped tables
@@ -713,16 +779,16 @@ ALTER TABLE `user_trash`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `worksheet_container`
+-- Indexes for table `worksheet_container_import`
 --
-ALTER TABLE `worksheet_container`
+ALTER TABLE `worksheet_container_import`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_container_ws_id` (`id_ws`);
 
 --
--- Indexes for table `worksheet_do`
+-- Indexes for table `worksheet_do_import`
 --
-ALTER TABLE `worksheet_do`
+ALTER TABLE `worksheet_do_import`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_do_ws_id` (`id_ws`);
 
@@ -745,9 +811,23 @@ ALTER TABLE `worksheet_import`
   ADD UNIQUE KEY `bl` (`bl`);
 
 --
--- Indexes for table `worksheet_trucking`
+-- Indexes for table `worksheet_informasi_tambahan_import`
 --
-ALTER TABLE `worksheet_trucking`
+ALTER TABLE `worksheet_informasi_tambahan_import`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_ws` (`id_ws`);
+
+--
+-- Indexes for table `worksheet_lartas_import`
+--
+ALTER TABLE `worksheet_lartas_import`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_lartas_ws_import` (`id_ws`);
+
+--
+-- Indexes for table `worksheet_trucking_import`
+--
+ALTER TABLE `worksheet_trucking_import`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_trucking_ws_id` (`id_ws`);
 
@@ -771,7 +851,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -822,16 +902,16 @@ ALTER TABLE `user_trash`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `worksheet_container`
+-- AUTO_INCREMENT for table `worksheet_container_import`
 --
-ALTER TABLE `worksheet_container`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+ALTER TABLE `worksheet_container_import`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
--- AUTO_INCREMENT for table `worksheet_do`
+-- AUTO_INCREMENT for table `worksheet_do_import`
 --
-ALTER TABLE `worksheet_do`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+ALTER TABLE `worksheet_do_import`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 
 --
 -- AUTO_INCREMENT for table `worksheet_export`
@@ -846,10 +926,22 @@ ALTER TABLE `worksheet_import`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
--- AUTO_INCREMENT for table `worksheet_trucking`
+-- AUTO_INCREMENT for table `worksheet_informasi_tambahan_import`
 --
-ALTER TABLE `worksheet_trucking`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+ALTER TABLE `worksheet_informasi_tambahan_import`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `worksheet_lartas_import`
+--
+ALTER TABLE `worksheet_lartas_import`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+
+--
+-- AUTO_INCREMENT for table `worksheet_trucking_import`
+--
+ALTER TABLE `worksheet_trucking_import`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
 
 --
 -- Constraints for dumped tables
@@ -883,21 +975,33 @@ ALTER TABLE `auth_users_permissions`
   ADD CONSTRAINT `auth_users_permissions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `worksheet_container`
+-- Constraints for table `worksheet_container_import`
 --
-ALTER TABLE `worksheet_container`
+ALTER TABLE `worksheet_container_import`
   ADD CONSTRAINT `fk_container_ws_id` FOREIGN KEY (`id_ws`) REFERENCES `worksheet_import` (`id`);
 
 --
--- Constraints for table `worksheet_do`
+-- Constraints for table `worksheet_do_import`
 --
-ALTER TABLE `worksheet_do`
+ALTER TABLE `worksheet_do_import`
   ADD CONSTRAINT `fk_do_ws_id` FOREIGN KEY (`id_ws`) REFERENCES `worksheet_import` (`id`);
 
 --
--- Constraints for table `worksheet_trucking`
+-- Constraints for table `worksheet_informasi_tambahan_import`
 --
-ALTER TABLE `worksheet_trucking`
+ALTER TABLE `worksheet_informasi_tambahan_import`
+  ADD CONSTRAINT `worksheet_informasi_tambahan_import_ibfk_1` FOREIGN KEY (`id_ws`) REFERENCES `worksheet_import` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `worksheet_lartas_import`
+--
+ALTER TABLE `worksheet_lartas_import`
+  ADD CONSTRAINT `fk_lartas_ws_import` FOREIGN KEY (`id_ws`) REFERENCES `worksheet_import` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `worksheet_trucking_import`
+--
+ALTER TABLE `worksheet_trucking_import`
   ADD CONSTRAINT `fk_trucking_ws_id` FOREIGN KEY (`id_ws`) REFERENCES `worksheet_import` (`id`);
 COMMIT;
 
