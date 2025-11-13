@@ -1,29 +1,38 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\WorksheetImport;
 
 use CodeIgniter\Model;
 
-class WorkSheetExportModel extends Model
+class WorkSheetImportModel extends Model
 {
-    protected $table            = 'worksheet_export';
+    protected $table            = 'worksheet_import';
     protected $primaryKey       = 'id';
     protected $allowedFields    = [
         'no_ws',
+        'pengurusan_pib',
         'no_aju',
-        'no_peb',
-        'tgl_peb',
+        'tgl_aju',
+        'no_po',
+        'io_number',
+        'pib_nopen',
+        'tgl_nopen',
+        'penjaluran',
+        'tgl_spjm',
+        'tgl_sppb',
         'shipper',
         'consignee',
+        'notify_party',
         'vessel',
         'no_voyage',
         'pol',
-        'pod',
+        'terminal',
         'shipping_line',
         'commodity',
         'party',
         'jenis_con',
         'qty',
+        'kemasan',
         'net',
         'gross',
         'bl',
@@ -32,11 +41,18 @@ class WorkSheetExportModel extends Model
         'tgl_master',
         'no_invoice',
         'tgl_invoice',
-        'etd',
         'eta',
+        'dok_ori',
+        'tgl_ori',
+        'pengurusan_do',
         'asuransi',
         'top',
+        'jenis_trucking',
+        'pengurusan_lartas',
+        'jenis_tambahan',
+        'jenis_fasilitas',
         'berita_acara',
+        'status',
         'created_at',
         'updated_at',
         'deleted_by',
@@ -49,44 +65,62 @@ class WorkSheetExportModel extends Model
     protected $deletedField  = 'deleted_at';
 
     /**
-     * Mapping data dari booking_job ke worksheet_export
+     * Mapping data dari booking_job ke worksheet_import
      */
     public function mapFromBooking(array $booking): array
     {
+        // Ambil dan ubah tipe ke huruf kecil
+        $filterType = strtolower($booking['type'] ?? '');
+
+        // Mapping jenis_con berdasarkan tipe booking
+        switch ($filterType) {
+            case 'import_lcl':
+                $jenisCon = 'LCL';
+                break;
+            case 'import_fcl_jaminan':
+            case 'import_fcl_nonjaminan':
+            case 'export':
+                $jenisCon = 'FCL';
+                break;
+            default:
+                $jenisCon = 'FCL';
+                break;
+        }
+
         return [
             'no_ws'         => $booking['no_job'] ?? null,
             'no_aju'        => $booking['no_pib_po'] ?? null,
-            'shipper'       => $booking['consignee'] ?? null,
+            'consignee'     => $booking['consignee'] ?? null,
             'party'         => $booking['party'] ?? null,
-            'etd'           => $booking['eta'] ?? null,
-            'pod'           => $booking['pol'] ?? null,
+            'eta'           => $booking['eta'] ?? null,
+            'pol'           => $booking['pol'] ?? null,
             'bl'            => $booking['bl'] ?? null,
             'master_bl'     => $booking['master_bl'] ?? null,
             'shipping_line' => $booking['shipping_line'] ?? null,
-            'status'        => 'not complete',
+            'jenis_con'     => $jenisCon,
+            'status'        => 'not completed',
             'created_at'    => date('Y-m-d H:i:s'),
             'updated_at'    => date('Y-m-d H:i:s')
         ];
     }
 
     /**
-     * Format row untuk list worksheet export
+     * Format row untuk list (misalnya DataTables / API JSON)
      */
     public function formatListRow(array $r): array
     {
         return [
             'id'            => $r['id'],
-            'no_ws'         => $r['no_ws'] ?? null,
+            'no_ws'         => $r['no_ws'],
             'no_aju'        => $r['no_aju'] ?? null,
-            'shipper'       => $r['shipper'] ?? null,
             'consignee'     => $r['consignee'] ?? null,
             'party'         => $r['party'] ?? null,
-            'pod'           => $r['pod'] ?? null,
+            'eta'           => $r['eta'] ?? null,
+            'pol'           => $r['pol'] ?? null,
+            'shipping_line' => $r['shipping_line'] ?? null,
             'bl'            => $r['bl'] ?? null,
             'master_bl'     => $r['master_bl'] ?? null,
-            'vessel'        => $r['vessel'] ?? null,
-            'shipping_line' => $r['shipping_line'] ?? null,
-            'etd'           => $r['etd'] ?? null,
+            'jenis_con'     => $r['jenis_con'] ?? 'FCL', // default juga FCL di list
             'status'        => $r['status'] ?? 'not completed',
             'created_at'    => $r['created_at'] ?? null,
         ];

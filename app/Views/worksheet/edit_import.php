@@ -14,7 +14,7 @@
         <input type="hidden" name="type" value="import">
 
         <!-- ================= INFORMASI UTAMA ================= -->
-        <h5 class="mb-3 text-primary fw-bold border-bottom pb-2">Informasi Utama</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Utama</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>No Worksheet</label>
@@ -49,12 +49,11 @@
                 <label>IO Number (Opsional)</label>
                 <input type="text" name="io_number" class="form-control" value="<?= esc($worksheet['io_number']) ?>">
             </div>
-
         </div>
 
         <!-- ================= INFORMASI PIB ================= -->
         <br>
-        <h5 class="mb-3 text-primary fw-bold border-bottom pb-2">Informasi PIB</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi PIB</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Pengurusan PIB</label>
@@ -84,12 +83,11 @@
                 <label>Tanggal Pendaftaran PIB</label>
                 <input type="date" name="tgl_nopen" class="form-control" value="<?= esc($worksheet['tgl_nopen']) ?>">
             </div>
-        
         </div>
 
         <!-- ================= INFORMASI PENJALURAN ================= -->
         <br>
-        <h5 class="mb-3 text-primary fw-bold border-bottom pb-2">Informasi Penjaluran</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Penjaluran</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                     <label>Penjaluran PIB</label>
@@ -115,7 +113,7 @@
 
         <!-- ================= INFORMASI PENGANGKUTAN ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Pengangkutan</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Pengangkutan</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Shipping Line</label>
@@ -150,7 +148,7 @@
 
         <!-- ================= INFORMASI DOKUMEN ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Dokumen</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Dokumen</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>BL</label>
@@ -163,12 +161,12 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label>Master BL</label>
+                <label>Master BL (Opsional)</label>
                 <input type="text" name="master_bl" class="form-control" value="<?= esc($worksheet['master_bl']) ?>">
             </div>
 
             <div class="col-md-6 mb-3">
-                <label>Tanggal Master</label>
+                <label>Tanggal Master (Opsional)</label>
                 <input type="date" name="tgl_master" class="form-control" value="<?= esc($worksheet['tgl_master']) ?>">
             </div>
 
@@ -182,12 +180,29 @@
                 <input type="date" name="tgl_invoice" class="form-control" value="<?= esc($worksheet['tgl_invoice']) ?>">
             </div>
 
+            <div class="col-md-6 mb-3">
+                <label>Dokumen Original</label>
+                <select name="dok_ori" id="dok_ori" class="form-select">
+                    <option value="">-- Pilih Dokumen Original --</option>
+                    <option value="Sudah Ada" <?= $worksheet['dok_ori'] === 'Sudah Ada' ? 'selected' : '' ?>>Sudah Ada</option>
+                    <option value="Belum Ada" <?= $worksheet['dok_ori'] === 'Belum Ada' ? 'selected' : '' ?>>Belum Ada</option>
+                </select>
+            </div>
+            
+
+            <div class="col-md-6 mb-3" id="tgl-ori-section">
+                <div class="col-md-6 mb-3">
+                    <label>Tanggal Dokumen Original</label>
+                    <input type="date" name="tgl_ori" class="form-control" value="<?= esc($worksheet['tgl_ori']) ?>">
+                </div>
+            </div>
+
         </div>
 
 
         <!-- ================= INFORMASI BARANG ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Barang</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Barang</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Commodity Barang</label>
@@ -222,7 +237,7 @@
 
         <!-- ================= JENIS CONTAINER ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Container</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Container</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Jenis Container</label>
@@ -307,8 +322,7 @@
 
         <!-- ================= Informasi DO ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Delivery Order</h5>
-
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Delivery Order</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Pengurusan Delivery Order</label>
@@ -363,8 +377,7 @@
         </div>
 
         <!-- ================= Informasi Trucking ================= -->
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Trucking</h5>
-
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Trucking</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Jenis Trucking</label>
@@ -379,7 +392,6 @@
         <!-- ================= Tabel Trucking ================= -->
         <div id="trucking-info-section" class="mt-3">
             <button type="button" id="addTruckingRow" class="btn btn-sm btn-success mb-2">+ Tambah Trucking</button>
-
             <table class="table table-bordered align-middle" id="truckingTable">
                 <thead>
                     <tr class="table-secondary">
@@ -419,8 +431,7 @@
 
         <!-- ================= Informasi Lartas ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Lartas</h5>
-
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Lartas</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Pengurusan Lartas</label>
@@ -435,7 +446,6 @@
         <!-- ================= Tabel Lartas ================= -->
         <div id="lartas-info-section" class="mt-3">
             <button type="button" id="addLartasRow" class="btn btn-sm btn-success mb-2">+ Tambah Lartas</button>
-
             <table class="table table-bordered" id="lartasTable">
                 <thead>
                     <tr class="table-secondary">
@@ -468,7 +478,8 @@
 
 
         <!-- ================= Informasi Asuransi ================= -->
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Asuransi</h5>
+        <br>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Asuransi</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Pengurusan Asuransi</label>
@@ -480,7 +491,6 @@
                     <option value="CIP" <?= $worksheet['asuransi'] === 'CIP' ? 'selected' : '' ?>>CIP</option>
                 </select>
             </div>
-
             <div class="col-md-6 mb-3">
                 <label>TOP</label>
                 <select name="top" class="form-select">
@@ -491,10 +501,63 @@
             </div>
         </div>
 
+        <!-- ================= Informasi Fasilitas ================= -->
+        <br>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Fasilitas</h5>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Jenis Fasilitas</label>
+                <select name="jenis_fasilitas" id="jenis_fasilitas" class="form-select">
+                    <option value="">-- Pilih Jenis Fasilitas --</option>
+                    <option value="Pengurusan Fasilitas" <?= $worksheet['jenis_fasilitas'] === 'Pengurusan Fasilitas' ? 'selected' : '' ?>>Pengurusan Fasilitas</option>
+                    <option value="Fasilitas Sendiri" <?= $worksheet['jenis_fasilitas'] === 'Fasilitas Sendiri' ? 'selected' : '' ?>>Fasilitas Sendiri</option>
+                    <option value="Tidak Ada Fasilitas" <?= $worksheet['jenis_fasilitas'] === 'Tidak Ada Fasilitas' ? 'selected' : '' ?>>Tidak Ada Fasilitas</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ================= Tabel Fasilitas ================= -->
+        <div id="fasilitas-info-section" class="mt-3">
+            <button type="button" id="addFasilitasRow" class="btn btn-sm btn-success mb-2">+ Tambah Fasilitas</button>
+
+            <table class="table table-bordered" id="fasilitasTable">
+                <thead>
+                    <tr class="table-secondary">
+                        <th style="width: 50px;">No</th>
+                        <th>Tipe Fasilitas</th>
+                        <th>Nama Fasilitas</th>
+                        <th>No. Fasilitas</th>
+                        <th>Tanggal Fasilitas</th>
+                        <th style="width: 80px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($fasilitass)) : ?>
+                        <?php $no = 1; foreach ($fasilitass as $f) : ?>
+                            <tr>
+                                <td class="text-center nomor"><?= $no++; ?></td>
+                                <td><input type="text" name="tipe_fasilitas[]" value="<?= esc($f['tipe_fasilitas']) ?>" class="form-control"></td>
+                                <td><input type="text" name="nama_fasilitas[]" value="<?= esc($f['nama_fasilitas']) ?>" class="form-control"></td>
+                                <td><input type="text" name="no_fasilitas[]" value="<?= esc($f['no_fasilitas']) ?>" class="form-control"></td>
+                                <td><input type="date" name="tgl_fasilitas[]" value="<?= esc($f['tgl_fasilitas']) ?>" class="form-control"></td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-danger btn-sm removeFasilitasRow">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+                    
+
+
         <!-- ================= INFORMASI TAMBAHAN ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Tambahan</h5>
-
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Tambahan</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label>Jenis Tambahan</label>
@@ -509,7 +572,6 @@
         <!-- ================= Tabel Informasi Tambahan ================= -->
         <div id="tambahan-info-section" class="mt-3">
             <button type="button" id="addTambahanRow" class="btn btn-sm btn-success mb-2">+ Tambah Pengurusan</button>
-
             <table class="table table-bordered" id="tambahanTable">
                 <thead>
                     <tr class="table-secondary">
@@ -541,24 +603,39 @@
 
         <!-- ================= CATATAN ================= -->
         <br>
-        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom pb-2">Informasi Catatan</h5>
+        <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Catatan</h5>
         <div class="row">                    
             <div class="col-md-12 mb-3">
                 <label>Berita Acara</label>
                 <textarea name="berita_acara" class="form-control" rows="3"><?= esc($worksheet['berita_acara']) ?></textarea>
             </div>
         </div>
+        <br>
 
-        <div class="mt-4">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <button type="button" class="btn btn-danger" id="checkDataBtn" data-id="<?= $worksheet['id'] ?>">Cek Data</button>
-            <a href="<?= base_url('worksheet?type=import') ?>" class="btn btn-secondary">Kembali</a>
+        <hr class="border-2 border-primary">
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            <div>
+                <a href="<?= base_url('worksheet/') ?>" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-floppy2-fill"></i> Update
+                </button>
+                <button type="button" class="btn btn-danger" id="checkDataBtn" data-id="<?= $worksheet['id'] ?>">
+                    <i class="bi bi-search"></i> Cek Data
+                </button>
+            </div>
         </div>
+
     </form>
 </div>
 
 <!-- ================= SCRIPT ================= -->
 <script>
+
+
     // =============== Penjaluran =======================
     const penjaluranSelect = document.getElementById('penjaluran');
     const tglSpjmSection = document.getElementById('tgl-spjm-section');
@@ -574,6 +651,24 @@
 
     penjaluranSelect.addEventListener('change', toggleTglSpjm);
     window.addEventListener('DOMContentLoaded', toggleTglSpjm);
+
+
+    // =============== Dokumen Original =======================
+    const dokOriSelect = document.getElementById('dok_ori');
+    const tglOriSection = document.getElementById('tgl-ori-section');
+
+    function toggleTglOri() {
+        if (dokOriSelect.value === 'Sudah Ada') {
+            tglOriSection.style.display = 'flex'; // tampilkan
+        } else {
+            tglOriSection.style.display = 'none'; // sembunyikan
+            document.querySelector('input[name="tgl_ori"]').value = ''; // kosongkan nilai
+        }
+    }
+
+    dokOriSelect.addEventListener('change', toggleTglOri);
+    window.addEventListener('DOMContentLoaded', toggleTglOri);
+
 
     // =============== Pengurusan Container =======================
     document.addEventListener('DOMContentLoaded', function() {
@@ -821,8 +916,67 @@
         updateLartasNumbers();
     });
 
-    // ==================== Pengurusan Tambahan ==========================
+    // ==================== Pengurusan Fasilitas ==========================
+    // Fungsi: Update nomor urut otomatis
+    function updateFasilitasNumbers() {
+        document.querySelectorAll('#fasilitasTable tbody tr').forEach((tr, index) => {
+            tr.querySelector('.nomor').textContent = index + 1;
+        });
+    }
 
+    // Tambah baris Fasilitas
+    document.getElementById('addFasilitasRow').addEventListener('click', function() {
+        const tbody = document.querySelector('#fasilitasTable tbody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="text-center nomor"></td>
+            <td><input type="text" name="tipe_fasilitas[]" class="form-control" placeholder="COO / ECOO"></td>
+            <td><input type="text" name="nama_fasilitas[]" class="form-control" placeholder="Nama Fasilitas"></td>
+            <td><input type="text" name="no_fasilitas[]" class="form-control" placeholder="Nomor Fasilitas"></td>
+            <td><input type="date" name="tgl_fasilitas[]" class="form-control"></td>
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm removeFasilitasRow">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+        updateFasilitasNumbers();
+    });
+
+    // Hapus baris Fasilitas
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.removeFasilitasRow')) {
+            e.target.closest('tr').remove();
+            updateFasilitasNumbers();
+        }
+    });
+
+    // Tampilkan / sembunyikan section Fasilitas
+    const jenisFasilitasSelect = document.getElementById('jenis_fasilitas');
+    const fasilitasSection = document.getElementById('fasilitas-info-section');
+
+    function toggleFasilitasSection() {
+        if (
+            jenisFasilitasSelect.value === 'Pengurusan Fasilitas' ||
+            jenisFasilitasSelect.value === 'Fasilitas Sendiri'
+        ) {
+            fasilitasSection.style.display = 'block';
+        } else {
+            fasilitasSection.style.display = 'none';
+            // Hapus semua baris jika Tidak Ada Fasilitas
+            document.querySelectorAll('#fasilitasTable tbody tr').forEach(tr => tr.remove());
+        }
+        updateFasilitasNumbers();
+    }
+
+    jenisFasilitasSelect.addEventListener('change', toggleFasilitasSection);
+    window.addEventListener('DOMContentLoaded', function() {
+        toggleFasilitasSection();
+        updateFasilitasNumbers();
+    });
+
+    // ==================== Pengurusan Tambahan ==========================
     // Fungsi: Update nomor urut otomatis
     function updateTambahanNumbers() {
         document.querySelectorAll('#tambahanTable tbody tr').forEach((tr, index) => {

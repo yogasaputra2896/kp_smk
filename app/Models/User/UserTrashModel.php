@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\User;
 
 use CodeIgniter\Model;
 
@@ -76,7 +76,7 @@ class UserTrashModel extends Model
      */
     public function restoreUser($userData)
     {
-        $userModel = new \App\Models\UserModel();
+        $userModel = new \App\Models\User\UserModel();
         return $userModel->insert($userData);
     }
 

@@ -3,8 +3,8 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\UserModel;
-use App\Models\UserTrashModel;
+use App\Models\User\UserModel;
+use App\Models\User\UserTrashModel;
 
 class UserManagement extends BaseController
 {

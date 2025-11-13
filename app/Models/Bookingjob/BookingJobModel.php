@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Bookingjob;
 
 use CodeIgniter\Model;
 
-class BookingJobTrashModel extends Model
+class BookingJobModel extends Model
 {
-    protected $table            = 'booking_job_trash';
+    protected $table            = 'booking_job';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
 
@@ -24,13 +24,11 @@ class BookingJobTrashModel extends Model
         'shipping_line',
         'bl',
         'master_bl',
-        'status',
-        'deleted_by',
-        'deleted_at',
+        'status'
     ];
 
+    // otomatis isi created_at & updated_at
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
 }

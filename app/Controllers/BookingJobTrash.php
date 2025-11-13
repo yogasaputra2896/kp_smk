@@ -3,8 +3,8 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\BookingJobTrashModel;
-use App\Models\BookingJobModel;
+use App\Models\Bookingjob\BookingJobTrashModel;
+use App\Models\Bookingjob\BookingJobModel;
 
 class BookingJobTrash extends BaseController
 {

@@ -3,12 +3,12 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\BookingJobModel;
-use App\Models\BookingJobTrashModel;
-use App\Models\WorkSheetImportModel;
-use App\Models\WorkSheetExportModel;
-use App\Models\UserModel;
-use App\Models\UserTrashModel;
+use App\Models\Bookingjob\BookingJobModel;
+use App\Models\Bookingjob\BookingJobTrashModel;
+use App\Models\WorksheetImport\WorkSheetImportModel;
+use App\Models\WorksheetExport\WorkSheetExportModel;
+use App\Models\User\UserModel;
+use App\Models\User\UserTrashModel;
 
 class Dashboard extends BaseController
 {

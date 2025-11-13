@@ -3,8 +3,8 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\BookingJobModel;
-use App\Models\BookingJobTrashModel;
+use App\Models\Bookingjob\BookingJobModel;
+use App\Models\Bookingjob\BookingJobTrashModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -946,9 +946,9 @@ class BookingJob extends BaseController
         try {
             // Tentukan model worksheet berdasarkan type booking
             if (isset($booking['type']) && strtolower($booking['type']) === 'export') {
-                $wsModel = new \App\Models\WorkSheetExportModel();
+                $wsModel = new \App\Models\WorksheetExport\WorkSheetExportModel();
             } else {
-                $wsModel = new \App\Models\WorkSheetImportModel();
+                $wsModel = new \App\Models\WorksheetImport\WorkSheetImportModel();
             }
 
             // Mapping data booking ke worksheet
