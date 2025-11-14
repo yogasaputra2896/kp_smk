@@ -114,35 +114,35 @@ $segment1 = $uri->getSegment(1);
                 <?php if (in_groups('staff')): ?>
                     <li class="sidebar-title">Menu Staff Exim</li>
 
-                    <li class="sidebar-item active">
+                    <li class="sidebar-item <?= ($segment1 == 'dashboard') ? 'active' : '' ?>">
                         <a href="<?= base_url('dashboard') ?>" class='sidebar-link'>
                             <i class="bi bi-grid-fill"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'booking-job') ? 'active' : '' ?>">
                         <a href="<?= base_url('booking-job'); ?>" class="sidebar-link">
                             <i class="bi bi-calendar-check-fill"></i>
                             <span>Booking Job</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'worksheet') ? 'active' : '' ?>">
                         <a href="<?= base_url('worksheet'); ?>" class="sidebar-link">
                             <i class="bi bi-journal-text"></i>
                             <span>Worksheet</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'e-arsip') ? 'active' : '' ?>">
                         <a href="<?= base_url('e-arsip'); ?>" class="sidebar-link">
                             <i class="bi bi-archive-fill"></i>
                             <span>E-Arsip</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'master-data') ? 'active' : '' ?>">
                         <a href="<?= base_url('master-data'); ?>" class="sidebar-link">
                             <i class="bi bi-folder2-open"></i>
                             <span>Master Data</span>
@@ -158,42 +158,42 @@ $segment1 = $uri->getSegment(1);
                             </a>
                         </li>
                     <?php endif; ?>
-
                 <?php endif; ?>
+
 
                 <!-- Role Accounting -->
                 <?php if (in_groups('accounting')): ?>
                     <li class="sidebar-title">Menu Staff Accounting</li>
 
-                    <li class="sidebar-item active">
+                    <li class="sidebar-item <?= ($segment1 == 'dashboard') ? 'active' : '' ?>">
                         <a href="<?= base_url('dashboard') ?>" class='sidebar-link'>
                             <i class="bi bi-grid-fill"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'worksheet') ? 'active' : '' ?>">
                         <a href="<?= base_url('worksheet'); ?>" class="sidebar-link">
                             <i class="bi bi-journal-text"></i>
                             <span>Worksheet</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'debit-note') ? 'active' : '' ?>">
                         <a href="<?= base_url('debit-note'); ?>" class="sidebar-link">
                             <i class="bi bi-receipt-cutoff"></i>
                             <span>Debit Note</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'e-arsip') ? 'active' : '' ?>">
                         <a href="<?= base_url('e-arsip'); ?>" class="sidebar-link">
                             <i class="bi bi-archive-fill"></i>
                             <span>E-Arsip</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?= ($segment1 == 'master-data') ? 'active' : '' ?>">
                         <a href="<?= base_url('master-data'); ?>" class="sidebar-link">
                             <i class="bi bi-folder2-open"></i>
                             <span>Master Data</span>
@@ -211,6 +211,7 @@ $segment1 = $uri->getSegment(1);
                     <?php endif; ?>
 
                 <?php endif; ?>
+
 
 
 

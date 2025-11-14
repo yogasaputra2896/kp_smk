@@ -42,9 +42,12 @@
                 <button id="btnRefresh" class="btn btn-secondary" title="Refresh Data">
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
-                <button id="btnTrash" class="btn btn-danger" title="Sampah Booking Job">
-                    <i class="bi bi-trash"></i>
-                </button>
+
+                <?php if (session()->get('role') === 'admin') : ?>
+                    <button id="btnTrash" class="btn btn-danger" title="Sampah Booking Job">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
 

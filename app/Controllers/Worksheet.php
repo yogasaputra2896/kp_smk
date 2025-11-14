@@ -537,16 +537,15 @@ class Worksheet extends BaseController
             $this->informasiTambahanModel->where('id_ws', $id)->delete();
         }
 
+        // Jangan ubah status di updateImport
+        unset($data['status']); 
 
-
-        // Set status akhir setelah semua cek
-        $data['status'] = $allFilled ? 'completed' : 'not completed';
-
-        // Update data worksheet utama
+        // Update worksheet_import TANPA menyentuh kolom status
         $this->importModel->update($id, $data);
 
+
         session()->setFlashdata('success', 'Data worksheet import berhasil diperbarui.');
-        return redirect()->to('/worksheet?type=import');
+        return redirect()->to(base_url('worksheet') . '?type=import');
     }
 
     /**
@@ -643,18 +642,6 @@ class Worksheet extends BaseController
             }
         }
 
-        // ==============================
-        // Cek data SPJM jika penjaluran SPJM
-        // ==============================
-        if (($data['penjaluran'] ?? '') === 'SPJM') {
-            if (empty($data['tgl_spjm']) || $data['tgl_spjm'] === '0000-00-00') {
-                $incomplete[] = [
-                    'name'  => 'tgl_spjm',
-                    'label' => 'Tanggal SPJM wajib diisi karena penjaluran = SPJM'
-                ];
-            }
-        }
-
 
         // ==============================
         // Cek container jika FCL
@@ -718,7 +705,7 @@ class Worksheet extends BaseController
         // ==============================
         // Cek data DO jika Pengurusan DO
         // ==============================
-        if (($data['pengurusan_do'] ?? '') === 'Pengambilan DO') {
+        if (($data['pengurusan_do'] ?? '') === 'Pengambilan Delivery Order') {
             $dos = $this->doModel->where('id_ws', $id)->findAll();
 
             if (empty($dos)) {
@@ -851,18 +838,27 @@ class Worksheet extends BaseController
 
 
         // ==============================
-        // Hasil akhir
+        // HASIL AKHIR
         // ==============================
         if (empty($incomplete)) {
+
+            $this->importModel->update($id, [
+                'status' => 'completed'
+            ]);
+
             return $this->response->setJSON([
                 'status'  => 'complete',
-                'message' => 'Semua data wajib sudah terisi.'
+                'message' => 'Semua data worksheet export sudah lengkap.'
             ]);
         }
 
+        $this->importModel->update($id, [
+            'status' => 'not completed'
+        ]);
+
         return $this->response->setJSON([
             'status'         => 'incomplete',
-            'message'        => 'Beberapa data belum diisi.',
+            'message'        => 'Beberapa data worksheet export belum diisi.',
             'missing_fields' => $incomplete
         ]);
     }
@@ -884,34 +880,30 @@ class Worksheet extends BaseController
 
         // Ambil semua data relasi berdasarkan id_ws
         $containers          = $this->containerExportModel->getByWorksheet($id);
-        $trucking            = $this->truckingExportModel->getByWorksheet($id);
-        $do                  = $this->doExportModel->where('id_ws', $id)->findAll();
-        $lartas              = $this->lartasExportModel->getByWorksheet($id);
-        $informasiTambahan   = $this->informasiTambahanExportModel->getByWorksheet($id);
-        $fasilitas           = $this->fasilitasExportModel->getByWorksheet($id);
+        $truckings           = $this->truckingExportModel->getByWorksheet($id);
+        $dos                 = $this->doExportModel->where('id_ws', $id)->findAll();
+        $lartass             = $this->lartasExportModel->getByWorksheet($id);
+        $informasiTambahans  = $this->informasiTambahanExportModel->getByWorksheet($id);
+        $fasilitass          = $this->fasilitasExportModel->getByWorksheet($id);
 
-        return view('worksheet/export/edit_export', [
+        return view('worksheet/edit_export', [
             'worksheet'           => $worksheet,
             'containers'          => $containers,
-            'trucking'            => $trucking,
-            'do'                  => $do,
-            'lartas'              => $lartas,
-            'informasi_tambahan'  => $informasiTambahan,
-            'fasilitas'           => $fasilitas,
+            'truckings'           => $truckings,
+            'dos'                 => $dos,
+            'lartass'             => $lartass,
+            'informasitambahans' => $informasiTambahans,
+            'fasilitass'          => $fasilitass,
         ]);
     }
 
-
     /**
-     * ==========================
-     * UPDATE WORKSHEET EXPORT
-     * ==========================
-     */
+         * ==========================
+         * UPDATE DATA UTAMA EXPORT
+         * ==========================
+    */
     public function updateExport($id)
     {
-        // ======================
-        // 1. Update data utama worksheet_export
-        // ======================
         $data = [
             'no_ws'             => $this->request->getPost('no_ws'),
             'no_aju'            => $this->request->getPost('no_aju'),
@@ -931,6 +923,7 @@ class Worksheet extends BaseController
             'no_voyage'         => $this->request->getPost('no_voyage'),
             'pol'               => $this->request->getPost('pol'),
             'pod'               => $this->request->getPost('pod'),
+            'terminal'          => $this->request->getPost('terminal'),
             'shipping_line'     => $this->request->getPost('shipping_line'),
             'commodity'         => $this->request->getPost('commodity'),
             'party'             => $this->request->getPost('party'),
@@ -949,7 +942,6 @@ class Worksheet extends BaseController
             'closing'           => $this->request->getPost('closing'),
             'stuffing'          => $this->request->getPost('stuffing'),
             'depo'              => $this->request->getPost('depo'),
-            'terminal'          => $this->request->getPost('terminal'),
             'dok_ori'           => $this->request->getPost('dok_ori'),
             'tgl_ori'           => $this->request->getPost('tgl_ori'),
             'pengurusan_do'     => $this->request->getPost('pengurusan_do'),
@@ -963,339 +955,607 @@ class Worksheet extends BaseController
             'updated_at'        => date('Y-m-d H:i:s')
         ];
 
-        // Hapus field kosong agar tidak overwrite nilai lama
-        $data = array_filter($data, fn($v) => $v !== null && $v !== '');
+        // Hilangkan nilai null agar tidak overwrite data lama
+        $data = array_filter($data, fn($v) => $v !== null);
 
+        // Ambil record lama untuk merge
+        $existing = $this->exportModel->find($id);
+        $merged   = array_merge($existing ?? [], $data);
+
+        /**
+         * ==========================
+         * CEK REQUIRED FIELDS (EXPORT)
+         * ==========================
+         */
+        $requiredFields = [
+            'no_ws','no_aju','pengurusan_peb','peb_nopen','tgl_aju','tgl_nopen',
+            'shipper','consignee','vessel','no_voyage','pol','pod','shipping_line',
+            'commodity','party','qty','kemasan','net','gross','bl','tgl_bl',
+            'no_invoice','tgl_invoice','etd','pengurusan_do','asuransi','top',
+            'pengurusan_lartas','jenis_fasilitas','jenis_tambahan','penjaluran','tgl_npe',
+            'depo','stuffing','terminal','closing'
+        ];
+
+        $allFilled = true;
+        foreach ($requiredFields as $field) {
+            if (empty($merged[$field])) {
+                $allFilled = false;
+                break;
+            }
+        }
+
+        /**
+         * ==========================
+         * PENJALURAN (EXPORT)
+         * ==========================
+         */
+        $penjaluran = $this->request->getPost('penjaluran');
+        $tglSpjm    = $this->request->getPost('tgl_spjm');
+
+        if ($penjaluran === 'NPE') {
+            $tglSpjm = null;
+        }
+
+        $this->exportModel->update($id, [
+            'penjaluran' => $penjaluran,
+            'tgl_spjm'   => $tglSpjm,
+        ]);
+
+        /**
+         * ==========================
+         * DOKUMEN ORIGINAL (EXPORT)
+         * ==========================
+         */
+        $dokOri  = $this->request->getPost('dok_ori');
+        $tglOri  = $this->request->getPost('tgl_ori');
+
+        if ($dokOri === 'Belum Ada') {
+            $tglOri = null;
+        }
+
+        $this->exportModel->update($id, [
+            'dok_ori' => $dokOri,
+            'tgl_ori' => $tglOri
+        ]);
+
+        /**
+         * ==========================
+         * CONTAINER EXPORT
+         * ==========================
+         */
+        $this->containerExportModel->where('id_ws', $id)->delete();
+
+        $noContainer = $this->request->getPost('no_container');
+        $ukuran      = $this->request->getPost('ukuran');
+        $tipe        = $this->request->getPost('tipe');
+
+        if ($merged['jenis_con'] === 'FCL' && !empty($noContainer)) {
+            $hasContainer = false;
+
+            foreach ($noContainer as $i => $no) {
+                if (!empty(trim($no))) {
+                    $this->containerExportModel->insert([
+                        'id_ws'        => $id,
+                        'no_container' => trim($no),
+                        'ukuran'       => $ukuran[$i] ?? null,
+                        'tipe'         => $tipe[$i] ?? null,
+                        'created_at'   => date('Y-m-d H:i:s')
+                    ]);
+                    $hasContainer = true;
+                }
+            }
+
+            if (!$hasContainer) {
+                $allFilled = false;
+            }
+        }
+
+        /**
+         * ==========================
+         * TRUCKING EXPORT
+         * ==========================
+         */
+        $this->truckingExportModel->where('id_ws', $id)->delete();
+
+        $jenisTrucking = $this->request->getPost('jenis_trucking');
+        $noMobil       = $this->request->getPost('no_mobil');
+        $tipeMobil     = $this->request->getPost('tipe_mobil');
+        $namaSupir     = $this->request->getPost('nama_supir');
+        $alamat        = $this->request->getPost('alamat');
+        $telpSupir     = $this->request->getPost('telp_supir');
+
+        if ($jenisTrucking === 'Pengurusan Trucking' && !empty($noMobil)) {
+            $hasTrucking = false;
+
+            foreach ($noMobil as $i => $nopol) {
+                if (!empty(trim($nopol))) {
+                    $this->truckingExportModel->insert([
+                        'id_ws'      => $id,
+                        'no_mobil'   => trim($nopol),
+                        'tipe_mobil' => $tipeMobil[$i] ?? null,
+                        'nama_supir' => $namaSupir[$i] ?? null,
+                        'alamat'     => $alamat[$i] ?? null,
+                        'telp_supir' => $telpSupir[$i] ?? null,
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+                    $hasTrucking = true;
+                }
+            }
+
+            if (!$hasTrucking) {
+                $allFilled = false;
+            }
+        }
+
+        /**
+         * ==========================
+         * DO EXPORT
+         * ==========================
+         */
+        $this->doExportModel->where('id_ws', $id)->delete();
+
+        $tipeDo      = $this->request->getPost('tipe_do');
+        $pengambilDo = $this->request->getPost('pengambil_do');
+        $tglMatiDo   = $this->request->getPost('tgl_mati_do');
+
+        if ($merged['pengurusan_do'] === 'Pengambilan Delivery Order' && !empty($tipeDo)) {
+            $hasDo = false;
+
+            foreach ($tipeDo as $i => $tipe) {
+                if (!empty(trim($tipe))) {
+                    $this->doExportModel->insert([
+                        'id_ws'        => $id,
+                        'tipe_do'      => trim($tipe),
+                        'pengambil_do' => $pengambilDo[$i] ?? null,
+                        'tgl_mati_do'  => $tglMatiDo[$i] ?? null,
+                        'created_at'   => date('Y-m-d H:i:s')
+                    ]);
+                    $hasDo = true;
+                }
+            }
+
+            if (!$hasDo) {
+                $allFilled = false;
+            }
+        }
+
+        /**
+         * ==========================
+         * LARTAS EXPORT
+         * ==========================
+         */
+        $this->lartasExportModel->where('id_ws', $id)->delete();
+
+        $namaLartas = $this->request->getPost('nama_lartas');
+        $noLartas   = $this->request->getPost('no_lartas');
+        $tglLartas  = $this->request->getPost('tgl_lartas');
+
+        if ($merged['pengurusan_lartas'] === 'Pembuatan Lartas' && !empty($namaLartas)) {
+            $hasLartas = false;
+
+            foreach ($namaLartas as $i => $nama) {
+                if (!empty(trim($nama))) {
+                    $this->lartasExportModel->insert([
+                        'id_ws'        => $id,
+                        'nama_lartas'  => trim($nama),
+                        'no_lartas'    => $noLartas[$i] ?? null,
+                        'tgl_lartas'   => $tglLartas[$i] ?? null,
+                        'created_at'   => date('Y-m-d H:i:s')
+                    ]);
+                    $hasLartas = true;
+                }
+            }
+
+            if (!$hasLartas) {
+                $allFilled = false;
+            }
+        }
+
+        /**
+         * ==========================
+         * FASILITAS EXPORT
+         * ==========================
+         */
+        $this->fasilitasExportModel->where('id_ws', $id)->delete();
+
+        $tipeFasilitas = $this->request->getPost('tipe_fasilitas');
+        $namaFasilitas = $this->request->getPost('nama_fasilitas');
+        $tglFasilitas  = $this->request->getPost('tgl_fasilitas');
+        $noFasilitas   = $this->request->getPost('no_fasilitas');
+
+        if ($merged['jenis_fasilitas'] !== 'Tidak Ada Fasilitas' && !empty($namaFasilitas)) {
+            $hasFasilitas = false;
+
+            foreach ($namaFasilitas as $i => $nama) {
+                if (!empty(trim($nama))) {
+                    $this->fasilitasExportModel->insert([
+                        'id_ws'          => $id,
+                        'tipe_fasilitas' => $tipeFasilitas[$i] ?? null,
+                        'nama_fasilitas' => trim($nama),
+                        'tgl_fasilitas'  => $tglFasilitas[$i] ?? null,
+                        'no_fasilitas'   => $noFasilitas[$i] ?? null,
+                        'created_at'     => date('Y-m-d H:i:s')
+                    ]);
+                    $hasFasilitas = true;
+                }
+            }
+
+            if (!$hasFasilitas) {
+                $allFilled = false;
+            }
+        }
+
+        /**
+         * ==========================
+         * INFORMASI TAMBAHAN EXPORT
+         * ==========================
+         */
+        $this->informasiTambahanExportModel->where('id_ws', $id)->delete();
+
+        $namaPengurusan = $this->request->getPost('nama_pengurusan');
+        $tglPengurusan  = $this->request->getPost('tgl_pengurusan');
+
+        if ($merged['jenis_tambahan'] === 'Pengurusan Tambahan' && !empty($namaPengurusan)) {
+            $hasTambahan = false;
+
+            foreach ($namaPengurusan as $i => $nama) {
+                if (!empty(trim($nama))) {
+                    $this->informasiTambahanExportModel->insert([
+                        'id_ws'           => $id,
+                        'nama_pengurusan' => trim($nama),
+                        'tgl_pengurusan'  => $tglPengurusan[$i] ?? null,
+                        'created_at'      => date('Y-m-d H:i:s')
+                    ]);
+                    $hasTambahan = true;
+                }
+            }
+
+            if (!$hasTambahan) {
+                $allFilled = false;
+            }
+        }
+
+        // Jangan ubah status di updateImport
+        unset($data['status']); 
+
+        // Update worksheet_import TANPA menyentuh kolom status
         $this->exportModel->update($id, $data);
 
-        // ======================
-        // 2. Update data CONTAINER
-        // ======================
-        $this->containerExportModel->where('id_ws', $id)->delete();
-        $containers = $this->request->getPost('container');
-        if (!empty($containers) && is_array($containers)) {
-            $insertData = [];
-            foreach ($containers as $c) {
-                if (!empty($c['no_container'])) {
-                    $insertData[] = [
-                        'id_ws'        => $id,
-                        'no_container' => $c['no_container'],
-                        'seal'         => $c['seal'] ?? null,
-                        'size'         => $c['size'] ?? null,
-                        'created_at'   => date('Y-m-d H:i:s')
-                    ];
-                }
-            }
-            if ($insertData) {
-                $this->containerExportModel->insertBatch($insertData);
-            }
-        }
-
-        // ======================
-        // 3. Update data TRUCKING
-        // ======================
-        $this->truckingExportModel->where('id_ws', $id)->delete();
-        $trucking = $this->request->getPost('trucking');
-        if (!empty($trucking) && is_array($trucking)) {
-            $insertData = [];
-            foreach ($trucking as $t) {
-                if (!empty($t['no_mobil'])) {
-                    $insertData[] = [
-                        'id_ws'      => $id,
-                        'no_mobil'   => $t['no_mobil'],
-                        'tipe_mobil' => $t['tipe_mobil'] ?? null,
-                        'nama_supir' => $t['nama_supir'] ?? null,
-                        'alamat'     => $t['alamat'] ?? null,
-                        'telp_supir' => $t['telp_supir'] ?? null,
-                        'created_at' => date('Y-m-d H:i:s')
-                    ];
-                }
-            }
-            if ($insertData) {
-                $this->truckingExportModel->insertBatch($insertData);
-            }
-        }
-
-        // ======================
-        // 4. Update data DO
-        // ======================
-        $this->doExportModel->where('id_ws', $id)->delete();
-        $doData = $this->request->getPost('do');
-        if (!empty($doData) && is_array($doData)) {
-            $insertData = [];
-            foreach ($doData as $d) {
-                if (!empty($d['tipe_do'])) {
-                    $insertData[] = [
-                        'id_ws'        => $id,
-                        'tipe_do'      => $d['tipe_do'],
-                        'pengambil_do' => $d['pengambil_do'] ?? null,
-                        'tgl_mati_do'  => $d['tgl_mati_do'] ?? null,
-                        'created_at'   => date('Y-m-d H:i:s')
-                    ];
-                }
-            }
-            if ($insertData) {
-                $this->doExportModel->insertBatch($insertData);
-            }
-        }
-
-        // ======================
-        // 5. Update data LARTAS
-        // ======================
-        $this->lartasExportModel->where('id_ws', $id)->delete();
-        $lartasData = $this->request->getPost('lartas');
-        if (!empty($lartasData) && is_array($lartasData)) {
-            $insertData = [];
-            foreach ($lartasData as $l) {
-                if (!empty($l['nama_lartas'])) {
-                    $insertData[] = [
-                        'id_ws'       => $id,
-                        'nama_lartas' => $l['nama_lartas'],
-                        'no_lartas'   => $l['no_lartas'] ?? null,
-                        'tgl_lartas'  => $l['tgl_lartas'] ?? null,
-                        'created_at'  => date('Y-m-d H:i:s')
-                    ];
-                }
-            }
-            if ($insertData) {
-                $this->lartasExportModel->insertBatch($insertData);
-            }
-        }
-
-        // ======================
-        // 6. Update data INFORMASI TAMBAHAN
-        // ======================
-        $this->informasiTambahanExportModel->where('id_ws', $id)->delete();
-        $infoTambahan = $this->request->getPost('informasi_tambahan');
-        if (!empty($infoTambahan) && is_array($infoTambahan)) {
-            $insertData = [];
-            foreach ($infoTambahan as $info) {
-                if (!empty($info['nama_pengurusan'])) {
-                    $insertData[] = [
-                        'id_ws'           => $id,
-                        'nama_pengurusan' => $info['nama_pengurusan'],
-                        'tgl_pengurusan'  => $info['tgl_pengurusan'] ?? null,
-                        'created_at'      => date('Y-m-d H:i:s')
-                    ];
-                }
-            }
-            if ($insertData) {
-                $this->informasiTambahanExportModel->insertBatch($insertData);
-            }
-        }
-
-        // ======================
-        // 7. Update data FASILITAS
-        // ======================
-        $this->fasilitasExportModel->where('id_ws', $id)->delete();
-        $fasilitasData = $this->request->getPost('fasilitas');
-        if (!empty($fasilitasData) && is_array($fasilitasData)) {
-            $insertData = [];
-            foreach ($fasilitasData as $f) {
-                if (!empty($f['tipe_fasilitas'])) {
-                    $insertData[] = [
-                        'id_ws'          => $id,
-                        'tipe_fasilitas' => $f['tipe_fasilitas'],
-                        'nama_fasilitas' => $f['nama_fasilitas'] ?? null,
-                        'tgl_fasilitas'  => $f['tgl_fasilitas'] ?? null,
-                        'no_fasilitas'   => $f['no_fasilitas'] ?? null,
-                        'created_at'     => date('Y-m-d H:i:s')
-                    ];
-                }
-            }
-            if ($insertData) {
-                $this->fasilitasExportModel->insertBatch($insertData);
-            }
-        }
-
-        // ======================
-        // 8. Redirect & Pesan Sukses
-        // ======================
-        return redirect()
-            ->to('/worksheet?type=export')
-            ->with('success', 'Worksheet export dan semua data relasi berhasil diperbarui.');
+        session()->setFlashdata('success', 'Data worksheet export berhasil diperbarui.');
+        return redirect()->to(base_url('worksheet') . '?type=export');
     }
 
 
-     /**
- * ==========================
- * CEK KELENGKAPAN WORKSHEET EXPORT
- * ==========================
- */
-public function checkExport($id)
-{
-    $data = $this->exportModel->find($id);
 
-    if (!$data) {
-        return $this->response->setJSON([
-            'status'  => 'error',
-            'message' => 'Data worksheet export tidak ditemukan.'
-        ]);
-    }
+    /**
+     * ==========================
+     * CEK KELENGKAPAN WORKSHEET EXPORT (MENYESUAIKAN CEK IMPORT)
+     * ==========================
+     */
+    public function checkExport($id)
+    {
+        $data = $this->exportModel->find($id);
 
-    // ======================
-    // 1. Cek field utama di worksheet_export
-    // ======================
-    $requiredFields = [
-        'no_ws'         => 'Nomor Worksheet',
-        'no_aju'        => 'Nomor AJU',
-        'no_peb'        => 'Nomor PEB',
-        'tgl_peb'       => 'Tanggal PEB',
-        'shipper'       => 'Shipper',
-        'consignee'     => 'Consignee',
-        'vessel'        => 'Vessel',
-        'no_voyage'     => 'Nomor Voyage',
-        'pol'           => 'Port of Loading (POL)',
-        'pod'           => 'Port of Discharge (POD)',
-        'shipping_line' => 'Shipping Line',
-        'commodity'     => 'Commodity',
-        'party'         => 'Party',
-        'jenis_con'     => 'Jenis Container',
-        'qty'           => 'Quantity',
-        'net'           => 'Net Weight',
-        'gross'         => 'Gross Weight',
-        'bl'            => 'Bill of Lading (BL)',
-        'tgl_bl'        => 'Tanggal BL',
-        'no_invoice'    => 'Nomor Invoice',
-        'tgl_invoice'   => 'Tanggal Invoice',
-        'etd'           => 'ETD',
-        'eta'           => 'ETA',
-        'asuransi'      => 'Asuransi',
-        'top'           => 'TOP',
-        'berita_acara'  => 'Berita Acara'
-    ];
-
-    $incomplete = [];
-    foreach ($requiredFields as $field => $label) {
-        $value = $data[$field] ?? null;
-        if (empty($value) || $value === '0000-00-00' || $value === '1970-01-01') {
-            $incomplete[] = [
-                'name'  => $field,
-                'label' => $label
-            ];
+        if (!$data) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Data worksheet export tidak ditemukan.'
+            ]);
         }
-    }
 
-    // ==============================
-    // 2. Cek data Container jika FCL
-    // ==============================
-    if (($data['jenis_con'] ?? '') === 'FCL') {
-        $containers = $this->containerExportModel->where('id_ws', $id)->findAll();
+        // ======================
+        // Cek field utama
+        // ======================
+        $requiredFields = [
+            'no_ws'             => 'Nomor Worksheet',
+            'no_aju'            => 'Nomor Pengajuan PEB',
+            'tgl_aju'           => 'Tanggal Pengajuan PEB',
+            'pengurusan_peb'    => 'Pengurusan PEB',
+            'peb_nopen'         => 'Nomor Pendaftaran PEB',
+            'tgl_nopen'         => 'Tanggal Pendaftaran PEB',
+            'penjaluran'        => 'Pilih Penjaluran',
+            'tgl_npe'           => 'Tanggal NPE',
+            'shipper'           => 'Shipper',
+            'consignee'         => 'Consignee',
+            'vessel'            => 'Vessel',
+            'no_voyage'         => 'Nomor Voyage',
+            'pol'               => 'Port of Loading (POL)',
+            'pod'               => 'Port of Discharge (POD)',
+            'depo'              => 'Nama Depo',
+            'stuffing'          => 'Tanggal Stuffing',
+            'terminal'          => 'Lokasi Terminal',
+            'closing'           => 'Tanggal Closing',
+            'shipping_line'     => 'Shipping Line',
+            'commodity'         => 'Commodity',
+            'party'             => 'Party',
+            'qty'               => 'Quantity',
+            'dok_ori'           => 'Dokumen Original',
+            'pengurusan_do'     => 'Pengurusan Delivery Order',
+            'jenis_con'         => 'Jenis Container',
+            'jenis_trucking'    => 'Pengurusan Trucking',
+            'pengurusan_lartas' => 'Pengurusan Lartas',
+            'jenis_fasilitas'   => 'Jenis Fasilitas',
+            'jenis_tambahan'    => 'Jenis Tambahan',
+            'net'               => 'Net Weight',
+            'gross'             => 'Gross Weight',
+            'bl'                => 'Bill of Lading (BL)',
+            'tgl_bl'            => 'Tanggal BL',
+            'no_invoice'        => 'Nomor Invoice',
+            'tgl_invoice'       => 'Tanggal Invoice',
+            'etd'               => 'ETD',
+            'asuransi'          => 'Asuransi',
+            'top'               => 'TOP',
+        ];
 
-        if (empty($containers)) {
-            $incomplete[] = [
-                'name'  => 'container',
-                'label' => 'Data Container wajib diisi untuk FCL'
-            ];
+        $incomplete = [];
+
+        foreach ($requiredFields as $field => $label) {
+            $value = $data[$field] ?? null;
+
+            if (
+                empty($value) ||
+                $value === '0000-00-00' ||
+                $value === '1970-01-01'
+            ) {
+                $incomplete[] = [
+                    'name'  => $field,
+                    'label' => $label
+                ];
+            }
+        }
+
+        // ==============================
+        // Cek data SPJM jika penjaluran SPJM
+        // ==============================
+        if (($data['penjaluran'] ?? '') === 'SPJM') {
+            if (empty($data['tgl_spjm']) || $data['tgl_spjm'] === '0000-00-00') {
+                $incomplete[] = [
+                    'name'  => 'tgl_spjm',
+                    'label' => 'Tanggal SPJM wajib diisi karena penjaluran = SPJM'
+                ];
+            }
+        }
+
+        // ==============================
+        // Cek data dok original
+        // ==============================
+        if (($data['dok_ori'] ?? '') === 'Sudah Ada') {
+            if (empty($data['tgl_ori']) || $data['tgl_ori'] === '0000-00-00') {
+                $incomplete[] = [
+                    'name'  => 'tgl_ori',
+                    'label' => 'Tanggal Terima Dokumen Original wajib diisi karena Sudah Ada'
+                ];
+            }
+        }
+
+        // ==============================
+        // Cek Container jika FCL
+        // ==============================
+        if (($data['jenis_con'] ?? '') === 'FCL') {
+
+            $containers = $this->containerExportModel->where('id_ws', $id)->findAll();
+
+            if (empty($containers)) {
+                $incomplete[] = [
+                    'name'  => 'container',
+                    'label' => 'Data Container wajib diisi untuk FCL'
+                ];
+            } else {
+                foreach ($containers as $c) {
+                    if (
+                        empty($c['no_container']) ||
+                        empty($c['ukuran']) ||
+                        empty($c['tipe'])
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'container_detail',
+                            'label' => 'Beberapa kolom Container (No Container, Ukuran, atau Tipe) belum lengkap'
+                        ];
+                        break;
+                    }
+                }
+            }
+        }
+
+        // ==============================
+        // 3. Cek Trucking jika Pengurusan Trucking
+        // ==============================
+        if (($data['jenis_trucking'] ?? '') === 'Pengurusan Trucking') {
+
+            $truckings = $this->truckingExportModel->where('id_ws', $id)->findAll();
+
+            if (empty($truckings)) {
+                $incomplete[] = [
+                    'name'  => 'trucking',
+                    'label' => 'Data Trucking wajib diisi untuk Pengurusan Trucking'
+                ];
+            } else {
+                foreach ($truckings as $t) {
+                    if (
+                        empty($t['no_mobil']) ||
+                        empty($t['tipe_mobil']) ||
+                        empty($t['nama_supir']) ||
+                        empty($t['alamat']) ||
+                        empty($t['telp_supir'])
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'trucking_detail',
+                            'label' => 'Beberapa kolom Trucking (No Mobil, Tipe Mobil, Nama Supir, Alamat, Telp) belum lengkap'
+                        ];
+                        break;
+                    }
+                }
+            }
+
         } else {
-            foreach ($containers as $c) {
-                if (empty($c['no_container']) || empty($c['seal']) || empty($c['size'])) {
-                    $incomplete[] = [
-                        'name'  => 'container_detail',
-                        'label' => 'Beberapa kolom Container (No Container, Seal, atau Size) belum lengkap'
-                    ];
-                    break;
+            // Jika trucking sendiri → hapus data trucking lama
+            $this->truckingExportModel->where('id_ws', $id)->delete();
+        }
+
+        // ==============================
+        // 4. Cek DO jika Pengurusan DO
+        // ==============================
+        if (($data['pengurusan_do'] ?? '') === 'Pengambilan DO') {
+
+            $dos = $this->doExportModel->where('id_ws', $id)->findAll();
+
+            if (empty($dos)) {
+                $incomplete[] = [
+                    'name'  => 'do',
+                    'label' => 'Data DO wajib diisi untuk Pengambilan DO'
+                ];
+            } else {
+                foreach ($dos as $d) {
+                    if (
+                        empty($d['tipe_do']) ||
+                        empty($d['pengambil_do']) ||
+                        empty($d['tgl_mati_do']) ||
+                        $d['tgl_mati_do'] === '0000-00-00'
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'do_detail',
+                            'label' => 'Beberapa kolom DO (Tipe DO, Pengambil DO, Tanggal Mati DO) belum lengkap'
+                        ];
+                        break;
+                    }
                 }
             }
-        }
-    }
 
-    // ==============================
-    // 3. Cek data Trucking (jika ada)
-    // ==============================
-    $truckings = $this->truckingExportModel->where('id_ws', $id)->findAll();
-    if (!empty($truckings)) {
-        foreach ($truckings as $t) {
-            if (empty($t['no_mobil']) || empty($t['tipe_mobil']) || empty($t['nama_supir'])) {
+        } else {
+            // DO sendiri → hapus data lama
+            $this->doExportModel->where('id_ws', $id)->delete();
+        }
+
+        // ==============================
+        // 5. Cek Lartas jika Pembuatan Lartas
+        // ==============================
+        if (($data['pengurusan_lartas'] ?? '') === 'Pembuatan Lartas') {
+
+            $lartas = $this->lartasExportModel->where('id_ws', $id)->findAll();
+
+            if (empty($lartas)) {
                 $incomplete[] = [
-                    'name'  => 'trucking_detail',
-                    'label' => 'Beberapa kolom Trucking (No Mobil, Tipe Mobil, atau Nama Supir) belum lengkap'
+                    'name'  => 'lartas',
+                    'label' => 'Data Lartas wajib diisi untuk Pembuatan Lartas'
                 ];
-                break;
+            } else {
+                foreach ($lartas as $l) {
+                    if (
+                        empty($l['nama_lartas']) ||
+                        empty($l['no_lartas']) ||
+                        empty($l['tgl_lartas']) ||
+                        $l['tgl_lartas'] === '0000-00-00'
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'lartas_detail',
+                            'label' => 'Beberapa kolom Lartas (Nama, Nomor, Tanggal) belum lengkap'
+                        ];
+                        break;
+                    }
+                }
             }
-        }
-    }
 
-    // ==============================
-    // 4. Cek data Lartas (jika ada)
-    // ==============================
-    $lartas = $this->lartasExportModel->where('id_ws', $id)->findAll();
-    if (!empty($lartas)) {
-        foreach ($lartas as $l) {
-            if (empty($l['nama_lartas']) || empty($l['no_lartas']) || empty($l['tgl_lartas']) || $l['tgl_lartas'] === '0000-00-00') {
+        } else {
+            // lartas sendiri → hapus data lama
+            $this->lartasExportModel->where('id_ws', $id)->delete();
+        }
+
+        // ==============================
+        // 6. Cek Fasilitas jika Pengurusan Fasilitas atau Fasilitas Sendiri
+        // ==============================
+        if (
+            ($data['jenis_fasilitas'] ?? '') === 'Pengurusan Fasilitas' ||
+            ($data['jenis_fasilitas'] ?? '') === 'Fasilitas Sendiri'
+        ) {
+
+            $fasilitas = $this->fasilitasExportModel->where('id_ws', $id)->findAll();
+
+            if (empty($fasilitas)) {
                 $incomplete[] = [
-                    'name'  => 'lartas_detail',
-                    'label' => 'Beberapa kolom Lartas (Nama, Nomor, atau Tanggal Lartas) belum lengkap'
+                    'name'  => 'fasilitas',
+                    'label' => 'Data Fasilitas wajib diisi'
                 ];
-                break;
+            } else {
+                foreach ($fasilitas as $f) {
+                    if (
+                        empty($f['tipe_fasilitas']) ||
+                        empty($f['nama_fasilitas']) ||
+                        empty($f['tgl_fasilitas']) ||
+                        empty($f['no_fasilitas']) ||
+                        $f['tgl_fasilitas'] === '0000-00-00'
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'fasilitas_detail',
+                            'label' => 'Beberapa kolom Fasilitas (Tipe, Nama, Nomor Fasilitas) belum lengkap'
+                        ];
+                        break;
+                    }
+                }
             }
-        }
-    }
 
-    // ==============================
-    // 5. Cek data DO (jika ada)
-    // ==============================
-    $dos = $this->doExportModel->where('id_ws', $id)->findAll();
-    if (!empty($dos)) {
-        foreach ($dos as $d) {
-            if (empty($d['tipe_do']) || empty($d['pengambil_do']) || empty($d['tgl_mati_do']) || $d['tgl_mati_do'] === '0000-00-00') {
+        } else {
+            $this->fasilitasExportModel->where('id_ws', $id)->delete();
+        }
+
+        // ==============================
+        // 7. Cek Informasi Tambahan
+        // ==============================
+        if (($data['jenis_tambahan'] ?? '') === 'Pengurusan Tambahan') {
+
+            $tambahans = $this->informasiTambahanExportModel->where('id_ws', $id)->findAll();
+
+            if (empty($tambahans)) {
                 $incomplete[] = [
-                    'name'  => 'do_detail',
-                    'label' => 'Beberapa kolom DO (Tipe DO, Pengambil DO, atau Tanggal Mati DO) belum lengkap'
+                    'name'  => 'informasi_tambahan',
+                    'label' => 'Data Informasi Tambahan wajib diisi'
                 ];
-                break;
+            } else {
+                foreach ($tambahans as $t) {
+                    if (
+                        empty($t['nama_pengurusan']) ||
+                        empty($t['tgl_pengurusan']) ||
+                        $t['tgl_pengurusan'] === '0000-00-00'
+                    ) {
+                        $incomplete[] = [
+                            'name'  => 'informasi_tambahan_detail',
+                            'label' => 'Beberapa kolom Informasi Tambahan belum lengkap'
+                        ];
+                        break;
+                    }
+                }
             }
-        }
-    }
 
-    // ==============================
-    // 6. Cek data Fasilitas (jika ada)
-    // ==============================
-    $fasilitas = $this->fasilitasExportModel->where('id_ws', $id)->findAll();
-    if (!empty($fasilitas)) {
-        foreach ($fasilitas as $f) {
-            if (empty($f['tipe_fasilitas']) || empty($f['nama_fasilitas']) || empty($f['tgl_fasilitas']) || empty($f['no_fasilitas']) || $f['tgl_fasilitas'] === '0000-00-00') {
-                $incomplete[] = [
-                    'name'  => 'fasilitas_detail',
-                    'label' => 'Beberapa kolom Fasilitas (Tipe, Nama, Tanggal, atau Nomor) belum lengkap'
-                ];
-                break;
-            }
+        } else {
+            $this->informasiTambahanExportModel->where('id_ws', $id)->delete();
         }
-    }
 
-    // ==============================
-    // 7. Cek data Informasi Tambahan (jika ada)
-    // ==============================
-    $tambahans = $this->informasiTambahanExportModel->where('id_ws', $id)->findAll();
-    if (!empty($tambahans)) {
-        foreach ($tambahans as $t) {
-            if (empty($t['nama_pengurusan']) || empty($t['tgl_pengurusan']) || $t['tgl_pengurusan'] === '0000-00-00') {
-                $incomplete[] = [
-                    'name'  => 'informasi_tambahan_detail',
-                    'label' => 'Beberapa kolom Informasi Tambahan (Nama Pengurusan atau Tanggal) belum lengkap'
-                ];
-                break;
-            }
+        // ==============================
+        // HASIL AKHIR
+        // ==============================
+        if (empty($incomplete)) {
+
+            $this->exportModel->update($id, [
+                'status' => 'completed'
+            ]);
+
+            return $this->response->setJSON([
+                'status'  => 'complete',
+                'message' => 'Semua data worksheet export sudah lengkap.'
+            ]);
         }
-    }
 
-    // ==============================
-    // 8. Hasil akhir
-    // ==============================
-    if (empty($incomplete)) {
-        return $this->response->setJSON([
-            'status'  => 'complete',
-            'message' => 'Semua data worksheet export sudah lengkap.'
+        $this->exportModel->update($id, [
+            'status' => 'not completed'
         ]);
+
+        return $this->response->setJSON([
+            'status'         => 'incomplete',
+            'message'        => 'Beberapa data worksheet export belum diisi.',
+            'missing_fields' => $incomplete
+        ]);
+
     }
 
-    return $this->response->setJSON([
-        'status'         => 'incomplete',
-        'message'        => 'Beberapa data worksheet export belum diisi.',
-        'missing_fields' => $incomplete
-    ]);
-}
 
     
 

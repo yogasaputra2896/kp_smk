@@ -11,7 +11,10 @@ use CodeIgniter\Router\RouteCollection;
  * DEFAULT ROUTES
  * ==========================
  */
-$routes->get('/', 'Dashboard::index', ['filter' => 'login']);
+$routes->get('/', function () {
+    return redirect()->to('dashboard');
+});
+
 $routes->get('dashboard', 'Dashboard::index', ['filter' => 'login']);
 
 /**
@@ -46,7 +49,7 @@ $routes->group('booking-job', [
  */
 $routes->group('booking-job-trash', [
     'namespace' => 'App\Controllers',
-    'filter'    => 'role:admin,staff'
+    'filter'    => 'role:admin'
 ], function ($routes) {
     $routes->get('/', 'BookingJobTrash::index');
     $routes->get('list', 'BookingJobTrash::list');
@@ -55,9 +58,9 @@ $routes->group('booking-job-trash', [
 });
 
 /**
- * ==========================
+ * ==================================
  * ROUTES WORKSHEET (IMPORT & EXPORT)
- * ==========================
+ * ==================================
  */
 $routes->group('worksheet', [
     'namespace' => 'App\Controllers',
@@ -79,6 +82,7 @@ $routes->group('worksheet', [
     // ======= Export Worksheet =======
     $routes->get('export/edit/(:num)', 'Worksheet::editExport/$1');
     $routes->post('export/update/(:num)', 'Worksheet::updateExport/$1');
+    $routes->get('checkExport/(:num)', 'Worksheet::checkExport/$1');
 
     // ======= Redirect Booking =======
     $routes->get('redirectToBooking', 'Worksheet::redirectToBooking');

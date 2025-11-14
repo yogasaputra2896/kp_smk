@@ -107,8 +107,9 @@ class Dashboard extends BaseController
                 return view('dashboard/accounting', $data);
 
             default:
-                return redirect()->to('/')
-                    ->with('error', 'Anda tidak punya akses ke dashboard.');
+                return redirect()->to('login')
+                    ->with('error', 'Akun Anda belum memiliki role.');
+            
         }
     }
 }

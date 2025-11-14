@@ -27,9 +27,11 @@
         <div class="d-flex justify-content-between mb-3">
             <!-- Tombol kiri -->
             <div class="d-flex gap-2">
-                <button id="btnAdd" class="btn btn-primary">
-                    <i class="bi bi-calendar-plus me-2"></i> Tambah Worksheet
-                </button>
+                <?php if (in_groups('admin') || in_groups('staff')): ?>
+                    <button id="btnAdd" class="btn btn-primary">
+                        <i class="bi bi-calendar-plus me-2"></i> Tambah Worksheet
+                    </button>
+                <?php endif; ?>
                 <button id="btnExport" class="btn btn-success">
                     <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export Excel
                 </button>
@@ -157,7 +159,19 @@
         // ====================== CONFIG ======================
         const LIST_URL = "<?= base_url('worksheet/list') ?>";
         let tbl;
-        let currentType = 'import';
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        let currentType = getQueryParam('type') || 'import';
+
+        $('.filter-btn').removeClass('btn-primary active').addClass('btn-outline-primary');
+        $(`.filter-btn[data-type="${currentType}"]`)
+            .removeClass('btn-outline-primary')
+            .addClass('btn-primary active');
+
+
 
         function loadTable(type) {
             if (tbl) {
@@ -255,7 +269,7 @@
                 },
                 {
                     data: 'no_ws',
-                    title: 'No WS'
+                    title: 'No Worksheet'
                 },
                 {
                     data: 'no_aju',
@@ -263,7 +277,7 @@
                 },
                 {
                     data: 'shipper',
-                    title: 'Shipper/Customer'
+                    title: 'Shipper/Exportir'
                 },
                 {
                     data: 'party',
