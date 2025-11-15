@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 // ======================
 // IMPORT MODELS
@@ -167,11 +169,11 @@ class Worksheet extends BaseController
         // Ambil data kontainer & trucking (jika ada)
         $containers         = $this->containerModel->where('id_ws', $id)->findAll();
         $truckings          = $this->truckingModel->where('id_ws', $id)->findAll();
-        $dos                = $this->doModel ->where('id_ws', $id)->findAll();
-        $lartass            = $this->lartasModel ->where('id_ws', $id)->findAll();
-        $informasitambahans = $this->informasiTambahanModel ->where('id_ws', $id)->findAll();
-        $fasilitass         = $this->fasilitasModel ->where('id_ws', $id)->findAll();
-        
+        $dos                = $this->doModel->where('id_ws', $id)->findAll();
+        $lartass            = $this->lartasModel->where('id_ws', $id)->findAll();
+        $informasitambahans = $this->informasiTambahanModel->where('id_ws', $id)->findAll();
+        $fasilitass         = $this->fasilitasModel->where('id_ws', $id)->findAll();
+
 
         return view('worksheet/edit_import', [
             'worksheet'  => $worksheet,
@@ -243,12 +245,38 @@ class Worksheet extends BaseController
 
         // Field wajib untuk status "completed"
         $requiredFields = [
-            'no_ws','pengurusan_pib','no_aju','tgl_aju','pib_nopen','tgl_nopen',
-            'tgl_sppb','shipper','consignee','vessel',
-            'no_voyage','pol','terminal','shipping_line','commodity',
-            'party','qty','kemasan','net','gross','bl','tgl_bl','no_invoice',
-            'tgl_invoice','eta','pengurusan_do','asuransi','top','pengurusan_lartas',
-            'penjaluran','jenis_tambahan','jenis_fasilitas'
+            'no_ws',
+            'pengurusan_pib',
+            'no_aju',
+            'tgl_aju',
+            'pib_nopen',
+            'tgl_nopen',
+            'tgl_sppb',
+            'shipper',
+            'consignee',
+            'vessel',
+            'no_voyage',
+            'pol',
+            'terminal',
+            'shipping_line',
+            'commodity',
+            'party',
+            'qty',
+            'kemasan',
+            'net',
+            'gross',
+            'bl',
+            'tgl_bl',
+            'no_invoice',
+            'tgl_invoice',
+            'eta',
+            'pengurusan_do',
+            'asuransi',
+            'top',
+            'pengurusan_lartas',
+            'penjaluran',
+            'jenis_tambahan',
+            'jenis_fasilitas'
         ];
 
         $allFilled = true;
@@ -445,7 +473,6 @@ class Worksheet extends BaseController
             if (!$hasLartas) {
                 $allFilled = false; // Tidak ada data Lartas valid yang diinput
             }
-
         } elseif ($pengurusanLartas === 'Lartas Sendiri') {
             // Jika Lartas sendiri → hapus semua data lama
             $this->lartasModel->where('id_ws', $id)->delete();
@@ -491,7 +518,6 @@ class Worksheet extends BaseController
             if (!$hasFasilitas) {
                 $allFilled = false; // Tidak ada data valid diinput
             }
-
         } elseif ($jenisFasilitas === 'Tidak Ada Fasilitas') {
             // Jika tidak ada fasilitas → hapus semua data
             $this->fasilitasModel->where('id_ws', $id)->delete();
@@ -531,14 +557,13 @@ class Worksheet extends BaseController
             if (!$hasTambahan) {
                 $allFilled = false; // Tidak ada data Informasi Tambahan valid diinput
             }
-
         } elseif ($jenisTambahan === 'Tidak Ada Tambahan') {
             // Jika Tidak Ada Tambahan → hapus semua data lama (jika ada)
             $this->informasiTambahanModel->where('id_ws', $id)->delete();
         }
 
         // Jangan ubah status di updateImport
-        unset($data['status']); 
+        unset($data['status']);
 
         // Update worksheet_import TANPA menyentuh kolom status
         $this->importModel->update($id, $data);
@@ -605,7 +630,7 @@ class Worksheet extends BaseController
         $incomplete = [];
         foreach ($requiredFields as $field => $label) {
             $value = $data[$field] ?? null;
-        
+
             if (
                 empty($value) ||
                 $value === '0000-00-00' ||
@@ -660,7 +685,7 @@ class Worksheet extends BaseController
                     if (
                         empty($c['no_container']) ||
                         empty($c['ukuran']) ||
-                        empty($c['tipe']) 
+                        empty($c['tipe'])
                     ) {
                         $incomplete[] = [
                             'name'  => 'container_detail',
@@ -768,7 +793,7 @@ class Worksheet extends BaseController
             $this->lartasModel->where('id_ws', $id)->delete();
         }
 
-         // ==============================
+        // ==============================
         // Cek data Fasilitas jika diperlukan
         // ==============================
         if (
@@ -863,6 +888,78 @@ class Worksheet extends BaseController
         ]);
     }
 
+
+    /**
+     * PRINT WORKSHEET IMPORT
+     */
+    public function printImport($encoded_id)
+    {
+        // Tambahkan padding = jika diperlukan untuk base64 decode
+        $padding = strlen($encoded_id) % 4;
+        if ($padding) {
+            $encoded_id .= str_repeat('=', 4 - $padding);
+        }
+
+        // Decode dan ambil ID (bagian sebelum -)
+        $decoded = base64_decode($encoded_id);
+        $parts = explode('-', $decoded);
+        $id = $parts[0] ?? null;
+
+        // Validasi ID
+        if (!$id || !is_numeric($id)) {
+            return redirect()->back()->with('error', 'Invalid ID.');
+        }
+
+        // ==============
+        // GET DATA
+        // ==============
+        $ws = $this->importModel->find($id);
+
+        if (!$ws) {
+            return redirect()->back()->with('error', 'Worksheet tidak ditemukan.');
+        }
+
+        // ==============
+        // RELATIONS
+        // ==============
+        $container  = $this->containerModel->getByWorksheet($id);
+        $trucking   = $this->truckingModel->getByWorksheet($id);
+        $do         = $this->doModel->where('id_ws', $id)->findAll();
+        $lartas     = $this->lartasModel->getByWorksheet($id);
+        $tambahan   = $this->informasiTambahanModel->getByWorksheet($id);
+        $fasilitas  = $this->fasilitasModel->getByWorksheet($id);
+
+        // ==============
+        // VIEW
+        // ==============
+        $html = view('worksheet/print_import', [
+            'ws'        => $ws,
+            'container' => $container,
+            'trucking'  => $trucking,
+            'do'        => $do,
+            'lartas'    => $lartas,
+            'fasilitas' => $fasilitas,
+            'tambahan'  => $tambahan,
+        ]);
+
+        // ==============
+        // PDF SETUP
+        // ==============
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $filename = 'Worksheet_Import_' . $ws['no_ws'] . '.pdf';
+
+        return $dompdf->stream($filename, ["Attachment" => false]);
+    }
+
     // ======================================================================================================================================
     // ======================================================================================================================================
     /**
@@ -898,10 +995,10 @@ class Worksheet extends BaseController
     }
 
     /**
-         * ==========================
-         * UPDATE DATA UTAMA EXPORT
-         * ==========================
-    */
+     * ==========================
+     * UPDATE DATA UTAMA EXPORT
+     * ==========================
+     */
     public function updateExport($id)
     {
         $data = [
@@ -968,12 +1065,42 @@ class Worksheet extends BaseController
          * ==========================
          */
         $requiredFields = [
-            'no_ws','no_aju','pengurusan_peb','peb_nopen','tgl_aju','tgl_nopen',
-            'shipper','consignee','vessel','no_voyage','pol','pod','shipping_line',
-            'commodity','party','qty','kemasan','net','gross','bl','tgl_bl',
-            'no_invoice','tgl_invoice','etd','pengurusan_do','asuransi','top',
-            'pengurusan_lartas','jenis_fasilitas','jenis_tambahan','penjaluran','tgl_npe',
-            'depo','stuffing','terminal','closing'
+            'no_ws',
+            'no_aju',
+            'pengurusan_peb',
+            'peb_nopen',
+            'tgl_aju',
+            'tgl_nopen',
+            'shipper',
+            'consignee',
+            'vessel',
+            'no_voyage',
+            'pol',
+            'pod',
+            'shipping_line',
+            'commodity',
+            'party',
+            'qty',
+            'kemasan',
+            'net',
+            'gross',
+            'bl',
+            'tgl_bl',
+            'no_invoice',
+            'tgl_invoice',
+            'etd',
+            'pengurusan_do',
+            'asuransi',
+            'top',
+            'pengurusan_lartas',
+            'jenis_fasilitas',
+            'jenis_tambahan',
+            'penjaluran',
+            'tgl_npe',
+            'depo',
+            'stuffing',
+            'terminal',
+            'closing'
         ];
 
         $allFilled = true;
@@ -1216,7 +1343,7 @@ class Worksheet extends BaseController
         }
 
         // Jangan ubah status di updateImport
-        unset($data['status']); 
+        unset($data['status']);
 
         // Update worksheet_import TANPA menyentuh kolom status
         $this->exportModel->update($id, $data);
@@ -1228,9 +1355,9 @@ class Worksheet extends BaseController
 
 
     /**
-     * ==========================
+     * ===========================================================
      * CEK KELENGKAPAN WORKSHEET EXPORT (MENYESUAIKAN CEK IMPORT)
-     * ==========================
+     * ===========================================================
      */
     public function checkExport($id)
     {
@@ -1386,7 +1513,6 @@ class Worksheet extends BaseController
                     }
                 }
             }
-
         } else {
             // Jika trucking sendiri → hapus data trucking lama
             $this->truckingExportModel->where('id_ws', $id)->delete();
@@ -1420,7 +1546,6 @@ class Worksheet extends BaseController
                     }
                 }
             }
-
         } else {
             // DO sendiri → hapus data lama
             $this->doExportModel->where('id_ws', $id)->delete();
@@ -1454,7 +1579,6 @@ class Worksheet extends BaseController
                     }
                 }
             }
-
         } else {
             // lartas sendiri → hapus data lama
             $this->lartasExportModel->where('id_ws', $id)->delete();
@@ -1492,7 +1616,6 @@ class Worksheet extends BaseController
                     }
                 }
             }
-
         } else {
             $this->fasilitasExportModel->where('id_ws', $id)->delete();
         }
@@ -1524,7 +1647,6 @@ class Worksheet extends BaseController
                     }
                 }
             }
-
         } else {
             $this->informasiTambahanExportModel->where('id_ws', $id)->delete();
         }
@@ -1553,10 +1675,76 @@ class Worksheet extends BaseController
             'message'        => 'Beberapa data worksheet export belum diisi.',
             'missing_fields' => $incomplete
         ]);
-
     }
 
+    /**
+     * PRINT WORKSHEET EXPORT
+     */
+    public function printExport($encoded_id)
+    {
+        // Tambahkan padding = jika diperlukan untuk base64 decode
+        $padding = strlen($encoded_id) % 4;
+        if ($padding) {
+            $encoded_id .= str_repeat('=', 4 - $padding);
+        }
 
-    
+        // Decode dan ambil ID (bagian sebelum -)
+        $decoded = base64_decode($encoded_id);
+        $parts = explode('-', $decoded);
+        $id = $parts[0] ?? null;
 
+        // Validasi ID
+        if (!$id || !is_numeric($id)) {
+            return redirect()->back()->with('error', 'Invalid ID.');
+        }
+
+        // ==============
+        // GET DATA
+        // ==============
+        $ws = $this->exportModel->find($id);
+
+        if (!$ws) {
+            return redirect()->back()->with('error', 'Worksheet tidak ditemukan.');
+        }
+
+        // ==============
+        // RELATIONS
+        // ==============
+        $container  = $this->containerExportModel->getByWorksheet($id);
+        $trucking   = $this->truckingExportModel->getByWorksheet($id);
+        $do         = $this->doExportModel->where('id_ws', $id)->findAll();
+        $lartas     = $this->lartasExportModel->getByWorksheet($id);
+        $tambahan   = $this->informasiTambahanExportModel->getByWorksheet($id);
+        $fasilitas  = $this->fasilitasExportModel->getByWorksheet($id);
+
+        // ==============
+        // VIEW
+        // ==============
+        $html = view('worksheet/print_export', [
+            'ws'        => $ws,
+            'container' => $container,
+            'trucking'  => $trucking,
+            'do'        => $do,
+            'lartas'    => $lartas,
+            'fasilitas' => $fasilitas,
+            'tambahan'  => $tambahan,
+        ]);
+
+        // ==============
+        // PDF SETUP
+        // ==============
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $filename = 'Worksheet_Export_' . $ws['no_ws'] . '.pdf';
+
+        return $dompdf->stream($filename, ["Attachment" => false]);
+    }
 }

@@ -43,7 +43,7 @@
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
 
-                <?php if (session()->get('role') === 'admin') : ?>
+                <?php if (in_groups('admin')): ?>
                     <button id="btnTrash" class="btn btn-danger" title="Sampah Booking Job">
                         <i class="bi bi-trash"></i>
                     </button>
@@ -140,8 +140,8 @@
                     <!-- No PIB/PO -->
                     <div class="col-md-6">
                         <label for="noPibPo" class="form-label">No PIB/PEB/PO</label>
-                        <input type="text" name="no_pib_po" id="noPibPo" class="form-control" 
-                        placeholder="Nomor PIB/PEB/PO"required>
+                        <input type="text" name="no_pib_po" id="noPibPo" class="form-control"
+                            placeholder="Nomor PIB/PEB/PO" required>
                     </div>
 
                     <!-- Consignee -->
@@ -154,8 +154,8 @@
                     <!-- Party -->
                     <div class="col-md-6">
                         <label for="party" class="form-label">Party</label>
-                        <input type="text" name="party" id="party" class="form-control" 
-                        placeholder="1 X 20 / LCL 1 PK"required>
+                        <input type="text" name="party" id="party" class="form-control"
+                            placeholder="1 X 20 / LCL 1 PK" required>
                     </div>
 
                     <!-- ETA -->
@@ -1075,10 +1075,15 @@
         document.addEventListener("click", function(e) {
             if (e.target.closest(".btn-note")) {
                 e.preventDefault();
+
                 const btn = e.target.closest(".btn-note");
                 const id = btn.getAttribute("data-id");
 
-                window.open(`<?= base_url('booking-job/print-note') ?>/${id}`, '_blank');
+                // Gabungkan ID dengan timestamp
+                const timestamp = Date.now();
+                const encodedId = btoa(id + '-' + timestamp).replace(/=/g, '');
+
+                window.open(`<?= base_url('booking-job/print-note') ?>/${encodedId}`, '_blank');
             }
         });
 

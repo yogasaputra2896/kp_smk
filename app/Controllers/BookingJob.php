@@ -236,7 +236,7 @@ class BookingJob extends BaseController
                 'eta'          => $r['eta'],
                 'pol'          => $r['pol'],
                 'no_pib_po'    => $r['no_pib_po'],
-                'shipping_line'=> $r['shipping_line'],
+                'shipping_line' => $r['shipping_line'],
                 'bl'           => $r['bl'],
                 'status'       => $r['status'],
                 'master_bl'    => $r['master_bl'],
@@ -555,7 +555,7 @@ class BookingJob extends BaseController
             $period = "_{$year}";
         }
 
-        $filename = 'Booking_'. $type . '_' . $period . '_' . date('Y-m-d_His') . '.xlsx';
+        $filename = 'Booking_' . $type . '_' . $period . '_' . date('Y-m-d_His') . '.xlsx';
 
         // Header download Excel
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -579,13 +579,13 @@ class BookingJob extends BaseController
         $sheet->setTitle(substr($title, 0, 30));
 
         // ========== TAMBAHKAN JUDUL DI ATAS TABEL ==========
-        
+
         // Merge cell untuk judul (A1 sampai J1)
         $sheet->mergeCells('A1:J1');
-        
+
         // Set nilai judul
-        $sheet->setCellValue('A1', strtoupper('List Booking Job '.$title));
-        
+        $sheet->setCellValue('A1', strtoupper('List Booking Job ' . $title));
+
         // Style untuk judul
         $sheet->getStyle('A1')->applyFromArray([
             'font' => [
@@ -602,10 +602,10 @@ class BookingJob extends BaseController
                 'vertical' => Alignment::VERTICAL_CENTER
             ]
         ]);
-        
+
         // Set tinggi baris judul
         $sheet->getRowDimension(1)->setRowHeight(25);
-        
+
         // Tambahkan baris kosong atau info tambahan (opsional)
         $sheet->mergeCells('A2:J2');
         $sheet->setCellValue('A2', 'Laporan Data Booking Job - Dicetak: ' . date('d/m/Y H:i:s'));
@@ -622,10 +622,18 @@ class BookingJob extends BaseController
         $sheet->getRowDimension(2)->setRowHeight(18);
 
         // ========== HEADER KOLOM TABEL (MULAI DARI BARIS 3) ==========
-        
+
         $headers = [
-            'No', 'No Job', 'No PIB/PEB/PO', 'Importir/Exportir',
-            'Party', 'ETA/ETD', 'POL/POD', 'Pelayaran', 'BL', 'Master BL'
+            'No',
+            'No Job',
+            'No PIB/PEB/PO',
+            'Importir/Exportir',
+            'Party',
+            'ETA/ETD',
+            'POL/POD',
+            'Pelayaran',
+            'BL',
+            'Master BL'
         ];
 
         $color = $headerColors[$type] ?? '4F81BD';
@@ -637,7 +645,7 @@ class BookingJob extends BaseController
             $sheet->setCellValue($col . $headerRow, $h);
             $sheet->getStyle($col . $headerRow)->applyFromArray([
                 'font' => [
-                    'bold' => true, 
+                    'bold' => true,
                     'color' => ['argb' => 'FFFFFFFF']
                 ],
                 'fill' => [
@@ -659,7 +667,7 @@ class BookingJob extends BaseController
         }
 
         // ========== ISI DATA (MULAI DARI BARIS 4) ==========
-        
+
         $rowNumber = 4;  // ← UBAH dari 2 ke 4
         $no = 1;
         foreach ($data as $row) {
@@ -694,14 +702,14 @@ class BookingJob extends BaseController
         if (empty($data)) {
             $sheet->mergeCells('A4:J4');  // ← UBAH dari A2:J2 ke A4:J4
             $sheet->setCellValue('A4', 'Tidak ada data untuk jenis ini');
-            
+
             $sheet->getStyle('A4')->applyFromArray([
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER
                 ],
                 'font' => [
                     'italic' => true,
-                    'color' => ['argb' => 'FF888888'] 
+                    'color' => ['argb' => 'FF888888']
                 ]
             ]);
         }
@@ -738,10 +746,18 @@ class BookingJob extends BaseController
         $months = $query->getResultArray();
 
         $bulanNames = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
-            4 => 'April', 5 => 'Mei', 6 => 'Juni',
-            7 => 'Juli', 8 => 'Agustus', 9 => 'September',
-            10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
         ];
 
         $result = [];
@@ -868,21 +884,37 @@ class BookingJob extends BaseController
         $dompdf->render();
 
         $period = ($year ? "_{$year}" : '') . ($month ? '-' . str_pad($month, 2, '0', STR_PAD_LEFT) : '');
-        $filename = 'Booking_'. $type . $period . '_' . date('Y-m-d_His') . '.pdf';
+        $filename = 'Booking_' . $type . $period . '_' . date('Y-m-d_His') . '.pdf';
         $dompdf->stream($filename, ['Attachment' => true]);
         exit;
     }
 
 
-        /**
+    /**
      * ==============================================================
      * CETAK STICKY NOTE BOOKING JOB
      * ==============================================================
      * Fungsi untuk mencetak booking job dalam format note kecil
      * menggunakan Dompdf. Ukuran paper disesuaikan untuk sticky note.
      */
-    public function printNote($id)
+    public function printNote($encoded_id)
     {
+        // Tambahkan padding = jika diperlukan untuk base64 decode
+        $padding = strlen($encoded_id) % 4;
+        if ($padding) {
+            $encoded_id .= str_repeat('=', 4 - $padding);
+        }
+
+        // Decode dan ambil ID (bagian sebelum -)
+        $decoded = base64_decode($encoded_id);
+        $parts = explode('-', $decoded);
+        $id = $parts[0] ?? null;
+
+        // Validasi ID
+        if (!$id || !is_numeric($id)) {
+            return redirect()->back()->with('error', 'Invalid ID.');
+        }
+
         $bookingModel = new BookingJobModel();
         $data = $bookingModel->find($id);
 

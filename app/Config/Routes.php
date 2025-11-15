@@ -38,7 +38,7 @@ $routes->group('booking-job', [
     $routes->get('get-years', 'BookingJob::getYears');
     $routes->get('get-months/(:num)', 'BookingJob::getMonths/$1');
     $routes->get('export-pdf', 'BookingJob::exportPdf');
-    $routes->get('print-note/(:num)', 'BookingJob::printNote/$1');
+    $routes->get('print-note/(:segment)', 'BookingJob::printNote/$1');
     $routes->post('send-to-worksheet/(:num)', 'BookingJob::sendToWorksheet/$1');
 });
 
@@ -78,11 +78,14 @@ $routes->group('worksheet', [
     $routes->get('import/edit/(:num)', 'Worksheet::editImport/$1');
     $routes->post('import/update/(:num)', 'Worksheet::updateImport/$1');
     $routes->get('checkImport/(:num)', 'Worksheet::checkImport/$1');
+    $routes->get('print-import/(:segment)', 'Worksheet::printImport/$1');
+
 
     // ======= Export Worksheet =======
     $routes->get('export/edit/(:num)', 'Worksheet::editExport/$1');
     $routes->post('export/update/(:num)', 'Worksheet::updateExport/$1');
     $routes->get('checkExport/(:num)', 'Worksheet::checkExport/$1');
+    $routes->get('print-export/(:segment)', 'Worksheet::printExport/$1');
 
     // ======= Redirect Booking =======
     $routes->get('redirectToBooking', 'Worksheet::redirectToBooking');

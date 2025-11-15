@@ -151,6 +151,14 @@
     .dataTables_wrapper .dataTables_scroll {
         overflow: auto;
     }
+
+    .btn {
+        transition: 0.2s;
+    }
+
+    .btn:hover {
+        transform: translateY(-4px);
+    }
 </style>
 
 <!-- ====================== JAVASCRIPT ====================== -->
@@ -159,6 +167,7 @@
         // ====================== CONFIG ======================
         const LIST_URL = "<?= base_url('worksheet/list') ?>";
         let tbl;
+
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
@@ -243,14 +252,18 @@
                     searchable: false,
                     render: function(data, type, row) {
                         return `
+                            <!-- Tombol Edit -->
                             <button class="btn btn-sm btn-warning btn-edit" data-id="${row.id}" title="Edit Worksheet">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
+                            
                             <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}" title="Delete Worksheet">
                                 <i class="bi bi-trash"></i>
                             </button>
-                            <button class="btn btn-sm btn-primary btn-note" data-id="${row.id}" title="Print Worksheet">
-                                <i class="bi bi-sticky"></i>
+
+                            <!-- Tombol print -->
+                            <button class="btn btn-sm btn-primary btn-print" data-id="${row.id}" title="Print Worksheet">
+                                <i class="bi bi-printer"></i>
                             </button>
                         `;
                     }
@@ -329,8 +342,9 @@
                             <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}" title="Delete Worksheet">
                                 <i class="bi bi-trash"></i>
                             </button>
-                            <button class="btn btn-sm btn-primary btn-note" data-id="${row.id}" title="Print Worksheet">
-                                <i class="bi bi-sticky"></i>
+                            <!-- Tombol print -->
+                            <button class="btn btn-sm btn-primary btn-print" data-id="${row.id}" title="Print Worksheet">
+                                <i class="bi bi-printer"></i>
                             </button>
                         `;
                     }
@@ -440,6 +454,29 @@
                 window.location.href = `/worksheet/export/edit/${id}`;
             }
         });
+
+        // ====================== PRINT WORKSHEET ======================
+        document.addEventListener("click", function(e) {
+            if (e.target.closest(".btn-print")) {
+                e.preventDefault();
+
+                const btn = e.target.closest(".btn-print");
+                const id = btn.getAttribute("data-id");
+
+                // Gabungkan ID dengan timestamp
+                const timestamp = Date.now();
+                const encodedId = btoa(id + '-' + timestamp).replace(/=/g, '');
+
+                // cek apakah yang aktif import atau export
+                if (currentType === 'import') {
+                    window.open(`<?= base_url('worksheet/print-import') ?>/${encodedId}`, '_blank');
+                } else {
+                    window.open(`<?= base_url('worksheet/print-export') ?>/${encodedId}`, '_blank');
+                }
+            }
+        });
+
+
 
 
     })();
