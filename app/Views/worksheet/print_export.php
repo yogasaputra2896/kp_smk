@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>Worksheet_<?= $ws['no_ws'] ?></title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,6 +29,11 @@
             padding: 0;
             font-size: 16px;
             font-weight: bold;
+        }
+
+        hr{
+            width: 38%;
+            margin-left: 0;
         }
 
         .section-title {
@@ -80,6 +86,7 @@
     <!-- Header -->
     <div class="header-info">
         AJU : <?= $ws['no_aju'] ?><br>
+        <hr>
         PO : <?= $ws['no_po'] ?>
     </div>
 
@@ -279,21 +286,29 @@
     </table>
 
     <div class="page-break"></div>
+    <!-- Header -->
+    <div class="header-info">
+        AJU : <?= $ws['no_aju'] ?><br>
+        <hr>
+        PO : <?= $ws['no_po'] ?>
+    </div>
 
     <!-- ========================= PAGE 2 ========================= -->
-    <h1>WORKSHEET EXPORT – LEMBAR LANJUT</h1>
+    <h1>WORKSHEET EXPORT <br> LEMBAR LANJUT</h1>
 
     <!-- Container -->
     <?php if ($ws['jenis_con'] != 'LCL'): ?>
         <div class="section-title">Container</div>
         <table>
             <tr>
+                <td style="font-weight: bold; background: #f5f5f5; width: 20px">No</td>
                 <td style="font-weight: bold; background: #f5f5f5;">No Container</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Ukuran</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tipe</td>
             </tr>
-            <?php foreach ($container as $c): ?>
+            <?php $no = 1; foreach ($container as $c): ?>
                 <tr>
+                    <td style="font-weight: normal; background: #fff; width: 20px"><?= $no++ ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $c['no_container'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $c['ukuran'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $c['tipe'] ?></td>
@@ -307,13 +322,15 @@
         <div class="section-title">Trucking</div>
         <table>
             <tr>
+                <td style="font-weight: bold; background: #f5f5f5; width: 20px">No</td>
                 <td style="font-weight: bold; background: #f5f5f5;">No Mobil</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tipe Mobil</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Supir</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Telp</td>
             </tr>
-            <?php foreach ($trucking as $t): ?>
+            <?php $no = 1;  foreach ($trucking as $t): ?>
                 <tr>
+                    <td style="font-weight: normal; background: #fff; width: 20px"><?= $no++ ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $t['no_mobil'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $t['tipe_mobil'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $t['nama_supir'] ?></td>
@@ -328,12 +345,14 @@
         <div class="section-title">Delivery Order</div>
         <table>
             <tr>
+                <td style="font-weight: bold; background: #f5f5f5; width: 20px">NO</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tipe DO</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Pengambil</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tanggal Mati DO</td>
             </tr>
-            <?php foreach ($do as $d): ?>
+            <?php $no = 1; foreach ($do as $d): ?>
                 <tr>
+                    <td style="font-weight: normal; background: #fff; width: 20px"><?= $no++ ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $d['tipe_do'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $d['pengambil_do'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $d['tgl_mati_do'] ?></td>
@@ -347,12 +366,14 @@
         <div class="section-title">Lartas</div>
         <table>
             <tr>
+                <td style="font-weight: bold; background: #f5f5f5; width: 20px">No</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Nama Lartas</td>
                 <td style="font-weight: bold; background: #f5f5f5;">No Lartas</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tanggal</td>
             </tr>
-            <?php foreach ($lartas as $l): ?>
+            <?php $no = 1; foreach ($lartas as $l): ?>
                 <tr>
+                    <td style="font-weight: normal; background: #fff; width: 20px"><?= $no++ ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $l['nama_lartas'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $l['no_lartas'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $l['tgl_lartas'] ?></td>
@@ -366,13 +387,15 @@
         <div class="section-title">Fasilitas</div>
         <table>
             <tr>
+                <td style="font-weight: bold; background: #f5f5f5; width: 20px">No</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tipe</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Nama</td>
                 <td style="font-weight: bold; background: #f5f5f5;">No</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tanggal</td>
             </tr>
-            <?php foreach ($fasilitas as $f): ?>
+            <?php $no = 1; foreach ($fasilitas as $f): ?>
                 <tr>
+                    <td style="font-weight: normal; background: #fff; width: 20px"><?= $no++ ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $f['tipe_fasilitas'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $f['nama_fasilitas'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $f['no_fasilitas'] ?></td>
@@ -387,11 +410,13 @@
         <div class="section-title">Informasi Tambahan</div>
         <table>
             <tr>
+                <td style="font-weight: bold; background: #f5f5f5; width: 20px">No</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Nama Pengurusan</td>
                 <td style="font-weight: bold; background: #f5f5f5;">Tanggal</td>
             </tr>
-            <?php foreach ($tambahan as $t): ?>
+            <?php $no = 1; foreach ($tambahan as $t): ?>
                 <tr>
+                    <td style="font-weight: normal; background: #fff; width: 20px"><?= $no++ ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $t['nama_pengurusan'] ?></td>
                     <td style="font-weight: normal; background: #fff;"><?= $t['tgl_pengurusan'] ?></td>
                 </tr>

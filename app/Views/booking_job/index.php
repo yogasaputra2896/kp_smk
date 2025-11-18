@@ -5,16 +5,25 @@
 <!-- ====================== HEADER ====================== -->
 <?= $this->section('pageTitle') ?>
 <div class="page-heading">
-    <h3>Booking Job</h3>
-    <p class="text-subtitle text-muted">
+    <h3 class="heading-title">Booking Job</h3>
+
+    <!-- DESKTOP (Versi lengkap) -->
+    <p class="text-subtitle text-muted d-none d-sm-block">
         Modul Booking Job menyediakan fitur lengkap untuk mengelola data booking,
         mulai dari tambah, edit, hapus, cetak note, kirim data, hingga ekspor laporan ke Excel dan PDF secara periodik.
         Selain itu, tersedia fitur filter berdasarkan jenis booking dan pencarian data untuk memudahkan pengguna
-        menemukan informasi dengan cepat dan akurat. Modul ini juga dilengkapi dengan softdalete untuk menyimpan
+        menemukan informasi dengan cepat dan akurat. Modul ini juga dilengkapi dengan softdelete untuk menyimpan
         data yang telah dihapus sebelum benar-benar dihapus permanen, serta refresh data untuk memperbarui tampilan
         data secara real-time.
     </p>
+
+    <!-- MOBILE (Versi singkat) -->
+    <p class="text-subtitle text-muted d-block d-sm-none">
+        Modul Booking Job menyediakan fitur tambah, edit, hapus, ekspor, filter, dan pencarian data.
+        Softdelete serta refresh data juga tersedia untuk memudahkan pengelolaan.
+    </p>
 </div>
+
 <?= $this->endSection() ?>
 
 <!-- ====================== CONTENT ====================== -->
@@ -25,20 +34,32 @@
         <!-- ====================== TOOLBAR ====================== -->
         <div class="d-flex justify-content-between mb-3">
             <!-- Tombol kiri -->
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
+                <!-- Tambah Booking -->
                 <button id="btnAdd" class="btn btn-primary">
-                    <i class="bi bi-calendar-plus me-2"></i> Tambah Booking Job
+                    <i class="bi bi-calendar-plus me-2"></i>
+                    <span class="d-none d-sm-inline">Tambah Booking Job</span>
+                    <span class="d-inline d-sm-none">Add</span>
                 </button>
+
+                <!-- Export Excel -->
                 <button id="btnExport" class="btn btn-success">
-                    <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export Excel
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+                    <span class="d-none d-sm-inline">Export Excel</span>
+                    <span class="d-inline d-sm-none">Xls</span>
                 </button>
+
+                <!-- Export PDF -->
                 <button id="btnExportPdf" class="btn btn-danger">
-                    <i class="bi bi-file-earmark-pdf me-2"></i> Export Pdf
+                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                    <span class="d-none d-sm-inline">Export Pdf</span>
+                    <span class="d-inline d-sm-none">Pdf</span>
                 </button>
             </div>
 
+
             <!-- Tombol kanan -->
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap ms-2">
                 <button id="btnRefresh" class="btn btn-secondary" title="Refresh Data">
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
@@ -57,27 +78,64 @@
         </div>
 
         <!-- ====================== FILTER JENIS JOB ====================== -->
-        <div class="mb-3 btn-group" role="group" aria-label="Filter jenis job">
+        <div class="mb-3 btn-group flex-wrap" role="group" aria-label="Filter jenis job">
+
+            <!-- Import LCL -->
             <button class="btn btn-outline-primary filter-btn" data-type="import_lcl">
-                List Job Import <br>LCL
+                <span class="d-none d-sm-inline">
+                    Import<br>LCL
+                </span>
+                <span class="d-inline d-sm-none">
+                    LCL
+                </span>
             </button>
+
+            <!-- FCL Jaminan -->
             <button class="btn btn-outline-primary filter-btn" data-type="import_fcl_jaminan">
-                List Job Import <br>FCL JAMINAN
+                <span class="d-none d-sm-inline">
+                    Import<br>FCL JAMINAN
+                </span>
+                <span class="d-inline d-sm-none">
+                    FCL JAMINAN
+                </span>
             </button>
+
+            <!-- FCL Non-Jaminan -->
             <button class="btn btn-outline-primary filter-btn" data-type="import_fcl_nonjaminan">
-                List Job Import <br>FCL NON-JAMINAN
+                <span class="d-none d-sm-inline">
+                    Import<br>FCL NON-JAMINAN
+                </span>
+                <span class="d-inline d-sm-none">
+                    FCL NON-JAMINAN
+                </span>
             </button>
+
+            <!-- Lain -->
             <button class="btn btn-outline-primary filter-btn" data-type="lain">
-                List Job Import <br>LAIN-LAIN
+                <span class="d-none d-sm-inline">
+                    Import<br>LAIN-LAIN
+                </span>
+                <span class="d-inline d-sm-none">
+                LAIN-LAIN
+                </span>
             </button>
+
+            <!-- Export -->
             <button class="btn btn-outline-primary filter-btn" data-type="export">
-                List Job Export
+                <span class="d-none d-sm-inline">
+                    Export
+                </span>
+                <span class="d-inline d-sm-none">
+                    Export
+                </span>
             </button>
+
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h6 class="mb-0">Daftar Booking</h6>
         </div>
+
 
         <!-- ====================== TABLE BOOKING ====================== -->
         <div class="table-responsive">
@@ -451,9 +509,11 @@
         box-shadow: 0 0.25rem 0.5rem rgba(67, 94, 190, 0.4);
     }
 
+    /* ====================== TABLE ====================== */
     #tblBookings th,
     #tblBookings td {
         font-size: 15px;
+        white-space: nowrap;
     }
 
     #tblBookings th:nth-child(3),
@@ -490,13 +550,6 @@
         width: 100% !important;
     }
 
-    #tblBookings th,
-    #tblBookings td {
-        white-space: nowrap;
-        /* biar teks tidak turun ke bawah */
-        font-size: 15px;
-    }
-
     .dataTables_wrapper .dataTables_scroll {
         overflow: auto;
     }
@@ -513,7 +566,56 @@
     .btn:hover {
         transform: translateY(-4px);
     }
+
+    /* ====================== RESPONSIVE UNTUK MOBILE ====================== */
+    @media (max-width: 576px) {
+
+        /* Font tabel mengecil */
+        #tblBookings th,
+        #tblBookings td {
+            font-size: 15px !important;
+            white-space: normal !important;
+        }
+
+        /* Sembunyikan kolom tertentu */
+        #tblBookings th:nth-child(3),
+        #tblBookings td:nth-child(3),
+        #tblBookings th:nth-child(4),
+        #tblBookings td:nth-child(4),
+        #tblBookings th:nth-child(8),
+        #tblBookings td:nth-child(8),
+        #tblBookings th:nth-child(10),
+        #tblBookings td:nth-child(10) {
+            display: none !important;
+        }
+
+        /* Tombol kecil */
+        .btn-sm {
+            padding: 3px 6px !important;
+        }
+
+        /* Wrapper scroll */
+        .dataTables_wrapper .dataTables_scroll {
+            overflow-x: scroll !important;
+        }
+
+        /* Tombol filter: full width */
+        .filter-btn {
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        /* Hover effect ringan */
+        .btn:hover {
+            transform: translateY(-2px) !important;
+        }
+
+        
+        
+    }
 </style>
+
 
 <!-- ====================== JAVASCRIPT ====================== -->
 <script>
@@ -529,11 +631,16 @@
         let currentType = 'import_lcl';
 
         // ====================== INIT DATATABLES ======================
+        // Deteksi Mobile
+        const isMobile = window.innerWidth < 576;
+
+        // Init DataTable
         const tbl = $('#tblBookings').DataTable({
-            fixedColumns: {
-                left: 2, // fix 2 kolom paling kiri
-                right: 2 // fix 1 kolom paling kanan
+            fixedColumns: isMobile ? false : {
+                left: 2,
+                right: 2
             },
+
             ajax: {
                 url: LIST_URL,
                 data: function(d) {
@@ -592,39 +699,41 @@
                         // Jika status sudah "sudah kirim worksheet", maka aksi kosong
                         if (row.status === 'worksheet') {
                             return `
-                            <!-- Tombol Note -->
-                            <button class="btn btn-sm btn-primary btn-note" data-id="${data}" title="Print Note">
-                                <i class="bi bi-sticky"></i>
-                            </button>
-                            <!-- Tombol Delete -->
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="${data}" title="Delete Job">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                            <span class="badge bg-secondary"> Terkirim </span>
+                                <div class="aksi-grid">
+                                    <button class="btn btn-sm btn-primary btn-note" data-id="${data}" title="Print Note">
+                                        <i class="bi bi-sticky"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-danger btn-delete" data-id="${data}" title="Delete Job">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                    <span class="badge bg-secondary">Terkirim</span>
+                                </div>
                             `;
                         }
 
+
                         return `
-              <!-- Tombol Edit -->
-              <button class="btn btn-sm btn-warning btn-edit" data-id="${data}" title="Edit Job">
-                <i class="bi bi-pencil-square"></i>
-              </button>
+                            <div class="aksi-grid">
+                                <button class="btn btn-sm btn-warning btn-edit" data-id="${data}" title="Edit Job">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
 
-              <!-- Tombol Delete -->
-              <button class="btn btn-sm btn-danger btn-delete" data-id="${data}" title="Delete Job">
-                <i class="bi bi-trash"></i>
-              </button>
+                                <button class="btn btn-sm btn-danger btn-delete" data-id="${data}" title="Delete Job">
+                                    <i class="bi bi-trash"></i>
+                                </button>
 
-              <!-- Tombol Note -->
-              <button class="btn btn-sm btn-primary btn-note" data-id="${data}" title="Print Note">
-                <i class="bi bi-sticky"></i>
-              </button>
+                                <button class="btn btn-sm btn-primary btn-note" data-id="${data}" title="Print Note">
+                                    <i class="bi bi-sticky"></i>
+                                </button>
 
-              <!-- Tombol Send -->
-              <button class="btn btn-sm btn-success btn-send" data-id="${data}" title="Kirim ke Worksheet">
-                <i class="bi bi-send"></i>
-              </button>
-            `;
+                                <button class="btn btn-sm btn-success btn-send" data-id="${data}" title="Kirim ke Worksheet">
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </div>
+                        `;
+
                     }
                 }
             ],

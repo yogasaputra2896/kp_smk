@@ -6,8 +6,10 @@
 <!-- ====================== HEADER ====================== -->
 <?= $this->section('pageTitle') ?>
 <div class="page-heading">
-    <h3>Worksheet</h3>
-    <p class="text-subtitle text-muted">
+    <h3 class="heading-title">Worksheet</h3>
+
+    <!-- DESKTOP: versi lengkap -->
+    <p class="text-subtitle text-muted d-none d-sm-block">
         Modul Worksheet merupakan lanjutan dari booking job yang menyediakan fitur lengkap untuk mengelola data worksheet,
         mulai dari edit, hapus, cetak note, hingga ekspor laporan ke Excel dan PDF secara periodik.
         Selain itu, tersedia fitur filter berdasarkan jenis worksheet dan pencarian data untuk memudahkan pengguna
@@ -15,7 +17,14 @@
         data yang telah dihapus sebelum benar-benar dihapus permanen, serta refresh data untuk memperbarui tampilan
         data secara real-time.
     </p>
+
+    <!-- MOBILE: versi ringkas -->
+    <p class="text-subtitle text-muted d-block d-sm-none">
+        Modul Worksheet menyediakan fitur edit, hapus, cetak note, ekspor laporan, filter, serta pencarian data.
+        Softdelete & refresh data juga tersedia.
+    </p>
 </div>
+
 <?= $this->endSection() ?>
 
 <!-- ====================== CONTENT ====================== -->
@@ -25,45 +34,74 @@
 
         <!-- ====================== TOOLBAR ====================== -->
         <div class="d-flex justify-content-between mb-3">
+
             <!-- Tombol kiri -->
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
+
                 <?php if (in_groups('admin') || in_groups('staff')): ?>
+                    <!-- Tambah Worksheet -->
                     <button id="btnAdd" class="btn btn-primary">
-                        <i class="bi bi-calendar-plus me-2"></i> Tambah Worksheet
+                        <i class="bi bi-calendar-plus me-2"></i>
+                        <span class="d-none d-sm-inline">Tambah Worksheet</span>
+                        <span class="d-inline d-sm-none">Add</span>
                     </button>
                 <?php endif; ?>
+
+                <!-- Export Excel -->
                 <button id="btnExport" class="btn btn-success">
-                    <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export Excel
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+                    <span class="d-none d-sm-inline">Export Excel</span>
+                    <span class="d-inline d-sm-none">Xls</span>
                 </button>
+
+                <!-- Export PDF -->
                 <button id="btnExportPdf" class="btn btn-danger">
-                    <i class="bi bi-file-earmark-pdf me-2"></i> Export Pdf
+                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                    <span class="d-none d-sm-inline">Export Pdf</span>
+                    <span class="d-inline d-sm-none">Pdf</span>
                 </button>
+
             </div>
 
             <!-- Tombol kanan -->
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap ms-2">
                 <button id="btnRefresh" class="btn btn-secondary" title="Refresh Data">
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
+
                 <button id="btnTrash" class="btn btn-danger" title="Sampah Worksheet">
                     <i class="bi bi-trash"></i>
                 </button>
             </div>
+
         </div>
 
+        <!-- ======== TITLE FILTER ======== -->
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h6 class="mb-0">Jenis Worksheet</h6>
         </div>
 
-        <!-- ====================== FILTER JENIS WORKSHEET ====================== -->
-        <div class="mb-3 btn-group" role="group" aria-label="Filter worksheet">
-            <button type="button" class="btn btn-primary filter-btn active" data-type="import">Worksheet Import</button>
-            <button type="button" class="btn btn-outline-primary filter-btn" data-type="export">Worksheet Export</button>
+        <!-- ====================== FILTER WORKSHEET (responsive) ====================== -->
+        <div class="mb-3 btn-group flex-wrap" role="group" aria-label="Filter worksheet">
+
+            <!-- Import -->
+            <button type="button" class="btn btn-outline-primary filter-btn active" data-type="import">
+                <span class="d-none d-sm-inline">Worksheet Import</span>
+                <span class="d-inline d-sm-none">Import</span>
+            </button>
+
+            <!-- Export -->
+            <button type="button" class="btn btn-outline-primary filter-btn" data-type="export">
+                <span class="d-none d-sm-inline">Worksheet Export</span>
+                <span class="d-inline d-sm-none">Export</span>
+            </button>
+
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h6 class="mb-0">Daftar Worksheet</h6>
         </div>
+
 
         <!-- ====================== TABLE WORKSHEET ====================== -->
         <div class="table-responsive">
@@ -252,19 +290,27 @@
                     searchable: false,
                     render: function(data, type, row) {
                         return `
-                            <!-- Tombol Edit -->
-                            <button class="btn btn-sm btn-warning btn-edit" data-id="${row.id}" title="Edit Worksheet">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}" title="Delete Worksheet">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                        <!-- Tombol Edit -->
+                        <button class="btn btn-sm btn-warning btn-edit me-1" 
+                                data-id="${row.id}" 
+                                title="Edit Worksheet">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
 
-                            <!-- Tombol print -->
-                            <button class="btn btn-sm btn-primary btn-print" data-id="${row.id}" title="Print Worksheet">
-                                <i class="bi bi-printer"></i>
-                            </button>
+                        <!-- Tombol Delete -->
+                        <button class="btn btn-sm btn-danger btn-delete me-1" 
+                                data-id="${row.id}" 
+                                title="Delete Worksheet">
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                        <!-- Tombol Print -->
+                        <button class="btn btn-sm btn-primary btn-print" 
+                                data-id="${row.id}" 
+                                title="Print Worksheet">
+                            <i class="bi bi-printer"></i>
+                        </button>
+
                         `;
                     }
                 }
@@ -352,11 +398,14 @@
             ];
 
             // ====================== INIT DATATABLES ======================
+            let isMobile = $(window).width() < 768;
+
             tbl = $('#tblWorksheet').DataTable({
-                fixedColumns: {
-                    left: 2, // fix 2 kolom paling kiri
-                    right: 2 // fix 1 kolom paling kanan
+                fixedColumns: isMobile ? false : {
+                    left: 2,  // fix kolom kiri
+                    right: 2  // fix kolom kanan
                 },
+                scrollX: true, // WAJIB agar mobile tetap bisa scroll
                 ajax: {
                     url: LIST_URL,
                     data: {
@@ -365,10 +414,9 @@
                     dataSrc: 'data'
                 },
                 columns: type === 'import' ? columnsImport : columnsExport,
-                order: [
-                    [0, 'asc']
-                ]
+                order: [[0, 'asc']]
             });
+
         }
 
         // load default import
