@@ -34,7 +34,7 @@ class UserManagement extends BaseController
     // ============================================================
     public function list()
     {
-        $userModel = new \App\Models\UserManagementModel();
+        $userModel = new \App\Models\User\UserManagementModel();
         $rows = $userModel->getAllUsersWithRole();
 
         // Siapkan data untuk tabel
