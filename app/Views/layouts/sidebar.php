@@ -72,24 +72,40 @@ $segment1 = $uri->getSegment(1);
                         </a>
                     </li>
 
-                    <li class="sidebar-item has-sub <?= ($segment1 == 'booking-job-trash' || $segment1 == 'worksheet-trash') ? 'active' : '' ?>">
+                    <li class="sidebar-item has-sub <?= in_array($segment1, ['booking-job-trash', 'worksheet-import-trash', 'worksheet-export-trash']) ? 'active' : '' ?>">
                         <a href="#" class="sidebar-link">
                             <i class="bi bi-trash"></i>
                             <span>Sampah</span>
                         </a>
-                        <ul class="submenu" <?= ($segment1 == 'booking-job-trash' || $segment1 == 'worksheet-trash') ? 'style="display:block;"' : '' ?>>
+
+                        <ul class="submenu" <?= in_array($segment1, ['booking-job-trash', 'worksheet-import-trash', 'worksheet-export-trash']) ? 'style="display:block;"' : '' ?>>
+                            <!-- Booking Job Trash -->
                             <li class="submenu-item <?= ($segment1 == 'booking-job-trash') ? 'active' : '' ?>">
                                 <a href="<?= base_url('booking-job-trash') ?>">
-                                    <i class="bi bi-calendar-check-fill me-1"></i> Booking Job
+                                    <i class="bi bi-calendar-check-fill me-1"></i>
+                                    Booking Job
                                 </a>
                             </li>
-                            <li class="submenu-item <?= ($segment1 == 'worksheet-trash') ? 'active' : '' ?>">
-                                <a href="<?= base_url('worksheet-trash') ?>">
-                                    <i class="bi bi-journal-text me-1"></i> Worksheet
+
+                            <!-- Worksheet Import Trash -->
+                            <li class="submenu-item <?= ($segment1 == 'worksheet-import-trash') ? 'active' : '' ?>">
+                                <a href="<?= base_url('worksheet-import-trash') ?>">
+                                    <i class="bi bi-journal-text me-1"></i>
+                                    Worksheet Import
+                                </a>
+                            </li>
+
+                            <!-- Worksheet Export Trash -->
+                            <li class="submenu-item <?= ($segment1 == 'worksheet-export-trash') ? 'active' : '' ?>">
+                                <a href="<?= base_url('worksheet-export-trash') ?>">
+                                    <i class="bi bi-journal-text me-1"></i>
+                                    Worksheet Export
                                 </a>
                             </li>
                         </ul>
                     </li>
+
+
 
                     <li class="sidebar-title">Account</li>
                     <li class="sidebar-item">

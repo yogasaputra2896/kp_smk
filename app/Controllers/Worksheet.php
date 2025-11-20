@@ -187,9 +187,9 @@ class Worksheet extends BaseController
     }
 
     /**
-     * ==========================
-     * UPDATE WORKSHEET IMPORT (FINAL)
-     * ==========================
+     * ========================
+     * UPDATE WORKSHEET IMPORT 
+     * ========================
      */
     public function updateImport($id)
     {
@@ -400,9 +400,9 @@ class Worksheet extends BaseController
         }
 
         /**
-         * ==========================
+         * ================
          * SIMPAN DATA DO
-         * ==========================
+         * ================
          */
         $pengurusanDo = $this->request->getPost('pengurusan_do');
         $tipeDo        = $this->request->getPost('tipe_do');
@@ -438,9 +438,9 @@ class Worksheet extends BaseController
         }
 
         /**
-         * ==========================
+         * ===================
          * SIMPAN DATA LARTAS
-         * ==========================
+         * ===================
          */
         $pengurusanLartas = $this->request->getPost('pengurusan_lartas');
         $namaLartas       = $this->request->getPost('nama_lartas');
@@ -525,9 +525,9 @@ class Worksheet extends BaseController
 
 
         /**
-         * ==========================
+         * ==============================
          * SIMPAN DATA INFORMASI TAMBAHAN
-         * ==========================
+         * ==============================
          */
         $jenisTambahan   = $this->request->getPost('jenis_tambahan');
         $namaPengurusan  = $this->request->getPost('nama_pengurusan');
@@ -873,7 +873,7 @@ class Worksheet extends BaseController
 
             return $this->response->setJSON([
                 'status'  => 'complete',
-                'message' => 'Semua data worksheet export sudah lengkap.'
+                'message' => 'Semua data worksheet import sudah lengkap.'
             ]);
         }
 
@@ -883,7 +883,7 @@ class Worksheet extends BaseController
 
         return $this->response->setJSON([
             'status'         => 'incomplete',
-            'message'        => 'Beberapa data worksheet export belum diisi.',
+            'message'        => 'Beberapa data worksheet import belum diisi.',
             'missing_fields' => $incomplete
         ]);
     }
@@ -959,6 +959,155 @@ class Worksheet extends BaseController
 
         return $dompdf->stream($filename, ["Attachment" => false]);
     }
+
+    // ============================================================
+    // HAPUS WORKSHEET IMPORT + PINDAHKAN SEMUA RELASI KE TRASH
+    // ============================================================
+    public function deleteImport($id)
+    {
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // IMPORT trash models
+            $trashMain      = new \App\Models\WorksheetImportTrash\WorkSheetImportTrashModel();
+            $trashContainer = new \App\Models\WorksheetImportTrash\WorksheetContainerTrashModel();
+            $trashDo        = new \App\Models\WorksheetImportTrash\WorksheetDoTrashModel();
+            $trashFasilitas = new \App\Models\WorksheetImportTrash\WorksheetFasilitasTrashModel();
+            $trashTruck     = new \App\Models\WorksheetImportTrash\WorksheetTruckingTrashModel();
+            $trashLartas    = new \App\Models\WorksheetImportTrash\WorksheetLartasTrashModel();
+            $trashInfo      = new \App\Models\WorksheetImportTrash\WorksheetInformasiTambahanTrashModel();
+
+            // Ambil worksheet import utama
+            $row = $this->importModel->find($id);
+            if (!$row) {
+                $db->transComplete();
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Worksheet import tidak ditemukan.'
+                ])->setStatusCode(404);
+            }
+
+            // who deleted
+            $deletedBy = null;
+            if (function_exists('user') && user()) {
+                $deletedBy = user()->username ?? user()->email ?? null;
+            }
+            if (empty($deletedBy)) {
+                $session = session();
+                $deletedBy = $session->get('username') ?? $session->get('email') ?? 'system';
+            }
+
+            $now = date('Y-m-d H:i:s');
+
+            // Siapkan parent untuk trash
+            $parentCopy = $row;
+            $parentCopy['deleted_at'] = $now;
+            $parentCopy['deleted_by'] = $deletedBy;
+
+            // unset id supaya tidak bentrok PK dengan tabel trash (trash autonumber sendiri)
+            unset($parentCopy['id']);
+
+            // Insert ke trash parent
+            $newTrashId = $trashMain->insert($parentCopy);
+            if (!$newTrashId) {
+                // gagal insert ke trash
+                $db->transComplete();
+                log_message('error', 'Gagal insert worksheet ke trash. original id=' . $id);
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Gagal memindahkan worksheet ke trash.'
+                ])->setStatusCode(500);
+            }
+
+            // Helper untuk copy relasi
+            $copyToTrash = function ($dataList, $trashModel) use ($newTrashId, $deletedBy, $now) {
+                foreach ($dataList as $d) {
+                    // hapus id utama agar tidak bentrok
+                    if (isset($d['id'])) unset($d['id']);
+
+                    // set id_ws ke id trash parent agar child 'link' ke parent di trash
+                    $d['id_ws'] = $newTrashId;
+                    $d['deleted_at'] = $now;
+                    $d['deleted_by'] = $deletedBy;
+
+                    // insert via model (model harus punya allowedFields yang sesuai)
+                    $trashModel->insert($d);
+                }
+            };
+
+            // Ambil dan copy semua child -> ke trash child, kemudian delete dari main
+            // CONTAINER
+            $containers = $this->containerModel->where('id_ws', $id)->findAll();
+            if (!empty($containers)) {
+                $copyToTrash($containers, $trashContainer);
+                $this->containerModel->where('id_ws', $id)->delete();
+            }
+
+            // DO
+            $dos = $this->doModel->where('id_ws', $id)->findAll();
+            if (!empty($dos)) {
+                $copyToTrash($dos, $trashDo);
+                $this->doModel->where('id_ws', $id)->delete();
+            }
+
+            // FASILITAS
+            $fas = $this->fasilitasModel->where('id_ws', $id)->findAll();
+            if (!empty($fas)) {
+                $copyToTrash($fas, $trashFasilitas);
+                $this->fasilitasModel->where('id_ws', $id)->delete();
+            }
+
+            // TRUCKING
+            $trucks = $this->truckingModel->where('id_ws', $id)->findAll();
+            if (!empty($trucks)) {
+                $copyToTrash($trucks, $trashTruck);
+                $this->truckingModel->where('id_ws', $id)->delete();
+            }
+
+            // LARTAS
+            $lartas = $this->lartasModel->where('id_ws', $id)->findAll();
+            if (!empty($lartas)) {
+                $copyToTrash($lartas, $trashLartas);
+                $this->lartasModel->where('id_ws', $id)->delete();
+            }
+
+            // INFORMASI TAMBAHAN
+            $infos = $this->informasiTambahanModel->where('id_ws', $id)->findAll();
+            if (!empty($infos)) {
+                $copyToTrash($infos, $trashInfo);
+                $this->informasiTambahanModel->where('id_ws', $id)->delete();
+            }
+
+            // Hapus parent dari tabel utama
+            $this->importModel->delete($id);
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                log_message('error', 'Transaksi moveToTrash gagal untuk worksheet id=' . $id);
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Gagal memindahkan worksheet ke trash (transaksi gagal).'
+                ])->setStatusCode(500);
+            }
+
+            return $this->response->setJSON([
+                'status' => 'ok',
+                'message' => 'Worksheet import berhasil dihapus.'
+            ]);
+        } catch (\Throwable $e) {
+            $db->transComplete();
+            log_message('error', 'Worksheet Import delete error: ' . $e->getMessage());
+
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat menghapus worksheet.'
+            ])->setStatusCode(500);
+        }
+    }
+
+
 
     // ======================================================================================================================================
     // ======================================================================================================================================
@@ -1747,4 +1896,150 @@ class Worksheet extends BaseController
 
         return $dompdf->stream($filename, ["Attachment" => false]);
     }
+
+    // ============================================================
+    // HAPUS WORKSHEET EXPORT + PINDAHKAN SEMUA RELASI KE TRASH
+    // ============================================================
+    public function deleteExport($id)
+    {
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // EXPORT trash models
+            $trashMain      = new \App\Models\WorksheetExportTrash\WorkSheetExportTrashModel();
+            $trashContainer = new \App\Models\WorksheetExportTrash\WorksheetContainerExportTrashModel();
+            $trashDo        = new \App\Models\WorksheetExportTrash\WorksheetDoExportTrashModel();
+            $trashFasilitas = new \App\Models\WorksheetExportTrash\WorksheetFasilitasExportTrashModel();
+            $trashTruck     = new \App\Models\WorksheetExportTrash\WorksheetTruckingExportTrashModel();
+            $trashLartas    = new \App\Models\WorksheetExportTrash\WorksheetLartasExportTrashModel();
+            $trashInfo      = new \App\Models\WorksheetExportTrash\WorksheetInformasiTambahanExportTrashModel();
+
+            // Ambil worksheet export utama
+            $row = $this->exportModel->find($id);
+            if (!$row) {
+                $db->transComplete();
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Worksheet export tidak ditemukan.'
+                ])->setStatusCode(404);
+            }
+
+            // who deleted
+            $deletedBy = null;
+            if (function_exists('user') && user()) {
+                $deletedBy = user()->username ?? user()->email ?? null;
+            }
+            if (empty($deletedBy)) {
+                $session = session();
+                $deletedBy = $session->get('username') ?? $session->get('email') ?? 'system';
+            }
+
+            $now = date('Y-m-d H:i:s');
+
+            // Siapkan parent untuk trash
+            $parentCopy = $row;
+            $parentCopy['deleted_at'] = $now;
+            $parentCopy['deleted_by'] = $deletedBy;
+
+            // unset id supaya tidak bentrok PK dengan tabel trash (trash autonumber sendiri)
+            unset($parentCopy['id']);
+
+            // Insert ke trash parent
+            $newTrashId = $trashMain->insert($parentCopy);
+            if (!$newTrashId) {
+                // gagal insert ke trash
+                $db->transComplete();
+                log_message('error', 'Gagal insert worksheet export ke trash. original id=' . $id);
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Gagal memindahkan worksheet export ke trash.'
+                ])->setStatusCode(500);
+            }
+
+            // Helper untuk copy relasi
+            $copyToTrash = function ($dataList, $trashModel) use ($newTrashId, $deletedBy, $now) {
+                foreach ($dataList as $d) {
+                    if (isset($d['id'])) unset($d['id']);
+                    $d['id_ws'] = $newTrashId;
+                    $d['deleted_at'] = $now;
+                    $d['deleted_by'] = $deletedBy;
+                    $trashModel->insert($d);
+                }
+            };
+
+            // Ambil dan copy semua child -> ke trash child, kemudian delete dari main
+            // CONTAINER
+            $containers = $this->containerExportModel->where('id_ws', $id)->findAll();
+            if (!empty($containers)) {
+                $copyToTrash($containers, $trashContainer);
+                $this->containerExportModel->where('id_ws', $id)->delete();
+            }
+
+            // DO
+            $dos = $this->doExportModel->where('id_ws', $id)->findAll();
+            if (!empty($dos)) {
+                $copyToTrash($dos, $trashDo);
+                $this->doExportModel->where('id_ws', $id)->delete();
+            }
+
+            // FASILITAS
+            $fas = $this->fasilitasExportModel->where('id_ws', $id)->findAll();
+            if (!empty($fas)) {
+                $copyToTrash($fas, $trashFasilitas);
+                $this->fasilitasExportModel->where('id_ws', $id)->delete();
+            }
+
+            // TRUCKING
+            $trucks = $this->truckingExportModel->where('id_ws', $id)->findAll();
+            if (!empty($trucks)) {
+                $copyToTrash($trucks, $trashTruck);
+                $this->truckingExportModel->where('id_ws', $id)->delete();
+            }
+
+            // LARTAS
+            $lartas = $this->lartasExportModel->where('id_ws', $id)->findAll();
+            if (!empty($lartas)) {
+                $copyToTrash($lartas, $trashLartas);
+                $this->lartasExportModel->where('id_ws', $id)->delete();
+            }
+
+            // INFORMASI TAMBAHAN
+            $infos = $this->informasiTambahanExportModel->where('id_ws', $id)->findAll();
+            if (!empty($infos)) {
+                $copyToTrash($infos, $trashInfo);
+                $this->informasiTambahanExportModel->where('id_ws', $id)->delete();
+            }
+
+            // Hapus parent dari tabel utama
+            $this->exportModel->delete($id);
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                log_message('error', 'Transaksi moveToTrash gagal untuk worksheet export id=' . $id);
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Gagal memindahkan worksheet export ke trash (transaksi gagal).'
+                ])->setStatusCode(500);
+            }
+
+            return $this->response->setJSON([
+                'status' => 'ok',
+                'message' => 'Worksheet export berhasil dihapus.'
+            ]);
+
+        } catch (\Throwable $e) {
+            $db->transComplete();
+            log_message('error', 'Worksheet Export delete error: ' . $e->getMessage());
+
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat menghapus worksheet export.'
+            ])->setStatusCode(500);
+        }
+    }
+
+    
+
 }

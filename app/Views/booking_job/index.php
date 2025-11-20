@@ -71,10 +71,9 @@
                 <?php endif; ?>
             </div>
         </div>
-
-
+        <hr class="border-2 border-primary">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="mb-0">Jenis List Job</h6>
+            <h6 class="mb-0">Jenis Booking Job</h6>
         </div>
 
         <!-- ====================== FILTER JENIS JOB ====================== -->
@@ -132,8 +131,10 @@
 
         </div>
 
+        <br>
+        <br>
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="mb-0">Daftar Booking</h6>
+            <h6 class="mb-0">Daftar Booking Job</h6>
         </div>
 
 
@@ -700,11 +701,16 @@
                         if (row.status === 'worksheet') {
                             return `
                                 <div class="aksi-grid">
-                                    <button class="btn btn-sm btn-primary btn-note" data-id="${data}" title="Print Note">
+                                    <button class="btn btn-sm btn-primary btn-note" 
+                                        data-id="${data}" 
+                                        title="Print Note">
                                         <i class="bi bi-sticky"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-danger btn-delete" data-id="${data}" title="Delete Job">
+                                    <button class="btn btn-sm btn-danger btn-delete" 
+                                        data-id="${data}" 
+                                        data-no_job="${row.no_job}" 
+                                        title="Delete Job">
                                         <i class="bi bi-trash"></i>
                                     </button>
 
@@ -716,19 +722,28 @@
 
                         return `
                             <div class="aksi-grid">
-                                <button class="btn btn-sm btn-warning btn-edit" data-id="${data}" title="Edit Job">
+                                <button class="btn btn-sm btn-warning btn-edit" 
+                                    data-id="${data}" 
+                                    title="Edit Job">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
 
-                                <button class="btn btn-sm btn-danger btn-delete" data-id="${data}" title="Delete Job">
+                                <button class="btn btn-sm btn-danger btn-delete" 
+                                    data-id="${data}" 
+                                    data-no_job="${row.no_job}" 
+                                    title="Delete Job">
                                     <i class="bi bi-trash"></i>
                                 </button>
 
-                                <button class="btn btn-sm btn-primary btn-note" data-id="${data}" title="Print Note">
+                                <button class="btn btn-sm btn-primary btn-note" 
+                                    data-id="${data}" 
+                                    title="Print Note">
                                     <i class="bi bi-sticky"></i>
                                 </button>
 
-                                <button class="btn btn-sm btn-success btn-send" data-id="${data}" title="Kirim ke Worksheet">
+                                <button class="btn btn-sm btn-success btn-send" 
+                                    data-id="${data}" 
+                                    title="Kirim ke Worksheet">
                                     <i class="bi bi-send"></i>
                                 </button>
                             </div>
@@ -743,64 +758,65 @@
         });
 
         // ====================== DELETE DATA ======================
-        $('#tblBookings').on('click', '.btn-delete', function() {
-            const id = $(this).data('id');
+$('#tblBookings').on('click', '.btn-delete', function () {
+    const id = $(this).data('id');
+    const no_job = $(this).data('no_job');  // AMBIL NO JOB
 
-            Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Data yang sudah dihapus akan dipindahkan ke sampah!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: `Data Booking Job dengan nomor:'${no_job}' akan dihapus!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
 
-                    // tampilkan loading
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            title: 'Menghapus...',
+            text: 'Mohon tunggu sebentar',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        $.ajax({
+            url: `${BASE_URL}/booking-job/delete/${id}`,
+            type: 'POST',
+            dataType: 'json',
+            success: function (res) {
+                Swal.close();
+
+                if (res.status === 'ok') {
                     Swal.fire({
-                        title: 'Menghapus...',
-                        text: 'Mohon tunggu sebentar',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
+                        icon: 'success',
+                        title: 'Terhapus!',
+                        text: res.message,
+                        timer: 2000,
+                        showConfirmButton: false
                     });
 
-                    $.ajax({
-                        url: BASE_URL + '/booking-job/delete/' + id,
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function(res) {
-                            if (res.status === 'ok') {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Terhapus!',
-                                    text: res.message,
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                                tbl.ajax.reload();
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Gagal!',
-                                    text: res.message
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: xhr.responseText
-                            });
-                        }
+                    tbl.ajax.reload(null, false);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: res.message
                     });
                 }
-            });
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: xhr.responseText || 'Terjadi kesalahan pada server.'
+                });
+            }
         });
+    });
+});
 
         // ====================== TOMBOL JENIS-JENIS JOB ======================
         $('.filter-btn').on('click', function() {

@@ -75,6 +75,7 @@
             </div>
 
         </div>
+        <hr class="border-2 border-primary">
 
         <!-- ======== TITLE FILTER ======== -->
         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -98,6 +99,8 @@
 
         </div>
 
+        <br>
+        <br>
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h6 class="mb-0">Daftar Worksheet</h6>
         </div>
@@ -203,6 +206,7 @@
 <script>
     (function() {
         // ====================== CONFIG ======================
+        const BASE_URL = "<?= base_url() ?>";
         const LIST_URL = "<?= base_url('worksheet/list') ?>";
         let tbl;
 
@@ -299,8 +303,7 @@
 
                         <!-- Tombol Delete -->
                         <button class="btn btn-sm btn-danger btn-delete me-1" 
-                                data-id="${row.id}" 
-                                title="Delete Worksheet">
+                                data-id="${row.id}" data-no_ws="${row.no_ws}" title="Delete Worksheet">
                             <i class="bi bi-trash"></i>
                         </button>
 
@@ -385,9 +388,11 @@
                             <button class="btn btn-sm btn-warning btn-edit" data-id="${row.id}" title="Edit Worksheet">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}" title="Delete Worksheet">
+                            <button class="btn btn-sm btn-danger btn-delete me-1" 
+                                    data-id="${row.id}" data-no_ws="${row.no_ws}" title="Delete Worksheet">
                                 <i class="bi bi-trash"></i>
                             </button>
+
                             <!-- Tombol print -->
                             <button class="btn btn-sm btn-primary btn-print" data-id="${row.id}" title="Print Worksheet">
                                 <i class="bi bi-printer"></i>
@@ -414,7 +419,7 @@
                     dataSrc: 'data'
                 },
                 columns: type === 'import' ? columnsImport : columnsExport,
-                order: [[0, 'asc']]
+                order: [[0, 'DESC']]
             });
 
         }
@@ -480,6 +485,17 @@
             }, false); // false = jangan reset pagination
         });
 
+        // ====================== SAMPAH WORKSHEET ======================
+        $('#btnTrash').on('click', function() {
+            let trashUrl = currentType === 'export'
+                ? '<?= base_url('worksheet-export-trash') ?>'
+                : '<?= base_url('worksheet-import-trash') ?>';
+
+            // Redirect ke halaman trash
+            window.location.href = trashUrl;
+        });
+
+
         // ====================== EDIT WORKSHEET ======================
         $('#tblWorksheet').on('click', '.btn-edit', function() {
             const id = $(this).data('id');
@@ -523,6 +539,76 @@
                 }
             }
         });
+
+        // ====================== DELETE WORKSHEET ======================
+        $('#tblWorksheet').on('click', '.btn-delete', function () {
+            const id = $(this).data('id');
+            const no_ws = $(this).data('no_ws'); // jika tombol punya data-no_ws
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: `Data worksheet dengan nomor: '${no_ws}' akan dihapus!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+
+                if (!result.isConfirmed) return;
+
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                // pilih controller berdasarkan jenis (import/export)
+                const deleteUrl =
+                    currentType === 'import'
+                        ? `${BASE_URL}/worksheet/import/delete/${id}`
+                        : `${BASE_URL}/worksheet/export/delete/${id}`;
+
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (res) {
+                        Swal.close();
+
+                        if (res.status === 'ok') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: res.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+
+                            tbl.ajax.reload(null, false);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: res.message || 'Terjadi kesalahan.'
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: xhr.responseText || 'Terjadi kesalahan pada server.'
+                        });
+                    }
+                });
+            });
+        });
+
+
+
 
 
 

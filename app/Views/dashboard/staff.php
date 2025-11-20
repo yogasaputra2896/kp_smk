@@ -113,7 +113,7 @@
 <div class="category-title mb-3"><i class="bi bi-bar-chart-fill me-2"></i>Statistik Worksheet</div>
 <div class="row g-3">
     <!-- Total Worksheet -->
-    <div class="col-md-4 col-6">
+    <div class="col-md-3 col-6">
         <div class="card text-center stat-card p-3">
             <div class="icon mb-2">
                 <i class="bi bi-journal-text fs-2 text-primary"></i>
@@ -124,7 +124,7 @@
     </div>
 
     <!-- Worksheet Import -->
-    <div class="col-md-4 col-6">
+    <div class="col-md-3 col-6">
         <div class="card text-center stat-card p-3">
             <div class="icon mb-2">
                 <i class="bi bi-box-arrow-in-down-right fs-2 text-warning"></i>
@@ -135,7 +135,7 @@
     </div>
 
     <!-- Worksheet Export -->
-    <div class="col-md-4 col-6">
+    <div class="col-md-3 col-6">
         <div class="card text-center stat-card p-3">
             <div class="icon mb-2">
                 <i class="bi bi-box-arrow-up-left fs-2 text-success"></i>
@@ -144,6 +144,18 @@
             <div class="stat-value fw-bold"><?= $totalWorksheetExport ?></div>
         </div>
     </div>
+
+    <!-- Deleted Worksheet -->
+    <div class="col-md-3 col-6">
+        <div class="card text-center stat-card p-3">
+            <div class="icon mb-2">
+                <i class="bi bi-trash3-fill fs-2 text-danger"></i>
+            </div>
+            <div class="stat-title mb-1">Deleted Worksheet</div>
+            <div class="stat-value fw-bold"><?= $totalDeletedWorksheet ?></div>
+        </div>
+    </div>
 </div>
+
 
 <?= $this->endSection() ?>

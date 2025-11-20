@@ -72,13 +72,14 @@ $routes->group('worksheet', [
     $routes->get('list', 'Worksheet::list'); // ?type=import/export
     $routes->get('create', 'Worksheet::create');
     $routes->post('store', 'Worksheet::store');
-    $routes->post('delete/(:num)', 'Worksheet::delete/$1');
 
     // ======= Import Worksheet =======
     $routes->get('import/edit/(:num)', 'Worksheet::editImport/$1');
     $routes->post('import/update/(:num)', 'Worksheet::updateImport/$1');
     $routes->get('checkImport/(:num)', 'Worksheet::checkImport/$1');
     $routes->get('print-import/(:segment)', 'Worksheet::printImport/$1');
+    $routes->post('import/delete/(:num)', 'Worksheet::deleteImport/$1');
+
 
 
     // ======= Export Worksheet =======
@@ -86,10 +87,68 @@ $routes->group('worksheet', [
     $routes->post('export/update/(:num)', 'Worksheet::updateExport/$1');
     $routes->get('checkExport/(:num)', 'Worksheet::checkExport/$1');
     $routes->get('print-export/(:segment)', 'Worksheet::printExport/$1');
+    $routes->post('export/delete/(:num)', 'Worksheet::deleteExport/$1');
+
 
     // ======= Redirect Booking =======
     $routes->get('redirectToBooking', 'Worksheet::redirectToBooking');
 });
+
+/**
+ * ==============================
+ * ROUTES WORKSHEET IMPORT TRASH
+ * ==============================
+ */
+
+$routes->group('worksheet-import-trash', [
+    'namespace' => 'App\Controllers',
+    'filter'    => 'role:admin'
+], function ($routes) {
+
+    // Halaman index trash
+    $routes->get('/', 'WorksheetImportTrash::index');
+
+    // Load data list trash (AJAX)
+    $routes->get('list', 'WorksheetImportTrash::list');
+
+    // Restore data
+    // PARAM:
+    // 1 = nama tabel (worksheet_import, worksheet_container_import, dst)
+    // 2 = ID TRASH (id dari tabel trash)
+    $routes->post('restore/(:segment)/(:num)', 'WorksheetImportTrash::restore/$1/$2');
+
+    // Delete permanent
+    $routes->post('delete-permanent/(:segment)/(:num)', 'WorksheetImportTrash::deletePermanent/$1/$2');
+});
+
+/**
+ * ==============================
+ * ROUTES WORKSHEET EXPORT TRASH
+ * ==============================
+ */
+
+$routes->group('worksheet-export-trash', [
+    'namespace' => 'App\Controllers',
+    'filter'    => 'role:admin'
+], function ($routes) {
+
+    // Halaman index trash
+    $routes->get('/', 'WorksheetExportTrash::index');
+
+    // Load data list trash (AJAX)
+    $routes->get('list', 'WorksheetExportTrash::list');
+
+    // Restore data
+    // PARAM:
+    // 1 = nama tabel (worksheet_export, worksheet_container_export, dst)
+    // 2 = ID TRASH (id dari tabel trash)
+    $routes->post('restore/(:segment)/(:num)', 'WorksheetExportTrash::restore/$1/$2');
+
+    // Delete permanent
+    $routes->post('delete-permanent/(:segment)/(:num)', 'WorksheetExportTrash::deletePermanent/$1/$2');
+});
+
+
 
 
 /**
@@ -126,6 +185,10 @@ $routes->group('user-management', [
     $routes->post('restore/(:num)', 'UserManagement::restore/$1');
 });
 
+
+// ==========================================================================================================================================
+// ==========================================================================================================================================
+// ==========================================================================================================================================
 
 /**
  * ==========================
