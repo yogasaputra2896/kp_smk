@@ -33,4 +33,13 @@ class WorksheetContainerModel extends Model
     {
         return $this->where('id_ws', $id_ws)->delete();
     }
+    
+    public function getWithNoWs($ids)
+    {
+        return $this->select('worksheet_container_import.*, worksheet_import.no_ws')
+            ->join('worksheet_import', 'worksheet_import.id = worksheet_container_import.id_ws')
+            ->whereIn('worksheet_container_import.id_ws', $ids)
+            ->findAll();
+    }
+    
 }

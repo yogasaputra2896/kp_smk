@@ -27,4 +27,12 @@ class WorksheetTruckingModel extends Model
     {
         return $this->where('id_ws', $id_ws)->findAll();
     }
+
+    public function getWithNoWs($ids)
+    {
+        return $this->select('worksheet_trucking_import.*, worksheet_import.no_ws')
+            ->join('worksheet_import', 'worksheet_import.id = worksheet_trucking_import.id_ws')
+            ->whereIn('worksheet_trucking_import.id_ws', $ids)
+            ->findAll();
+    }
 }

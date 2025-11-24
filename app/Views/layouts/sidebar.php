@@ -23,7 +23,7 @@ $segment1 = $uri->getSegment(1);
         <div class="sidebar-menu">
             <ul class="menu">
 
-                <!-- Role Admin -->
+                <!-- ====================== ROLE ADMIN ====================== -->
                 <?php if (in_groups('admin')): ?>
                     <li class="sidebar-title">Menu Admin</li>
 
@@ -40,7 +40,6 @@ $segment1 = $uri->getSegment(1);
                             <span>Booking Job</span>
                         </a>
                     </li>
-
 
                     <li class="sidebar-item <?= ($segment1 == 'worksheet') ? 'active' : '' ?>">
                         <a href="<?= base_url('worksheet'); ?>" class="sidebar-link">
@@ -63,58 +62,83 @@ $segment1 = $uri->getSegment(1);
                         </a>
                     </li>
 
+                    <!-- ====================== MASTER DATA ====================== -->
                     <li class="sidebar-title">Database</li>
 
-                    <li class="sidebar-item">
-                        <a href="<?= base_url('master-data'); ?>" class="sidebar-link">
+                    <li class="sidebar-item has-sub 
+                        <?= ($segment1 == 'master-data') ? 'active' : '' ?>">
+                        <a href="#" class="sidebar-link">
                             <i class="bi bi-folder2-open"></i>
                             <span>Master Data</span>
                         </a>
+
+                        <ul class="submenu" <?= ($segment1 == 'master-data') ? 'style="display:block;"' : '' ?>>
+
+                            <li class="submenu-item <?= ($segment1 == 'consignee') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/consignee') ?>">Consignee</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'pelayaran') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/pelayaran') ?>">Pelayaran</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'port') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/port') ?>">Port</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'notify-party') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/notify-party') ?>">Notify Party</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'vessel') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/vessel') ?>">Vessel</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'lokasi-sandar') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/lokasi-sandar') ?>">Lokasi Sandar</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'kemasan') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/kemasan') ?>">Kemasan</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'lartas') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/lartas') ?>">Lartas</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'fasilitas') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/fasilitas') ?>">Fasilitas</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment1 == 'informasi-tambahan') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/informasi-tambahan') ?>">Informasi Tambahan</a>
+                            </li>
+
+                        </ul>
                     </li>
 
-                    <li class="sidebar-item has-sub <?= in_array($segment1, ['booking-job-trash', 'worksheet-import-trash', 'worksheet-export-trash']) ? 'active' : '' ?>">
+                    <!-- ====================== SAMPAH ====================== -->
+                    <li class="sidebar-item has-sub 
+                        <?= in_array($segment1, ['booking-job-trash','worksheet-import-trash','worksheet-export-trash']) ? 'active' : '' ?>">
                         <a href="#" class="sidebar-link">
                             <i class="bi bi-trash"></i>
                             <span>Sampah</span>
                         </a>
 
-                        <ul class="submenu" <?= in_array($segment1, ['booking-job-trash', 'worksheet-import-trash', 'worksheet-export-trash']) ? 'style="display:block;"' : '' ?>>
-                            <!-- Booking Job Trash -->
+                        <ul class="submenu" <?= in_array($segment1, ['booking-job-trash','worksheet-import-trash','worksheet-export-trash']) ? 'style="display:block;"' : '' ?>>
                             <li class="submenu-item <?= ($segment1 == 'booking-job-trash') ? 'active' : '' ?>">
-                                <a href="<?= base_url('booking-job-trash') ?>">
-                                    <i class="bi bi-calendar-check-fill me-1"></i>
-                                    Booking Job
-                                </a>
+                                <a href="<?= base_url('booking-job-trash') ?>">Booking Job</a>
                             </li>
-
-                            <!-- Worksheet Import Trash -->
                             <li class="submenu-item <?= ($segment1 == 'worksheet-import-trash') ? 'active' : '' ?>">
-                                <a href="<?= base_url('worksheet-import-trash') ?>">
-                                    <i class="bi bi-journal-text me-1"></i>
-                                    Worksheet Import
-                                </a>
+                                <a href="<?= base_url('worksheet-import-trash') ?>">Worksheet Import</a>
                             </li>
-
-                            <!-- Worksheet Export Trash -->
                             <li class="submenu-item <?= ($segment1 == 'worksheet-export-trash') ? 'active' : '' ?>">
-                                <a href="<?= base_url('worksheet-export-trash') ?>">
-                                    <i class="bi bi-journal-text me-1"></i>
-                                    Worksheet Export
-                                </a>
+                                <a href="<?= base_url('worksheet-export-trash') ?>">Worksheet Export</a>
                             </li>
                         </ul>
                     </li>
 
-
-
                     <li class="sidebar-title">Account</li>
-                    <li class="sidebar-item">
-                        <a href="<?= base_url('user-management'); ?>" class="sidebar-link">
-                            <i class="bi bi-people-fill"></i>
-                            <span>Management Akun</span>
-                        </a>
-                    </li>
-
                     <?php if (logged_in()): ?>
                         <li class="sidebar-item">
                             <a href="<?= base_url('logout'); ?>" class="sidebar-link">

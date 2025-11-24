@@ -48,14 +48,14 @@
                 <?php endif; ?>
 
                 <!-- Export Excel -->
-                <button id="btnExport" class="btn btn-success">
+                <button class="btn btn-success" id="btnExportWorksheet">
                     <i class="bi bi-file-earmark-spreadsheet me-2"></i>
                     <span class="d-none d-sm-inline">Export Excel</span>
                     <span class="d-inline d-sm-none">Xls</span>
                 </button>
 
                 <!-- Export PDF -->
-                <button id="btnExportPdf" class="btn btn-danger">
+                <button id="btnExportWorksheePdf" class="btn btn-danger">
                     <i class="bi bi-file-earmark-pdf me-2"></i>
                     <span class="d-none d-sm-inline">Export Pdf</span>
                     <span class="d-inline d-sm-none">Pdf</span>
@@ -116,6 +116,186 @@
 
     </div>
 </div>
+
+<!-- ====================== MODAL: EXPORT WORKSHEET (GABUNGAN) ====================== -->
+<div class="modal fade" id="modalExportExcel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Export Worksheet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formExportWorksheet">
+
+                    <!-- Pilih Jenis Worksheet -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Jenis Worksheet</label>
+                        <select id="wsType" class="form-select" required>
+                            <option value="">-- Pilih Jenis --</option>
+                            <option value="import">Worksheet Import</option>
+                            <option value="export">Worksheet Export</option>
+                        </select>
+                    </div>
+
+                    <!-- Periode -->
+                    <div class="row">
+                        <h6>Periode</h6>
+                        <hr>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Tahun</label>
+                            <select id="wsYear" class="form-select" required>
+                                <option value="">-- Pilih Tahun --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Bulan</label>
+                            <select id="wsMonth" class="form-select">
+                                <option value="">-- Semua Bulan --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    Batal
+                </button>
+
+                <button class="btn btn-success" id="btnExportCombined">
+                    Export Sekarang
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ====================== MODAL EXPORT EXCEL ====================== -->
+<div class="modal fade" id="modalExportExcel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Export Worksheet (PDF)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formExportWorksheet">
+
+                    <!-- PILIH JENIS WORKSHEET -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Jenis Worksheet</label>
+                        <select id="wsType" class="form-select" required>
+                            <option value="">-- Pilih Jenis --</option>
+                            <option value="import">Worksheet Import</option>
+                            <option value="export">Worksheet Export</option>
+                        </select>
+                    </div>
+
+                    <!-- PERIODE -->
+                    <h6>Periode</h6>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Tahun</label>
+                            <select id="wsYear" class="form-select" required>
+                                <option value="">-- Pilih Tahun --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Bulan</label>
+                            <select id="wsMonth" class="form-select">
+                                <option value="">-- Semua Bulan --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+
+                <button class="btn btn-danger" id="btnExportPDF">
+                    Export PDF
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ====================== MODAL EXPORT PDF ====================== -->
+<div class="modal fade" id="modalExportPDF" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Export Worksheet (PDF)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formExportWorksheetPDF">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Jenis Worksheet</label>
+                        <select id="wsTypePDF" class="form-select" required>
+                            <option value="">-- Pilih Jenis --</option>
+                            <option value="import">Worksheet Import</option>
+                            <option value="export">Worksheet Export</option>
+                        </select>
+                    </div>
+
+                    <h6>Periode</h6>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Tahun</label>
+                            <select id="wsYearPDF" class="form-select" required>
+                                <option value="">-- Pilih Tahun --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Bulan</label>
+                            <select id="wsMonthPDF" class="form-select">
+                                <option value="">-- Semua Bulan --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+
+                <button class="btn btn-danger" id="btnExportPDFNow">
+                    Export PDF
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
 <?= $this->endSection() ?>
 
 <!-- ====================== PAGE SCRIPTS & ASSETS ====================== -->
@@ -607,8 +787,158 @@
             });
         });
 
+         // ====================== OPEN MODAL ======================
+        document.getElementById('btnExportWorksheet').addEventListener('click', function () {
+            $('#modalExportExcel').modal('show');
 
+            // Default = Import
+            fetch('<?= base_url("worksheet-import/get-years") ?>')
+                .then(res => res.json())
+                .then(data => {
+                    const yearSelect = document.getElementById('wsYear');
+                    yearSelect.innerHTML = `<option value="">-- Pilih Tahun --</option>`;
+                    data.years.forEach(y => {
+                        yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                    });
+                });
+        });
 
+        // ====================== CHANGE TYPE → RELOAD YEARS ======================
+        document.getElementById('wsType').addEventListener('change', function () {
+            const type = this.value;
+
+            const yearsUrl = 
+                type === 'export'
+                ? '<?= base_url("worksheet-export/get-years") ?>'
+                : '<?= base_url("worksheet-import/get-years") ?>';
+
+            // Load tahun berdasarkan type
+            fetch(yearsUrl)
+                .then(res => res.json())
+                .then(data => {
+                    const yearSelect = document.getElementById('wsYear');
+                    yearSelect.innerHTML = `<option value="">-- Pilih Tahun --</option>`;
+                    data.years.forEach(y => {
+                        yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                    });
+                });
+
+            // Reset bulan
+            document.getElementById('wsMonth').innerHTML = `<option value="">-- Semua Bulan --</option>`;
+        });
+
+        // ====================== LOAD MONTHS ======================
+        document.getElementById('wsYear').addEventListener('change', function () {
+
+            const type = document.getElementById('wsType').value;
+            const year = this.value;
+
+            if (!type || !year) return;
+
+            const monthsUrl = 
+                type === 'export'
+                ? '<?= base_url("worksheet-export/get-months") ?>'
+                : '<?= base_url("worksheet-import/get-months") ?>';
+
+            fetch(`${monthsUrl}/${year}`)
+                .then(res => res.json())
+                .then(data => {
+                    const monthSelect = document.getElementById('wsMonth');
+                    monthSelect.innerHTML = `<option value="">-- Semua Bulan --</option>`;
+                    data.months.forEach(m => {
+                        monthSelect.innerHTML += `<option value="${m.month}">${m.name}</option>`;
+                    });
+                });
+        });
+
+        // ====================== EXPORT NOW ======================
+        document.getElementById('btnExportCombined').addEventListener('click', function () {
+
+            const type = document.getElementById('wsType').value;
+            const year = document.getElementById('wsYear').value;
+            const month = document.getElementById('wsMonth').value;
+
+            if (!type) {
+                alert('Silakan pilih jenis worksheet dahulu!');
+                return;
+            }
+
+            const exportUrl = 
+                type === 'export'
+                ? '<?= base_url("worksheet-export/export-excel") ?>'
+                : '<?= base_url("worksheet-import/export-excel") ?>';
+
+            // Redirect to download file
+            window.location.href = `${exportUrl}?year=${year}&month=${month}`;
+        });
+
+        // ====================== OPEN MODAL ======================
+        // OPEN MODAL PDF
+        document.getElementById('btnExportWorksheePdf').addEventListener('click', function () {
+            $('#modalExportPDF').modal('show');
+            loadYearsPDF("import");
+        });
+
+        // LOAD TAHUN PDF
+        function loadYearsPDF(type) {
+            const url = type === 'export'
+                ? '<?= base_url("worksheet-export/get-years") ?>'
+                : '<?= base_url("worksheet-import/get-years") ?>';
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const yearSelect = document.getElementById('wsYearPDF');
+                    yearSelect.innerHTML = `<option value="">-- Pilih Tahun --</option>`;
+                    data.years.forEach(y => {
+                        yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                    });
+                });
+
+            document.getElementById('wsMonthPDF').innerHTML = `<option value="">-- Semua Bulan --</option>`;
+        }
+
+        // CHANGE TYPE PDF
+        document.getElementById('wsTypePDF').addEventListener('change', function () {
+            loadYearsPDF(this.value);
+        });
+
+        // LOAD BULAN PDF
+        document.getElementById('wsYearPDF').addEventListener('change', function () {
+            const type = document.getElementById('wsTypePDF').value;
+            const year = this.value;
+            if (!type || !year) return;
+
+            const url = type === 'export'
+                ? '<?= base_url("worksheet-export/get-months") ?>'
+                : '<?= base_url("worksheet-import/get-months") ?>';
+
+            fetch(`${url}/${year}`)
+                .then(res => res.json())
+                .then(data => {
+                    const monthSelect = document.getElementById('wsMonthPDF');
+                    monthSelect.innerHTML = `<option value="">-- Semua Bulan --</option>`;
+                    data.months.forEach(m => {
+                        monthSelect.innerHTML += `<option value="${m.month}">${m.name}</option>`;
+                    });
+                });
+        });
+
+        // EXPORT PDF
+        document.getElementById('btnExportPDFNow').addEventListener('click', function () {
+            const type  = document.getElementById('wsTypePDF').value;
+            const year  = document.getElementById('wsYearPDF').value;
+            const month = document.getElementById('wsMonthPDF').value;
+
+            if (!type) return alert("Pilih jenis worksheet!");
+            if (!year) return alert("Pilih tahun!");
+
+            const url = type === 'export'
+                ? '<?= base_url("worksheet-export/export-pdf") ?>'
+                : '<?= base_url("worksheet-import/export-pdf") ?>';
+
+            window.location.href = `${url}?year=${year}&month=${month}`;
+        });
 
 
 
@@ -624,5 +954,6 @@
             timer: 2000
         });
     <?php endif; ?>
+
 </script>
 <?= $this->endSection() ?>

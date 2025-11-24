@@ -63,4 +63,11 @@ class WorksheetLartasModel extends Model
         }
         return false;
     }
+    public function getWithNoWs($ids)
+    {
+        return $this->select('worksheet_lartas_import.*, worksheet_import.no_ws')
+            ->join('worksheet_import', 'worksheet_import.id = worksheet_lartas_import.id_ws')
+            ->whereIn('worksheet_lartas_import.id_ws', $ids)
+            ->findAll();
+    }
 }

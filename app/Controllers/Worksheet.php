@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Services\WorksheetImportService;
+use App\Services\WorksheetExportService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -1107,6 +1109,137 @@ class Worksheet extends BaseController
         }
     }
 
+    // ============================
+    //  EXPORT WORKSHEET IMPORT EXCEL
+    // ============================
+    public function exportImportExcel()
+    {
+        $wsModel   = new WorkSheetImportModel();
+        $container = new WorksheetContainerModel();
+        $fasilitas = new WorksheetFasilitasModel();
+        $lartas    = new WorksheetLartasModel();
+        $do        = new WorksheetDoModel();
+        $trucking  = new WorksheetTruckingModel();
+        $info      = new WorksheetInformasiTambahanModel();
+
+        // FILTER
+        $year  = $this->request->getGet('year');
+        $month = $this->request->getGet('month');
+
+        // FILTER MASTER
+        $builder = $wsModel->builder();
+        if ($year)  $builder->where("YEAR(created_at)", $year, false);
+        if ($month) $builder->where("MONTH(created_at)", $month, false);
+
+        $master = $builder->get()->getResultArray();
+
+        // Ambil ID master
+        $masterIds = array_column($master, 'id');
+
+        // CHILD — semua data sudah punya no_ws via JOIN
+        $containers = $container->getWithNoWs($masterIds);
+        $fasilitas  = $fasilitas->getWithNoWs($masterIds);
+        $lartas     = $lartas->getWithNoWs($masterIds);
+        $do         = $do->getWithNoWs($masterIds);
+        $trucking   = $trucking->getWithNoWs($masterIds);
+        $tambahan   = $info->getWithNoWs($masterIds);
+
+        // Eksekusi export
+        $export = new WorksheetImportService();
+        return $export->exportExcel($master, $containers, $fasilitas, $lartas, $do, $trucking, $tambahan);
+    }
+
+
+    // ============================
+    //  EXPORT WORKSHEET IMPORT PDF
+    // ============================
+    public function exportImportPDF()
+    {
+        $wsModel   = new WorkSheetImportModel();
+        $container = new WorksheetContainerModel();
+        $fasilitas = new WorksheetFasilitasModel();
+        $lartas    = new WorksheetLartasModel();
+        $do        = new WorksheetDoModel();
+        $trucking  = new WorksheetTruckingModel();
+        $info      = new WorksheetInformasiTambahanModel();
+
+        // FILTER
+        $year  = $this->request->getGet('year');
+        $month = $this->request->getGet('month');
+
+        // FILTER MASTER
+        $builder = $wsModel->builder();
+        if ($year)  $builder->where("YEAR(created_at)", $year, false);
+        if ($month) $builder->where("MONTH(created_at)", $month, false);
+
+        $master = $builder->get()->getResultArray();
+        $masterIds = array_column($master, 'id');
+
+        // CHILD mapping no_ws sudah dari getWithNoWs
+        $containers = $container->getWithNoWs($masterIds);
+        $fasilitas  = $fasilitas->getWithNoWs($masterIds);
+        $lartas     = $lartas->getWithNoWs($masterIds);
+        $do         = $do->getWithNoWs($masterIds);
+        $trucking   = $trucking->getWithNoWs($masterIds);
+        $tambahan   = $info->getWithNoWs($masterIds);
+
+        // Eksekusi export PDF
+        $export = new WorksheetImportService();
+        return $export->exportPDF($master, $containers, $fasilitas, $lartas, $do, $trucking, $tambahan);
+    }
+
+
+
+
+    // ===============================================
+    //  DROPDOWN TAHUN — dipanggil dari fetch()
+    // ===============================================
+    public function getImportYears()
+    {
+        $db = \Config\Database::connect();
+        $rows = $db->query("
+            SELECT DISTINCT YEAR(created_at) AS year 
+            FROM worksheet_import 
+            WHERE created_at IS NOT NULL 
+            ORDER BY year DESC
+        ")->getResultArray();
+
+        return $this->response->setJSON([
+            'years' => array_column($rows, 'year')
+        ]);
+    }
+
+
+    // ===============================================
+    //  DROPDOWN BULAN — dipanggil dari fetch()
+    // ===============================================
+    public function getImportMonths($year)
+    {
+        $db = \Config\Database::connect();
+        $rows = $db->query("
+            SELECT DISTINCT MONTH(created_at) AS month 
+            FROM worksheet_import 
+            WHERE YEAR(created_at) = ? 
+            ORDER BY month ASC
+        ", [$year])->getResultArray();
+
+        $names = [
+            1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',
+            7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'
+        ];
+
+        $out = [];
+        foreach ($rows as $r) {
+            $m = (int)$r['month'];
+            if ($m >=1 && $m <=12) {
+                $out[] = ['month' => $m, 'name' => $names[$m]];
+            }
+        }
+
+        return $this->response->setJSON(['months' => $out]);
+    }
+
+
 
 
     // ======================================================================================================================================
@@ -1500,8 +1633,6 @@ class Worksheet extends BaseController
         session()->setFlashdata('success', 'Data worksheet export berhasil diperbarui.');
         return redirect()->to(base_url('worksheet') . '?type=export');
     }
-
-
 
     /**
      * ===========================================================
@@ -2039,6 +2170,135 @@ class Worksheet extends BaseController
             ])->setStatusCode(500);
         }
     }
+
+    // ==============================
+    //  EXPORT WORKSHEET EXPORT — EXCEL
+    // ==============================
+    public function exportExportExcel()
+    {
+        $wsModel   = new WorkSheetExportModel();
+        $container = new WorksheetContainerExportModel();
+        $fasilitas = new WorksheetFasilitasExportModel();
+        $lartas    = new WorksheetLartasExportModel();
+        $do        = new WorksheetDoExportModel();
+        $trucking  = new WorksheetTruckingExportModel();
+        $info      = new WorksheetInformasiTambahanExportModel();
+
+        // FILTER PARAMS
+        $year  = $this->request->getGet('year');
+        $month = $this->request->getGet('month');
+
+        // FILTER MASTER
+        $builder = $wsModel->builder();
+        if ($year)  $builder->where("YEAR(created_at)", $year, false);
+        if ($month) $builder->where("MONTH(created_at)", $month, false);
+
+        $master = $builder->get()->getResultArray();
+        $masterIds = array_column($master, 'id');
+
+        // CHILD (menggunakan JOIN getWithNoWs)
+        $containers = $container->getWithNoWs($masterIds);
+        $fasilitas  = $fasilitas->getWithNoWs($masterIds);
+        $lartas     = $lartas->getWithNoWs($masterIds);
+        $do         = $do->getWithNoWs($masterIds);
+        $trucking   = $trucking->getWithNoWs($masterIds);
+        $tambahan   = $info->getWithNoWs($masterIds);
+
+        // Eksekusi export Excel
+        $export = new WorksheetExportService();
+        return $export->exportExcel($master, $containers, $fasilitas, $lartas, $do, $trucking, $tambahan);
+    }
+
+
+
+    // ==============================
+    //  EXPORT WORKSHEET EXPORT — PDF
+    // ==============================
+    public function exportExportPDF()
+    {
+        $wsModel   = new WorkSheetExportModel();
+        $container = new WorksheetContainerExportModel();
+        $fasilitas = new WorksheetFasilitasExportModel();
+        $lartas    = new WorksheetLartasExportModel();
+        $do        = new WorksheetDoExportModel();
+        $trucking  = new WorksheetTruckingExportModel();
+        $info      = new WorksheetInformasiTambahanExportModel();
+
+        // FILTER PARAMS
+        $year  = $this->request->getGet('year');
+        $month = $this->request->getGet('month');
+
+        // FILTER MASTER
+        $builder = $wsModel->builder();
+        if ($year)  $builder->where("YEAR(created_at)", $year, false);
+        if ($month) $builder->where("MONTH(created_at)", $month, false);
+
+        $master = $builder->get()->getResultArray();
+        $masterIds = array_column($master, 'id');
+
+        // CHILD — sudah JOIN ke no_ws
+        $containers = $container->getWithNoWs($masterIds);
+        $fasilitas  = $fasilitas->getWithNoWs($masterIds);
+        $lartas     = $lartas->getWithNoWs($masterIds);
+        $do         = $do->getWithNoWs($masterIds);
+        $trucking   = $trucking->getWithNoWs($masterIds);
+        $tambahan   = $info->getWithNoWs($masterIds);
+
+        // Eksekusi export PDF
+        $export = new WorksheetExportService();
+        return $export->exportPDF($master, $containers, $fasilitas, $lartas, $do, $trucking, $tambahan);
+    }
+
+
+
+    // ==============================
+    //  GET YEARS (dropdown tahun)
+    // ==============================
+    public function getExportYears()
+    {
+        $db = \Config\Database::connect();
+        $rows = $db->query("
+            SELECT DISTINCT YEAR(created_at) AS year 
+            FROM worksheet_export 
+            WHERE created_at IS NOT NULL 
+            ORDER BY year DESC
+        ")->getResultArray();
+
+        return $this->response->setJSON([
+            'years' => array_column($rows, 'year')
+        ]);
+    }
+
+
+
+    // ==============================
+    //  GET MONTHS (dropdown bulan)
+    // ==============================
+    public function getExportMonths($year)
+    {
+        $db = \Config\Database::connect();
+        $rows = $db->query("
+            SELECT DISTINCT MONTH(created_at) AS month 
+            FROM worksheet_export 
+            WHERE YEAR(created_at) = ? 
+            ORDER BY month ASC
+        ", [$year])->getResultArray();
+
+        $names = [
+            1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',
+            7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'
+        ];
+
+        $out = [];
+        foreach ($rows as $r) {
+            $m = (int)$r['month'];
+            $out[] = ['month' => $m, 'name' => $names[$m]];
+        }
+
+        return $this->response->setJSON(['months' => $out]);
+    }
+
+
 
     
 

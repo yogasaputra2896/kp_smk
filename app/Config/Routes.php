@@ -80,8 +80,6 @@ $routes->group('worksheet', [
     $routes->get('print-import/(:segment)', 'Worksheet::printImport/$1');
     $routes->post('import/delete/(:num)', 'Worksheet::deleteImport/$1');
 
-
-
     // ======= Export Worksheet =======
     $routes->get('export/edit/(:num)', 'Worksheet::editExport/$1');
     $routes->post('export/update/(:num)', 'Worksheet::updateExport/$1');
@@ -93,6 +91,24 @@ $routes->group('worksheet', [
     // ======= Redirect Booking =======
     $routes->get('redirectToBooking', 'Worksheet::redirectToBooking');
 });
+
+// ==============================
+// WORKSHEET IMPORT EXPORT (API)
+// ==============================
+
+// IMPORT
+$routes->get('worksheet-import/get-years', 'Worksheet::getImportYears');
+$routes->get('worksheet-import/get-months/(:num)', 'Worksheet::getImportMonths/$1');
+$routes->get('worksheet-import/export-excel', 'Worksheet::exportImportExcel');
+$routes->get('worksheet-import/export-pdf', 'Worksheet::exportImportPDF');
+
+// EXPORT
+$routes->get('worksheet-export/get-years', 'Worksheet::getExportYears');
+$routes->get('worksheet-export/get-months/(:num)', 'Worksheet::getExportMonths/$1');
+$routes->get('worksheet-export/export-excel', 'Worksheet::exportExportExcel');
+$routes->get('worksheet-export/export-pdf', 'Worksheet::exportExportPDF');
+
+
 
 /**
  * ==============================
@@ -147,6 +163,20 @@ $routes->group('worksheet-export-trash', [
     // Delete permanent
     $routes->post('delete-permanent/(:segment)/(:num)', 'WorksheetExportTrash::deletePermanent/$1/$2');
 });
+
+
+
+$routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accounting'], function($routes) {
+
+    $routes->get('/',              'MasterConsignee::index');
+    $routes->get('list',           'MasterConsignee::list');
+    $routes->post('store',         'MasterConsignee::store');
+    $routes->get('edit/(:num)',    'MasterConsignee::edit/$1');
+    $routes->post('update/(:num)', 'MasterConsignee::update/$1');
+    $routes->post('delete/(:num)', 'MasterConsignee::delete/$1');
+
+});
+
 
 
 

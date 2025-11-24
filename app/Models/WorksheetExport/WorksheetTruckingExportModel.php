@@ -63,4 +63,12 @@ class WorksheetTruckingExportModel extends Model
         }
         return false;
     }
+
+    public function getWithNoWs($ids)
+    {
+        return $this->select('worksheet_trucking_export.*, worksheet_export.no_ws')
+            ->join('worksheet_export', 'worksheet_export.id = worksheet_trucking_export.id_ws')
+            ->whereIn('worksheet_trucking_export.id_ws', $ids)
+            ->findAll();
+    }
 }

@@ -34,4 +34,13 @@ class WorksheetFasilitasExportModel extends Model
     {
         return $this->where('id_ws', $id_ws)->delete();
     }
+
+    public function getWithNoWs($ids)
+    {
+        return $this->select('worksheet_fasilitas_export.*, worksheet_export.no_ws')
+            ->join('worksheet_export', 'worksheet_export.id = worksheet_fasilitas_export.id_ws')
+            ->whereIn('worksheet_fasilitas_export.id_ws', $ids)
+            ->findAll();
+    }
+    
 }

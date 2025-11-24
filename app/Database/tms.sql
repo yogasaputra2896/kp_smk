@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 20, 2025 at 01:37 PM
+-- Generation Time: Nov 24, 2025 at 12:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -281,7 +281,15 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (172, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-20 05:07:29', 1),
 (173, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-20 06:41:55', 1),
 (174, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-20 08:06:58', 1),
-(175, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-20 10:46:09', 1);
+(175, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-20 10:46:09', 1),
+(176, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 01:37:42', 1),
+(177, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 02:46:26', 1),
+(178, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 04:08:39', 1),
+(179, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 06:46:38', 1),
+(180, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 07:05:29', 1),
+(181, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 08:10:24', 1),
+(182, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 11:19:16', 1),
+(183, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 11:19:25', 1);
 
 -- --------------------------------------------------------
 
@@ -420,6 +428,163 @@ CREATE TABLE `booking_job_trash` (
 
 INSERT INTO `booking_job_trash` (`id`, `no_job`, `type`, `consignee`, `party`, `eta`, `pol`, `no_pib_po`, `shipping_line`, `bl`, `master_bl`, `created_at`, `updated_at`, `deleted_by`, `deleted_at`, `status`) VALUES
 (26, 'IM/25/100005', 'import_lcl', 'PT TESTER DATA', '5 PK', '2025-09-20', 'SHANGHAI', 'C25-000005', 'SITC LINE', 'SITC000002', 'MSITC000002', '2025-10-19 13:50:56', '2025-10-19 13:50:56', 'Admin', '2025-10-19 13:50:56', 'open job');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_consignee`
+--
+
+CREATE TABLE `master_consignee` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_consignee` varchar(200) NOT NULL,
+  `npwp_consignee` varchar(25) DEFAULT NULL,
+  `alamat_consignee` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_consignee`
+--
+
+INSERT INTO `master_consignee` (`id`, `kode`, `nama_consignee`, `npwp_consignee`, `alamat_consignee`, `created_at`, `updated_at`) VALUES
+(1, 'PDT', 'PT DATA TESTER', '1234567890123456', 'JALAN TEST DATA DULU', '2025-11-24 04:47:01', '2025-11-24 04:47:01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_fasilitas`
+--
+
+CREATE TABLE `master_fasilitas` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `tipe_fasilitas` varchar(100) NOT NULL,
+  `nama_fasilitas` varchar(200) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_informasi_tambahan`
+--
+
+CREATE TABLE `master_informasi_tambahan` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_pengurusan` varchar(200) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_kemasan`
+--
+
+CREATE TABLE `master_kemasan` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `jenis_kemasan` varchar(200) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_lartas`
+--
+
+CREATE TABLE `master_lartas` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_lartas` varchar(200) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_lokasi_sandar`
+--
+
+CREATE TABLE `master_lokasi_sandar` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_sandar` varchar(200) NOT NULL,
+  `alamat_sandar` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_notify_party`
+--
+
+CREATE TABLE `master_notify_party` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_notify` varchar(200) NOT NULL,
+  `npwp_notify` varchar(25) DEFAULT NULL,
+  `alamat_notify` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_pelayaran`
+--
+
+CREATE TABLE `master_pelayaran` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_pelayaran` varchar(200) NOT NULL,
+  `npwp_pelayaran` varchar(25) DEFAULT NULL,
+  `alamat_pelayaran` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_port`
+--
+
+CREATE TABLE `master_port` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_port` varchar(200) NOT NULL,
+  `negara_port` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `master_vessel`
+--
+
+CREATE TABLE `master_vessel` (
+  `id` bigint(20) NOT NULL,
+  `kode` varchar(20) NOT NULL,
+  `nama_vessel` varchar(200) NOT NULL,
+  `negara_vessel` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -946,7 +1111,7 @@ INSERT INTO `worksheet_import` (`id`, `no_ws`, `no_aju`, `pengurusan_pib`, `tgl_
 (19, 'IM/25/100002', '00000000686820251018000002', 'Pembuatan Draft PIB', '2025-11-11', '-', '-', '123457', '2025-11-11', '2025-11-11', 'SPJM', '2025-11-08', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '120E', 'PORT KELANG', 'JICT', 'KMTC LINE', 'ALUMINIUM ALLOY', '2 PK', 'FCL', '2', 'Package', 100.00, 100.00, 'KMTC000003', '2025-11-11', 'MKMTC000003', '2025-11-11', 'INV000003', '2025-11-11', '2025-09-29', 'Belum Ada', NULL, 'Pengambilan Delivery Order', 'CIF', 'PREPAID', 'Pengurusan Trucking', 'Tidak Ada Tambahan', 'Pembuatan Lartas', 'Tidak Ada Fasilitas', '', '2025-11-11 02:11:19', '2025-11-13 07:19:43', NULL, '0000-00-00 00:00:00', 'completed'),
 (20, 'IM/25/400001', '00000000686820251018000003', 'Pembuatan Draft PIB', '2025-11-13', '-', '-', '123458', '2025-11-13', '2025-11-13', 'SPPB', NULL, 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '150E', 'PORT KELANG', 'KOJA', 'MCC LINE', 'TEST NAMA BARANG', '3 X 20', 'FCL', '3000', 'Carton', 10000.00, 15000.00, 'MCC123456', '2025-11-13', 'MMCC123456', '2025-11-13', 'INV0000456', '2025-11-13', '2025-09-23', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'CIF', 'PREPAID', 'Pengurusan Trucking', 'Tidak Ada Tambahan', 'Pembuatan Lartas', 'Tidak Ada Fasilitas', '', '2025-11-11 02:11:37', '2025-11-13 07:20:19', NULL, '0000-00-00 00:00:00', 'completed'),
 (21, 'IM/25/600001', 'C25-000014', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'SHEKOU', NULL, 'SITC', NULL, '2 x 20', 'FCL', NULL, NULL, NULL, NULL, 'SITC123456', NULL, 'MSITC123456', NULL, NULL, NULL, '2025-09-23', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2025-11-11 02:11:50', '2025-11-11 09:47:20', NULL, '0000-00-00 00:00:00', 'not completed'),
-(22, 'IM/25/500001', 'BUAT ASURANSI ONLY', 'Draft PIB Sendiri', '2025-11-13', '', '', 'BUAT A', '2025-11-13', '2025-11-13', 'SPPB', NULL, 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '', 'WAN WAN', '150E', 'INCHEON', 'JICT', 'OOCL LINE', 'TEST NAMA BARANG', '2 BG', 'LCL', '2', 'Bag', 10.00, 10.00, 'OOLU000001', '2025-11-13', '', '0000-00-00', 'INV000001', '2025-11-13', '2025-10-04', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'Pembuatan Asuransi', 'PREPAID', 'Trucking Sendiri', 'Tidak Ada Tambahan', 'Lartas Sendiri', 'Tidak Ada Fasilitas', 'BUAT ASURANSI ONLY', '2025-11-11 02:12:16', '2025-11-13 07:20:42', NULL, '0000-00-00 00:00:00', 'completed'),
+(22, 'IM/25/500001', 'BUAT ASURANSI ONLY', 'Draft PIB Sendiri', '2025-11-13', '', '', '', '2025-11-13', '2025-11-13', 'SPPB', NULL, 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '', 'WAN WAN', '150E', 'INCHEON', 'JICT', 'OOCL LINE', 'TEST NAMA BARANG', '2 BG', 'LCL', '2', 'Bag', 10.00, 10.00, 'OOLU000001', '2025-11-13', '', '0000-00-00', 'INV000001', '2025-11-13', '2025-10-04', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'Pembuatan Asuransi', 'PREPAID', 'Trucking Sendiri', 'Tidak Ada Tambahan', 'Lartas Sendiri', 'Tidak Ada Fasilitas', 'BUAT ASURANSI ONLY', '2025-11-11 02:12:16', '2025-11-24 01:41:11', NULL, '0000-00-00 00:00:00', 'completed'),
 (27, 'IM/25/100001', '00000000686820251018000001', 'Pembuatan Draft PIB', '2025-10-18', 'POIF-25-0001', '-', '123456', '2025-10-18', '2025-11-11', 'SPPB', NULL, 'SHELL OIL CO LTD', 'PT TESTER DATA', 'PT TESTER DATA GRUB', 'ONE MADRID', '0001W', 'KUALA LUMPUR', 'NPCT', 'WAN HAI LINE', 'BAHAN BAKAR SHELL', '1 PK', 'LCL', '1', 'Package', 1000.00, 1000.00, 'WAN123456', '2025-11-11', 'MWAN123456', '2025-10-18', 'INV123456', '2025-10-18', '2025-09-30', 'Sudah Ada', '2025-11-13', 'Pengambilan Delivery Order', 'Pembuatan Asuransi', 'PREPAID', 'Pengurusan Trucking', 'Pengurusan Tambahan', 'Pembuatan Lartas', 'Fasilitas Sendiri', '', '2025-11-20 07:15:29', '2025-11-20 10:56:35', NULL, '0000-00-00 00:00:00', 'completed'),
 (28, 'IM/25/400002', '00000000686820251018000004', 'Pembuatan Draft PIB', '2025-11-14', '', '', '216598', '2025-11-14', '2025-11-14', 'SPJM', '2025-11-14', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '', 'MSC YOGA', '315E', 'PORT KELANG', 'NPCT', 'ONE LINE', 'TEST NAMA BARANG', '1 X 20', 'FCL', '50', 'Pallet', 4000.00, 5000.00, 'ONE000010', '2025-11-14', 'MONE000010', '2025-11-14', 'INV653297898', '2025-11-14', '2025-09-10', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'CIF', 'PREPAID', 'Trucking Sendiri', 'Tidak Ada Tambahan', 'Lartas Sendiri', 'Tidak Ada Fasilitas', '', '2025-11-20 07:15:37', '2025-11-20 07:15:37', NULL, '0000-00-00 00:00:00', 'completed');
 
@@ -1341,6 +1506,76 @@ ALTER TABLE `booking_job_trash`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `master_consignee`
+--
+ALTER TABLE `master_consignee`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_fasilitas`
+--
+ALTER TABLE `master_fasilitas`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_informasi_tambahan`
+--
+ALTER TABLE `master_informasi_tambahan`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_kemasan`
+--
+ALTER TABLE `master_kemasan`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_lartas`
+--
+ALTER TABLE `master_lartas`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_lokasi_sandar`
+--
+ALTER TABLE `master_lokasi_sandar`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_notify_party`
+--
+ALTER TABLE `master_notify_party`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_pelayaran`
+--
+ALTER TABLE `master_pelayaran`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_port`
+--
+ALTER TABLE `master_port`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
+-- Indexes for table `master_vessel`
+--
+ALTER TABLE `master_vessel`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kode` (`kode`);
+
+--
 -- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
@@ -1581,7 +1816,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -1612,6 +1847,66 @@ ALTER TABLE `booking_job`
 --
 ALTER TABLE `booking_job_trash`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT for table `master_consignee`
+--
+ALTER TABLE `master_consignee`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `master_fasilitas`
+--
+ALTER TABLE `master_fasilitas`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_informasi_tambahan`
+--
+ALTER TABLE `master_informasi_tambahan`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_kemasan`
+--
+ALTER TABLE `master_kemasan`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_lartas`
+--
+ALTER TABLE `master_lartas`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_lokasi_sandar`
+--
+ALTER TABLE `master_lokasi_sandar`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_notify_party`
+--
+ALTER TABLE `master_notify_party`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_pelayaran`
+--
+ALTER TABLE `master_pelayaran`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_port`
+--
+ALTER TABLE `master_port`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `master_vessel`
+--
+ALTER TABLE `master_vessel`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `migrations`

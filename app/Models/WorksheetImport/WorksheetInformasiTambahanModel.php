@@ -24,4 +24,11 @@ class WorksheetInformasiTambahanModel extends Model
     {
         return $this->where('id_ws', $id_ws)->findAll();
     }
+    public function getWithNoWs($ids)
+    {
+        return $this->select('worksheet_informasi_tambahan_import.*, worksheet_import.no_ws')
+            ->join('worksheet_import', 'worksheet_import.id = worksheet_informasi_tambahan_import.id_ws')
+            ->whereIn('worksheet_informasi_tambahan_import.id_ws', $ids)
+            ->findAll();
+    }
 }

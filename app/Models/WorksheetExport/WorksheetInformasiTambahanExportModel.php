@@ -32,4 +32,12 @@ class WorksheetInformasiTambahanExportModel extends Model
     {
         return $this->where('id_ws', $id_ws)->delete();
     }
+
+    public function getWithNoWs($ids)
+    {
+        return $this->select('worksheet_informasi_tambahan_export.*, worksheet_export.no_ws')
+            ->join('worksheet_export', 'worksheet_export.id = worksheet_informasi_tambahan_export.id_ws')
+            ->whereIn('worksheet_informasi_tambahan_export.id_ws', $ids)
+            ->findAll();
+    }
 }

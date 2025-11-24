@@ -10,8 +10,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 
 class BookingJob extends BaseController
 {
