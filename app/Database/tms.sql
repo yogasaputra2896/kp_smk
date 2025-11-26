@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2025 at 12:48 PM
+-- Generation Time: Nov 26, 2025 at 12:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -289,7 +289,14 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (180, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 07:05:29', 1),
 (181, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 08:10:24', 1),
 (182, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 11:19:16', 1),
-(183, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 11:19:25', 1);
+(183, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-24 11:19:25', 1),
+(184, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 03:34:37', 1),
+(185, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 04:08:31', 1),
+(186, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 04:49:34', 1),
+(187, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 07:14:36', 1),
+(188, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 07:21:59', 1),
+(189, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 08:45:08', 1),
+(190, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 10:55:15', 1);
 
 -- --------------------------------------------------------
 
@@ -436,10 +443,10 @@ INSERT INTO `booking_job_trash` (`id`, `no_job`, `type`, `consignee`, `party`, `
 --
 
 CREATE TABLE `master_consignee` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `nama_consignee` varchar(200) NOT NULL,
-  `npwp_consignee` varchar(25) DEFAULT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
+  `nama_consignee` varchar(50) NOT NULL,
+  `npwp_consignee` varchar(16) DEFAULT NULL,
   `alamat_consignee` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
@@ -450,7 +457,9 @@ CREATE TABLE `master_consignee` (
 --
 
 INSERT INTO `master_consignee` (`id`, `kode`, `nama_consignee`, `npwp_consignee`, `alamat_consignee`, `created_at`, `updated_at`) VALUES
-(1, 'PDT', 'PT DATA TESTER', '1234567890123456', 'JALAN TEST DATA DULU', '2025-11-24 04:47:01', '2025-11-24 04:47:01');
+(1, 'PDTR', 'PT DATA TESTER', '1234567890123456', 'JALAN TEST DATA DULU', '2025-11-24 04:47:01', '2025-11-26 02:40:02'),
+(2, 'PYMS', 'PT YOGA MAKMUR SEJAHTERA', '1111222233334444', 'JALANIN AJAH DULU', '2025-11-26 02:39:35', '2025-11-26 02:39:35'),
+(3, 'PBAS', 'PT BUDI ADUNG SENTOSA', '6543211234566541', 'JALAN BUDI ADUNG YANG PUNYA', '2025-11-26 04:06:33', '2025-11-26 04:06:33');
 
 -- --------------------------------------------------------
 
@@ -1816,7 +1825,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -1852,7 +1861,7 @@ ALTER TABLE `booking_job_trash`
 -- AUTO_INCREMENT for table `master_consignee`
 --
 ALTER TABLE `master_consignee`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `master_fasilitas`

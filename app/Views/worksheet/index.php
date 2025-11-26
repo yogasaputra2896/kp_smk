@@ -123,7 +123,7 @@
         <div class="modal-content border-0 shadow-lg">
 
             <div class="modal-header">
-                <h5 class="modal-title">Export Worksheet</h5>
+                <h5 class="modal-title">Export Worksheet (Excel)</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -165,11 +165,11 @@
 
             <div class="modal-footer d-flex justify-content-between">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">
-                    Batal
+                    <i class="bi bi-x-circle me-1"></i> Batal
                 </button>
 
                 <button class="btn btn-success" id="btnExportCombined">
-                    Export Sekarang
+                    <i class="bi bi-download me-1"></i> Export
                 </button>
             </div>
 
@@ -224,10 +224,10 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-between">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Batal</button>
                 <button class="btn btn-danger" id="btnExportPDF">
-                    Export PDF
+                    <i class="bi bi-download me-1"></i> Export
                 </button>
             </div>
 
@@ -281,10 +281,10 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-between">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Batal</button>
                 <button class="btn btn-danger" id="btnExportPDFNow">
-                    Export PDF
+                    <i class="bi bi-download me-1"></i> Export
                 </button>
             </div>
 

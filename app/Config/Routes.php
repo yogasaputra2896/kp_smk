@@ -147,29 +147,25 @@ $routes->group('worksheet-export-trash', [
     'namespace' => 'App\Controllers',
     'filter'    => 'role:admin'
 ], function ($routes) {
-
-    // Halaman index trash
     $routes->get('/', 'WorksheetExportTrash::index');
-
-    // Load data list trash (AJAX)
     $routes->get('list', 'WorksheetExportTrash::list');
-
-    // Restore data
-    // PARAM:
-    // 1 = nama tabel (worksheet_export, worksheet_container_export, dst)
-    // 2 = ID TRASH (id dari tabel trash)
     $routes->post('restore/(:segment)/(:num)', 'WorksheetExportTrash::restore/$1/$2');
-
-    // Delete permanent
     $routes->post('delete-permanent/(:segment)/(:num)', 'WorksheetExportTrash::deletePermanent/$1/$2');
 });
 
-
+/**
+ * ==============================
+ * ROUTES MASTERDATA
+ * ==============================
+ */
 
 $routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accounting'], function($routes) {
 
     $routes->get('/',              'MasterConsignee::index');
     $routes->get('list',           'MasterConsignee::list');
+    $routes->get('search/kode', 'MasterConsignee::searchKode');
+    $routes->get('search/nama', 'MasterConsignee::searchNama');
+    $routes->get('search/npwp',    'MasterConsignee::searchNpwp');
     $routes->post('store',         'MasterConsignee::store');
     $routes->get('edit/(:num)',    'MasterConsignee::edit/$1');
     $routes->post('update/(:num)', 'MasterConsignee::update/$1');

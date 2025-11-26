@@ -252,8 +252,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary">Simpan Booking</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-floppy me-1"></i> Simpan Booking</button>
             </div>
         </form>
     </div>
@@ -343,8 +343,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-warning">Update Booking</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
+                <button type="submit" class="btn btn-warning text-dark"><i class="bi bi-floppy2-fill me-1"></i> Update Booking</button>
             </div>
         </form>
     </div>
@@ -405,7 +405,7 @@
                     <i class="bi bi-x-circle me-1"></i> Batal
                 </button>
                 <button type="button" class="btn btn-success" id="btnConfirmExportExcel">
-                    <i class="bi bi-download me-1"></i> Export Sekarang
+                    <i class="bi bi-download me-1"></i> Export
                 </button>
             </div>
         </div>
@@ -467,7 +467,7 @@
                     <i class="bi bi-x-circle me-1"></i> Batal
                 </button>
                 <button type="button" class="btn btn-danger" id="btnConfirmExportPdf">
-                    <i class="bi bi-download me-1"></i> Export Sekarang
+                    <i class="bi bi-download me-1"></i> Export
                 </button>
             </div>
         </div>

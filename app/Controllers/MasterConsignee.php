@@ -2,27 +2,106 @@
 
 namespace App\Controllers;
 
+use App\Controllers\BaseController;
 use App\Models\Master\MasterConsigneeModel;
-use CodeIgniter\Controller;
 
-class MasterConsignee extends Controller
+class MasterConsignee extends BaseController
 {
+    // ===============================
+    // INDEX
+    // ===============================
     public function index()
     {
-        $model = new MasterConsigneeModel();
-        $data['consignees'] = $model->orderBy('id', 'DESC')->findAll();
-
-        return view('master/consignee/index', $data);
+        return view('master/consignee/index');
     }
 
+    // ===============================
+    // LIST DATA (AJAX)
+    // ===============================
     public function list()
     {
         $model = new MasterConsigneeModel();
 
         return $this->response->setJSON([
-            'data' => $model->orderBy('id', 'DESC')->findAll()
+            'data' => $model->orderBy('id', 'ASC')->findAll()
         ]);
     }
+
+    // ===============================
+    // SEARCH KODE (SELECT2)
+    // ===============================
+    public function searchKode()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterConsigneeModel();
+        $data  = $model->select('kode')
+                       ->like('kode', $q)
+                       ->limit(10)
+                       ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['kode'],
+                'text'   => $row['kode'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NAMA (SELECT2)
+    // ===============================
+    public function searchNama()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterConsigneeModel();
+        $data  = $model->select('nama_consignee')
+                       ->like('nama_consignee', $q)
+                       ->limit(10)
+                       ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['nama_consignee'],
+                'text'   => $row['nama_consignee'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    public function searchNpwp()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterConsigneeModel();
+
+        $data = $model->select('npwp_consignee')
+                    ->like('npwp_consignee', $q)
+                    ->limit(10)
+                    ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['npwp_consignee'],
+                'text'   => $row['npwp_consignee'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+}
 
 
     // ===============================
@@ -30,30 +109,22 @@ class MasterConsignee extends Controller
     // ===============================
     public function store()
     {
-        $validation = \Config\Services::validation();
-
         $rules = [
-            'kode'            => 'required|min_length[2]|max_length[20]|is_unique[master_consignee.kode]',
-            'nama_consignee'  => 'required|min_length[3]',
-            'npwp_consignee'  => 'permit_empty|min_length[5]',
-            'alamat_consignee'=> 'permit_empty|min_length[5]'
+            'kode'             => 'required|min_length[4]|max_length[6]|is_unique[master_consignee.kode]',
+            'nama_consignee'   => 'required|min_length[5]|max_length[50]',
+            'npwp_consignee'   => 'required|min_length[16]|max_length[16]',
+            'alamat_consignee' => 'required|min_length[10]|max_length[100]'
         ];
 
         if (!$this->validate($rules)) {
             return $this->response->setJSON([
                 'status' => 'error',
-                'errors' => $validation->getErrors()
+                'errors' => $this->validator->getErrors()
             ]);
         }
 
         $model = new MasterConsigneeModel();
-
-        $model->save([
-            'kode'             => $this->request->getPost('kode'),
-            'nama_consignee'   => $this->request->getPost('nama_consignee'),
-            'npwp_consignee'   => $this->request->getPost('npwp_consignee'),
-            'alamat_consignee' => $this->request->getPost('alamat_consignee'),
-        ]);
+        $model->save($this->request->getPost());
 
         return $this->response->setJSON([
             'status'  => 'success',
@@ -62,12 +133,12 @@ class MasterConsignee extends Controller
     }
 
     // ===============================
-    // GET DATA BY ID (EDIT)
+    // GET DATA (EDIT)
     // ===============================
     public function edit($id)
     {
         $model = new MasterConsigneeModel();
-        $data = $model->find($id);
+        $data  = $model->find($id);
 
         if (!$data) {
             return $this->response->setJSON([
@@ -97,26 +168,22 @@ class MasterConsignee extends Controller
             ]);
         }
 
+        // is_unique harus mengabaikan row yang sedang diedit
         $rules = [
-            'kode'            => "required|min_length[2]|max_length[20]|is_unique[master_consignee.kode,id,{$id}]",
-            'nama_consignee'  => 'required|min_length[3]',
-            'npwp_consignee'  => 'permit_empty|min_length[5]',
-            'alamat_consignee'=> 'permit_empty|min_length[5]'
+            'kode' => "required|min_length[4]|max_length[6]|is_unique[master_consignee.kode,id,{$id}]",
+            'nama_consignee'   => 'required|min_length[5]|max_length[50]',
+            'npwp_consignee'   => 'required|min_length[16]|max_length[16]',
+            'alamat_consignee' => 'required|min_length[10]|max_length[100]'
         ];
 
         if (!$this->validate($rules)) {
             return $this->response->setJSON([
                 'status' => 'error',
-                'errors' => \Config\Services::validation()->getErrors()
+                'errors' => $this->validator->getErrors()
             ]);
         }
 
-        $model->update($id, [
-            'kode'             => $this->request->getPost('kode'),
-            'nama_consignee'   => $this->request->getPost('nama_consignee'),
-            'npwp_consignee'   => $this->request->getPost('npwp_consignee'),
-            'alamat_consignee' => $this->request->getPost('alamat_consignee'),
-        ]);
+        $model->update($id, $this->request->getPost());
 
         return $this->response->setJSON([
             'status'  => 'success',

@@ -2,6 +2,7 @@
 // letakkan ini sebelum pemakaian $uri
 $uri = service('uri');
 $segment1 = $uri->getSegment(1);
+$segment2 = $uri->getSegment(2);
 ?>
 
 
@@ -74,43 +75,43 @@ $segment1 = $uri->getSegment(1);
 
                         <ul class="submenu" <?= ($segment1 == 'master-data') ? 'style="display:block;"' : '' ?>>
 
-                            <li class="submenu-item <?= ($segment1 == 'consignee') ? 'active' : '' ?>">
-                                <a href="<?= base_url('master-data/consignee') ?>">Consignee</a>
+                            <li class="submenu-item <?= ($segment2 == 'consignee') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/consignee') ?>"><i class="bi bi-person-vcard me-1"></i> Consignee</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'pelayaran') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'pelayaran') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/pelayaran') ?>">Pelayaran</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'port') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'port') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/port') ?>">Port</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'notify-party') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'notify-party') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/notify-party') ?>">Notify Party</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'vessel') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'vessel') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/vessel') ?>">Vessel</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'lokasi-sandar') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'lokasi-sandar') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/lokasi-sandar') ?>">Lokasi Sandar</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'kemasan') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'kemasan') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/kemasan') ?>">Kemasan</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'lartas') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'lartas') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/lartas') ?>">Lartas</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'fasilitas') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'fasilitas') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/fasilitas') ?>">Fasilitas</a>
                             </li>
 
-                            <li class="submenu-item <?= ($segment1 == 'informasi-tambahan') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'informasi-tambahan') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/informasi-tambahan') ?>">Informasi Tambahan</a>
                             </li>
 
@@ -126,13 +127,13 @@ $segment1 = $uri->getSegment(1);
                         </a>
 
                         <ul class="submenu" <?= in_array($segment1, ['booking-job-trash','worksheet-import-trash','worksheet-export-trash']) ? 'style="display:block;"' : '' ?>>
-                            <li class="submenu-item <?= ($segment1 == 'booking-job-trash') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'booking-job-trash') ? 'active' : '' ?>">
                                 <a href="<?= base_url('booking-job-trash') ?>">Booking Job</a>
                             </li>
-                            <li class="submenu-item <?= ($segment1 == 'worksheet-import-trash') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'worksheet-import-trash') ? 'active' : '' ?>">
                                 <a href="<?= base_url('worksheet-import-trash') ?>">Worksheet Import</a>
                             </li>
-                            <li class="submenu-item <?= ($segment1 == 'worksheet-export-trash') ? 'active' : '' ?>">
+                            <li class="submenu-item <?= ($segment2 == 'worksheet-export-trash') ? 'active' : '' ?>">
                                 <a href="<?= base_url('worksheet-export-trash') ?>">Worksheet Export</a>
                             </li>
                         </ul>
