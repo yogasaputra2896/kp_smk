@@ -12,10 +12,19 @@ class MasterPort extends Controller
     // ============================================================
     public function index()
     {
-        $model = new MasterPortModel();
-        $data['port'] = $model->orderBy('id', 'DESC')->findAll();
+        return view('master/port/index');
+    }
 
-        return view('master/port/index', $data);
+    // ===============================
+    // LIST DATA (AJAX)
+    // ===============================
+    public function list()
+    {
+        $model = new MasterPortModel();
+
+        return $this->response->setJSON([
+            'data' => $model->orderBy('id', 'ASC')->findAll()
+        ]);
     }
 
     // ============================================================
@@ -26,7 +35,7 @@ class MasterPort extends Controller
         $validation = \Config\Services::validation();
 
         $rules = [
-            'kode'         => 'required|min_length[2]|max_length[20]|is_unique[master_port.kode]',
+            'kode'         => 'required|min_length[4]|max_length[6]|is_unique[master_port.kode]',
             'nama_port'    => 'required|min_length[3]',
             'negara_port'  => 'required|min_length[3]'
         ];
@@ -73,6 +82,85 @@ class MasterPort extends Controller
         ]);
     }
 
+    // ===============================
+    // SEARCH KODE (SELECT2)
+    // ===============================
+    public function searchKode()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterPortModel();
+        $data  = $model->select('kode')
+                       ->like('kode', $q)
+                       ->limit(10)
+                       ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['kode'],
+                'text'   => $row['kode'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NAMA (SELECT2)
+    // ===============================
+    public function searchNama()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterPortModel();
+        $data  = $model->select('nama_port')
+                       ->like('nama_port', $q)
+                       ->limit(10)
+                       ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['nama_port'],
+                'text'   => $row['nama_port'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    public function searchNegara()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterPortModel();
+
+        $data = $model->distinct()
+                    ->select('negara_port')
+                    ->like('negara_port', $q)
+                    ->orderBy('negara_port', 'ASC')
+                    ->limit(16)
+                    ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['negara_port'],
+                'text' => $row['negara_port']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+
+
     // ============================================================
     // UPDATE DATA
     // ============================================================
@@ -89,7 +177,7 @@ class MasterPort extends Controller
         }
 
         $rules = [
-            'kode'         => "required|min_length[2]|max_length[20]|is_unique[master_port.kode,id,{$id}]",
+            'kode'         => "required|min_length[4]|max_length[6]|is_unique[master_port.kode,id,{$id}]",
             'nama_port'    => 'required|min_length[3]',
             'negara_port'  => 'required|min_length[3]',
         ];

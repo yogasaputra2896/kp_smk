@@ -94,7 +94,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Alamat</label>
-                        <textarea name="alamat_consignee" class="form-control" rows="3" required></textarea>
+                        <textarea name="alamat_consignee" class="form-control" rows="3" placeholder="Masukan Alamat Consignee" required></textarea>
                     </div>
 
 
@@ -127,19 +127,22 @@
 
                 <div class="row g-3">
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Kode</label>
-                        <input type="text" id="editKode" name="kode" class="form-control" required>
+                        <select name="kode" id="editKodeConsignee" class="form-control select2" required></select>
+                        <span id="editKodeWarning" class="text-danger mt-1" style="display:none;">Kode sudah terdaftar!</span>
                     </div>
 
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <label class="form-label">Nama Consignee</label>
-                        <input type="text" id="editNama" name="nama_consignee" class="form-control" required>
+                        <select name="nama_consignee" id="editNamaConsignee" class="form-control select2" required></select>
+                        <span id="editNamaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">NPWP</label>
-                        <input type="text" id="editNpwp" name="npwp_consignee" class="form-control" required>
+                        <select name="npwp_consignee" id="editNpwpConsignee" class="form-control select2" required></select>
+                        <span id="editNpwpWarning" class="text-danger mt-1" style="display:none;">NPWP sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
@@ -147,18 +150,23 @@
                         <textarea id="editAlamat" name="alamat_consignee" class="form-control" rows="3" required></textarea>
                     </div>
 
-
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                <button class="btn btn-warning">Update</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Batal
+                </button>
+                <button class="btn btn-warning">
+                    <i class="bi bi-pencil-square me-1"></i> Update
+                </button>
             </div>
 
         </form>
     </div>
 </div>
+
+
 
 <!-- ====================== INLINE CSS ====================== -->
 <style>
@@ -192,50 +200,118 @@
         transform: translateY(-4px);
     }
 
-    /* ===========================
-   CUSTOM SELECT2 MODERN STYLE
-   =========================== */
+   /* ===============================
+   SELECT2 - MODERN PREMIUM STYLE
+   =============================== */
+
     .select2-container .select2-selection--single {
-        height: 45px !important;
-        padding: 6px 12px;
-        border: 1px solid #ced4da !important;
-        border-radius: 8px !important;
+        height: 48px !important;
+        padding: 8px 14px;
+        border: 1px solid #d0d7de !important;
+        border-radius: 10px !important;
+        background: #ffffff;
         display: flex;
         align-items: center;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        transition: 0.2s ease-in-out;
     }
 
+    /* Perbaiki border input search Select2 agar tidak hitam */
+    .select2-container .select2-dropdown .select2-search__field {
+        border: 1px solid #435ebe !important; /* warna border */
+        outline: none !important;
+        box-shadow: none !important;
+        border-radius: 8px !important;
+        padding: 8px 10px !important;
+        color: #2d2d2d !important;
+    }
+
+    /* Saat fokus */
+    .select2-container .select2-dropdown .select2-search__field:focus {
+        border: 1px solid #2f49d1 !important;
+        box-shadow: 0 0 0 3px rgba(67, 94, 190, 0.25) !important;
+    }
+
+
+    /* Perbaiki border input search Select2 agar tidak hitam */
+    .select2-container .select2-dropdown .select2-search__field {
+        border: 1px solid #435ebe !important; /* warna border */
+        outline: none !important;
+        box-shadow: none !important;
+        border-radius: 8px !important;
+        padding: 8px 10px !important;
+        color: #2d2d2d !important;
+    }
+
+    /* Saat fokus */
+    .select2-container .select2-dropdown .select2-search__field:focus {
+        border: 1px solid #2f49d1 !important;
+        box-shadow: 0 0 0 3px rgba(67, 94, 190, 0.25) !important;
+    }
+
+
+    /* Focused */
+    .select2-container--open .select2-selection--single {
+        border-color: #435ebe !important;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+    /* Text di dalam Select */
     .select2-container--default .select2-selection--single .select2-selection__rendered {
         line-height: 32px !important;
-        font-size: 16px;
+        font-size: 15px;
+        color: #2d2d2d;
     }
 
+    /* Posisikan arrow Select2 di tengah */
     .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 100%;
-        top: 10px !important;
-        right: 10px !important;
+        top: 50% !important;
+        transform: translateY(-50%);
+        right: 12px !important;
+        height: auto !important;
     }
 
+
+    /* Dropdown */
     .select2-dropdown {
-        border-radius: 8px !important;
-        border: 1px solid #aaa !important;
+        border-radius: 10px !important;
+        border: 1px solid #435ebe !important;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+        padding-top: 5px;
     }
 
+    /* Item di dropdown */
     .select2-results__option {
-        padding: 10px;
+        padding: 10px 14px;
         font-size: 14px;
-        border-bottom: 1px solid #f3f3f3;
+        border-bottom: 1px solid #eef1f4;
     }
 
+    /* Hover item */
+    .select2-results__option--highlighted {
+        background-color: #e8f0fe !important;
+        color: #000 !important;
+    }
+
+    /* Input search di dropdown */
     .select2-search__field {
-        border-radius: 6px !important;
-        padding: 6px !important;
-        border: 1px solid #bbb !important;
+        border-radius: 8px !important;
+        border-color: #435ebe;
+        padding: 8px !important;
+        border: 1px solid #b8bec5 !important;
+        margin-bottom: 5px;
     }
 
-    /* Jarak antar form lebih rapi */
+    .select2-container .select2-selection__placeholder {
+        color: #607080 !important;   /* ubah warna sesuai kebutuhan */
+        
+    }
+
+    /* Label form lebih rapi */
     .form-label {
         font-weight: 600;
-        margin-bottom: 5px;
+        margin-bottom: 6px;
+        color: #3a3a3a;
     }
 
 </style>
@@ -277,10 +353,10 @@ $(function(){
                 data: 'id',
                 render: function(id){
                     return `
-                        <button class="btn btn-sm btn-warning btn-edit" data-id="${id}">
+                        <button class="btn btn-sm btn-warning btn-edit mb-2" data-id="${id}" title="Edit Consignee">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="${id}">
+                        <button class="btn btn-sm btn-danger btn-delete mb-2" data-id="${id}" title="Delete Consignee">
                             <i class="bi bi-trash"></i>
                         </button>
                     `;
@@ -318,105 +394,204 @@ $(function(){
         $('#modalAdd').modal('show');
     });
 
-    // ========
-    // SELECT2
-    // ========
-
+    /// ================================
+    //  INIT SELECT2 DALAM MODAL ADD
+    // ================================
     $('#modalAdd').on('shown.bs.modal', function () {
 
-        // ==============
-        // SELECT2: KODE
-        // ==============
-        $('#kodeConsignee').select2({
+    // ==========================
+    // FUNGSI CEK DATA EXISTS
+    // ==========================
+    function checkExisting(element, title) {
+        $(element).off("select2:select").on("select2:select", function (e) {
+            if (e.params.data.exists) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: title + ' sudah terdaftar!',
+                    text: 'Gunakan ' + title.toLowerCase() + ' lain.'
+                }).then(() => {
+                    $(this).val(null).trigger('change');
+                });
+            }
+        });
+    }
+
+    // ==========================
+    // FUNGSI SELECT2
+    // ==========================
+    function initSelect2(selector, url, placeholder) {
+        $(selector).select2({
             dropdownParent: $('#modalAdd'),
             theme: "default",
-            placeholder: "Masukan Kode Consignee",
+            placeholder: placeholder,
             allowClear: true,
             tags: true,
             width: "100%",
             ajax: {
-                url: BASE_URL + "master-data/consignee/search/kode",
+                url: BASE_URL + url,
                 dataType: 'json',
-                delay: 300,
+                delay: 0,
                 data: params => ({ term: params.term }),
-                processResults: data => ({ results: data })
+                processResults: data => ({ 
+                    results: data.map(item => ({
+                        id: item.id,
+                        text: item.text.toUpperCase(),   // <=== dropdown uppercase
+                        exists: item.exists
+                    })) 
+                })
             }
         });
 
-        $('#kodeConsignee').off("select2:select").on("select2:select", function(e){
-            if (e.params.data.exists) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Kode sudah ada!',
-                    text: 'Gunakan kode lain.',
-                }).then(() => {
-                    $(this).val(null).trigger('change');
+        // =============================
+        // BUAT SEMUA DROPDOWN UPPERCASE
+        // =============================
+        $(selector).on('select2:open', function () {
+            setTimeout(() => {
+                $('.select2-results__option').each(function () {
+                    $(this).text($(this).text().toUpperCase());
                 });
-            }
+            }, 10);
         });
+    }
+
+    // ============================================
+    // 1. SELECT2 KODE CONSIGNEE (AUTO UPPERCASE)
+    // ============================================
+    initSelect2(
+        '#kodeConsignee',
+        "master-data/consignee/search/kode",
+        "Masukan Kode Consignee"
+    );
+    checkExisting('#kodeConsignee', "Kode Consignee");
+
+    // Auto uppercase + minimal 4 huruf
+    $('#kodeConsignee').on('select2:select', function (e) {
+        let val = $(this).val();
+        if (!val) return;
+
+        val = val.toString().toUpperCase();
+        $(this).val(val).trigger('change.select2');
+
+        if (val.length < 4) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Minimal 4 Karakter!',
+                text: 'Kode Consignee harus terdiri dari minimal 4 karakter.'
+            }).then(() => {
+                $(this).val(null).trigger('change');
+            });
+        } else if (val.length > 6) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Maximal 6 Karakter!',
+                text: 'Kode Consignee harus terdiri dari maksimal 6 karakter.'
+            }).then(() => {
+                $(this).val(null).trigger('change');
+            });
+        }
+    });
+
+    // ==========================================
+    // REALTIME UPPERCASE UNTUK DROPDOWN SELECT2
+    // ==========================================
+    $(document).on('keyup', ".select2-search__field", function () {
+        // Uppercase untuk input search
+        $(this).val($(this).val().toUpperCase());
+
+        // Realtime ubah semua opsi dropdown
+        $('.select2-results__option').each(function () {
+            $(this).text($(this).text().toUpperCase());
+        });
+    });
+
+    // Saat dropdown muncul, apply juga langsung
+    $(document).on('select2:open', function () {
+        setTimeout(() => {
+            $('.select2-results__option').each(function () {
+                $(this).text($(this).text().toUpperCase());
+            });
+        }, 10);
+    });
 
 
-        // =========================
-        // SELECT2: NAMA CONSIGNEE
-        // =========================
-        $('#namaConsignee').select2({
-            dropdownParent: $('#modalAdd'),
-            theme: "default",
-            placeholder: "Masukan Nama Consignee",
-            allowClear: true,
-            tags: true,
-            width: "100%",
-            ajax: {
-                url: BASE_URL + "master-data/consignee/search/nama",
-                dataType: 'json',
-                delay: 300,
-                data: params => ({ term: params.term }),
-                processResults: data => ({ results: data })
-            }
-        });
 
-        $('#namaConsignee').off("select2:select").on("select2:select", function(e){
-            if (e.params.data.exists) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Nama Consignee sudah ada!',
-                    text: 'Gunakan nama lain.',
-                }).then(() => {
-                    $(this).val(null).trigger('change');
-                });
-            }
-        });
+    // ============================
+    // 2. SELECT2 NAMA CONSIGNEE
+    // ============================
+    initSelect2(
+        '#namaConsignee',
+        "master-data/consignee/search/nama",
+        "Masukan Nama Consignee"
+    );
+    checkExisting('#namaConsignee', "Nama Consignee");
 
-        // ========================
-        // SELECT2 NPWP CONSIGNEE
-        // ========================
-        $('#npwpConsignee').select2({
-            dropdownParent: $('#modalAdd'),
-            placeholder: "Masukan Npwp Consignee",
-            allowClear: true,
-            tags: true,
-            ajax: {
-                url: BASE_URL + "master-data/consignee/search/npwp",
-                dataType: 'json',
-                delay: 250,
-                data: params => ({ term: params.term }),
-                processResults: data => ({ results: data })
-            }
-        });
 
-        $('#npwpConsignee').on('select2:select', function(e){
-            if (e.params.data.exists) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'NPWP sudah terdaftar!',
-                    text: 'Gunakan NPWP lain.'
-                }).then(() => {
-                    $(this).val(null).trigger('change');
-                });
-            }
-        });
+    // ============================
+    // 3. SELECT2 NPWP CONSIGNEE
+    // ============================
+    initSelect2(
+        '#npwpConsignee',
+        "master-data/consignee/search/npwp",
+        "Masukan NPWP Consignee"
+    );
+    checkExisting('#npwpConsignee', "NPWP");
 
     });
+
+
+    // ======================
+    // SELECT2 EDIT MODAL
+    // ======================
+    $('#modalEdit').on('shown.bs.modal', function () {
+
+    // === KODE ===
+    $('#editKodeConsignee').select2({
+        dropdownParent: $('#modalEdit'),
+        placeholder: "Masukan Kode Consignee",
+        tags: true,
+        width: "100%",
+        ajax: {
+            url: BASE_URL + "master-data/consignee/search/kode",
+            dataType: 'json',
+            delay: 0,
+            data: params => ({ term: params.term }),
+            processResults: data => ({ results: data })
+        }
+    });
+
+    // === NAMA ===
+    $('#editNamaConsignee').select2({
+        dropdownParent: $('#modalEdit'),
+        placeholder: "Masukan Nama Consignee",
+        tags: true,
+        width: "100%",
+        ajax: {
+            url: BASE_URL + "master-data/consignee/search/nama",
+            dataType: 'json',
+            delay: 0,
+            data: params => ({ term: params.term }),
+            processResults: data => ({ results: data })
+        }
+    });
+
+    // === NPWP ===
+    $('#editNpwpConsignee').select2({
+        dropdownParent: $('#modalEdit'),
+        placeholder: "Masukan NPWP Consignee",
+        tags: true,
+        width: "100%",
+        ajax: {
+            url: BASE_URL + "master-data/consignee/search/npwp",
+            dataType: 'json',
+            delay: 0,
+            data: params => ({ term: params.term }),
+            processResults: data => ({ results: data })
+        }
+    });
+
+    });
+
+
 
     // ===================================
     // ADD DATA
@@ -466,21 +641,28 @@ $(function(){
                 const d = res.data;
 
                 $('#editId').val(d.id);
-                $('#editKode').val(d.kode);
-                $('#editNama').val(d.nama_consignee);
-                $('#editNpwp').val(d.npwp_consignee);
+
+                // SET VALUE SELECT2 (harus append data dulu)
+                let kodeOption = new Option(d.kode, d.kode, true, true);
+                $('#editKodeConsignee').append(kodeOption).trigger('change');
+
+                let namaOption = new Option(d.nama_consignee, d.nama_consignee, true, true);
+                $('#editNamaConsignee').append(namaOption).trigger('change');
+
+                let npwpOption = new Option(d.npwp_consignee, d.npwp_consignee, true, true);
+                $('#editNpwpConsignee').append(npwpOption).trigger('change');
+
                 $('#editAlamat').val(d.alamat_consignee);
 
-                $('#editErrors').addClass('d-none').html("");
-
                 $('#modalEdit').modal('show');
-            } 
+            }
             else {
                 Swal.fire('Error', res.message, 'error');
             }
 
         }, 'json');
     });
+
 
     // ===================================
     // UPDATE DATA

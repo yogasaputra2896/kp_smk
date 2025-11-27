@@ -174,6 +174,36 @@ $routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accountin
 });
 
 
+$routes->group('master-data/pelayaran', ['filter' => 'role:admin,staff,accounting'], function($routes) {
+
+    $routes->get('/',              'MasterPelayaran::index');
+    $routes->get('list',           'MasterPelayaran::list');
+    $routes->get('search/kode',    'MasterPelayaran::searchKode');
+    $routes->get('search/nama',    'MasterPelayaran::searchNama');
+    $routes->get('search/npwp',    'MasterPelayaran::searchNpwp');
+    $routes->post('store',         'MasterPelayaran::store');
+    $routes->get('edit/(:num)',    'MasterPelayaran::edit/$1');
+    $routes->post('update/(:num)', 'MasterPelayaran::update/$1');
+    $routes->post('delete/(:num)', 'MasterPelayaran::delete/$1');
+
+});
+
+
+$routes->group('master-data/port', ['filter' => 'role:admin,staff,accounting'], function($routes) {
+
+    $routes->get('/',              'MasterPort::index');
+    $routes->get('list',           'MasterPort::list');
+    $routes->get('search/kode',    'MasterPort::searchKode');
+    $routes->get('search/nama',    'MasterPort::searchNama');
+    $routes->get('search/negara',  'MasterPort::searchNegara');
+    $routes->post('store',         'MasterPort::store');
+    $routes->get('edit/(:num)',    'MasterPort::edit/$1');
+    $routes->post('update/(:num)', 'MasterPort::update/$1');
+    $routes->post('delete/(:num)', 'MasterPort::delete/$1');
+
+});
+
+
 
 
 

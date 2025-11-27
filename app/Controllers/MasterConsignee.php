@@ -101,7 +101,7 @@ class MasterConsignee extends BaseController
         }
 
         return $this->response->setJSON($results);
-}
+    }
 
 
     // ===============================
@@ -170,7 +170,7 @@ class MasterConsignee extends BaseController
 
         // is_unique harus mengabaikan row yang sedang diedit
         $rules = [
-            'kode' => "required|min_length[4]|max_length[6]|is_unique[master_consignee.kode,id,{$id}]",
+            'kode' => 'required|min_length[4]|max_length[6]|is_unique[master_consignee.kode,id,{$id}]',
             'nama_consignee'   => 'required|min_length[5]|max_length[50]',
             'npwp_consignee'   => 'required|min_length[16]|max_length[16]',
             'alamat_consignee' => 'required|min_length[10]|max_length[100]'

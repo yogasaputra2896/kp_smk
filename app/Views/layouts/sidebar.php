@@ -80,11 +80,11 @@ $segment2 = $uri->getSegment(2);
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'pelayaran') ? 'active' : '' ?>">
-                                <a href="<?= base_url('master-data/pelayaran') ?>">Pelayaran</a>
+                                <a href="<?= base_url('master-data/pelayaran') ?>"><i class="bi bi-building me-1"></i> Pelayaran</a>
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'port') ? 'active' : '' ?>">
-                                <a href="<?= base_url('master-data/port') ?>">Port</a>
+                                <a href="<?= base_url('master-data/port') ?>"><i class="bi bi-geo me-1"></i> Pelabuhan</a>
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'notify-party') ? 'active' : '' ?>">
