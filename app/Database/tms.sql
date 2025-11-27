@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 26, 2025 at 12:15 PM
+-- Generation Time: Nov 27, 2025 at 02:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -296,7 +296,13 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (187, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 07:14:36', 1),
 (188, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 07:21:59', 1),
 (189, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 08:45:08', 1),
-(190, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 10:55:15', 1);
+(190, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-26 10:55:15', 1),
+(191, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 03:11:50', 1),
+(192, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 04:56:13', 1),
+(193, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 07:20:42', 1),
+(194, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 08:09:02', 1),
+(195, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 10:08:14', 1),
+(196, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 11:36:38', 1);
 
 -- --------------------------------------------------------
 
@@ -457,9 +463,9 @@ CREATE TABLE `master_consignee` (
 --
 
 INSERT INTO `master_consignee` (`id`, `kode`, `nama_consignee`, `npwp_consignee`, `alamat_consignee`, `created_at`, `updated_at`) VALUES
-(1, 'PDTR', 'PT DATA TESTER', '1234567890123456', 'JALAN TEST DATA DULU', '2025-11-24 04:47:01', '2025-11-26 02:40:02'),
-(2, 'PYMS', 'PT YOGA MAKMUR SEJAHTERA', '1111222233334444', 'JALANIN AJAH DULU', '2025-11-26 02:39:35', '2025-11-26 02:39:35'),
-(3, 'PBAS', 'PT BUDI ADUNG SENTOSA', '6543211234566541', 'JALAN BUDI ADUNG YANG PUNYA', '2025-11-26 04:06:33', '2025-11-26 04:06:33');
+(1, 'PDTR', 'PT DATA TESTER', '1234567890123456', 'Jalan Test Dulu Bang', '2025-11-24 04:47:01', '2025-11-26 21:16:39'),
+(2, 'PYMS', 'PT YOGA MAKMUR SEJAHTERA', '1111222233334444', 'Jalan Semoga Beneran Punya', '2025-11-26 02:39:35', '2025-11-26 21:16:58'),
+(3, 'PBAS', 'PT BUDI ADUNG SENTOSA', '6543211234566541', 'Jalan Budi Agung Nih Bos', '2025-11-26 04:06:33', '2025-11-26 21:17:13');
 
 -- --------------------------------------------------------
 
@@ -556,14 +562,23 @@ CREATE TABLE `master_notify_party` (
 --
 
 CREATE TABLE `master_pelayaran` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `nama_pelayaran` varchar(200) NOT NULL,
-  `npwp_pelayaran` varchar(25) DEFAULT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
+  `nama_pelayaran` varchar(50) NOT NULL,
+  `npwp_pelayaran` varchar(16) DEFAULT NULL,
   `alamat_pelayaran` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_pelayaran`
+--
+
+INSERT INTO `master_pelayaran` (`id`, `kode`, `nama_pelayaran`, `npwp_pelayaran`, `alamat_pelayaran`, `created_at`, `updated_at`) VALUES
+(1, 'ONEI', 'PT OCEAN NETWORK EXPRESS INDONESIA', '9999888833332222', 'AIA Central Building, Jl. Jend. Sudirman No.Kav. 48A, RT.5/RW.4, Karet Semanggi, Setiabudi, South Jakarta City, Jakarta 12930', '2025-11-27 01:23:54', '2025-11-27 01:55:51'),
+(2, 'KMTC', 'PT SAMUDERA AGENCIES INDONESIA', '7777222211113333', 'Lippo Kuningan, 21st Floor, Jl. HR Rasuna Said No.Kav. B-12, RT.6/RW.7, Kuningan, Karet Kuningan, Kecamatan Setiabudi, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12940', '2025-11-27 01:50:06', '2025-11-27 01:50:06'),
+(3, 'MSCL', 'PT. PERUSAHAAN PELAYARAN NUSANTARA PANURJWAN', '2222444477775555', 'Capital Place Building, 39th Floor Jl. Jend. Gatot Subroto Kav. 18 ID - 12710 JAKARTA, JAVA', '2025-11-27 01:55:16', '2025-11-27 01:55:16');
 
 -- --------------------------------------------------------
 
@@ -572,13 +587,23 @@ CREATE TABLE `master_pelayaran` (
 --
 
 CREATE TABLE `master_port` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `nama_port` varchar(200) NOT NULL,
-  `negara_port` varchar(100) DEFAULT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
+  `nama_port` varchar(50) NOT NULL,
+  `negara_port` varchar(25) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_port`
+--
+
+INSERT INTO `master_port` (`id`, `kode`, `nama_port`, `negara_port`, `created_at`, `updated_at`) VALUES
+(1, 'IDJKT', 'TANJUNG PRIOK', 'INDONESIA', '2025-11-27 05:00:22', '2025-11-27 05:00:22'),
+(2, 'IDCGK', 'CENGKARENG / SOEKARNO', 'INDONESIA', '2025-11-27 05:07:01', '2025-11-27 05:07:01'),
+(3, 'IDSUB', 'TANJUNG PERAK', 'INDONESIA', '2025-11-27 05:10:43', '2025-11-27 05:10:43'),
+(4, 'CNXGG', 'XINGANG', 'CHINA', '2025-11-27 05:18:45', '2025-11-27 05:18:45');
 
 -- --------------------------------------------------------
 
@@ -1825,7 +1850,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -1903,13 +1928,13 @@ ALTER TABLE `master_notify_party`
 -- AUTO_INCREMENT for table `master_pelayaran`
 --
 ALTER TABLE `master_pelayaran`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `master_port`
 --
 ALTER TABLE `master_port`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `master_vessel`
