@@ -1,15 +1,15 @@
 <?= $this->extend('layouts/layout') ?>
 
-<?= $this->section('title') ?>Master Pelayaran<?= $this->endSection() ?>
+<?= $this->section('title') ?>Master Notify Party<?= $this->endSection() ?>
 
 <!-- ====================== HEADER ====================== -->
 <?= $this->section('pageTitle') ?>
 <div class="page-heading">
-    <h3 class="heading-title">Master Data Pelayaran</h3>
+    <h3 class="heading-title">Master Data Notify Party</h3>
 
     <p class="text-subtitle text-muted">
-        Master Data Pelayaran digunakan untuk menyimpan informasi perusahaan pelayaran.
-        Data pada modul ini akan digunakan otomatis di modul Bosuccessing Job dan Worksheet
+        Master Data Notify Party digunakan untuk menyimpan informasi Notify Party atau pihak ketiga.
+        Data pada modul ini akan digunakan otomatis di modul Booking Job dan Worksheet
         agar proses input lebih cepat, konsisten dan tidak terjadi kesalahan penulisan data.
     </p>
 </div>
@@ -25,7 +25,7 @@
             <div class="d-flex gap-2 flex-wrap">
                 <button id="btnAdd" class="btn btn-primary">
                     <i class="bi bi-plus-circle me-2"></i>
-                    Tambah Pelayaran
+                    Tambah Notify Party
                 </button>
             </div>
 
@@ -40,12 +40,12 @@
 
         <!-- TABLE -->
         <div class="table-responsive">
-            <table id="tblPelayaran" class="table table-striped table-bordered w-100">
+            <table id="tblNotify" class="table table-striped table-bordered w-100">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Kode</th>
-                        <th>Nama Pelayaran</th>
+                        <th>Nama Notify Party</th>
                         <th>NPWP</th>
                         <th>Alamat</th>
                         <th>Aksi</th>
@@ -64,7 +64,7 @@
         <form id="formAdd" class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Tambah Pelayaran</h5>
+                <h5 class="modal-title">Tambah Notify Party</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -76,25 +76,25 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Kode</label>
-                        <select name="kode" id="kodePelayaran" class="form-control select2" required></select>
+                        <select name="kode" id="kodeNotify" class="form-control select2" required></select>
                         <span id="kodeWarning" class="text-danger mt-1" style="display:none;">Kode sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Nama Pelayaran</label>
-                        <select name="nama_pelayaran" id="namaPelayaran" class="form-control select2" required></select>
+                        <label class="form-label">Nama Notify Party</label>
+                        <select name="nama_notify" id="namaNotify" class="form-control select2" required></select>
                         <span id="namaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">NPWP</label>
-                        <select name="npwp_pelayaran" id="npwpPelayaran" class="form-control select2" required></select>
-                        <span id="npwpWarning" class="text-danger mt-1" style="display:none;">NPWP sudah terdaftar!</span>
+                        <select name="npwp_notify" id="npwpNotify" class="form-control select2" required></select>
+                        <span id="namaWarning" class="text-danger mt-1" style="display:none;">Npwp sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Alamat</label>
-                        <textarea name="alamat_pelayaran" class="form-control" rows="3" placeholder="Masukan Alamat Pelayaran" required></textarea>
+                        <textarea name="alamat_notify" class="form-control" rows="3" placeholder="Masukan Alamat Notify Party" required></textarea>
                     </div>
 
                 </div>
@@ -115,7 +115,7 @@
         <form id="formEdit" class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Edit Pelayaran</h5>
+                <h5 class="modal-title">Edit Notify Party</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -128,42 +128,47 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Kode</label>
-                        <select name="kode" id="editKodePelayaran" class="form-control select2" required></select>
+                        <select name="kode" id="editkodeNotify" class="form-control select2" required></select>
                         <span id="editKodeWarning" class="text-danger mt-1" style="display:none;">Kode sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Nama Pelayaran</label>
-                        <select name="nama_pelayaran" id="editNamaPelayaran" class="form-control select2" required></select>
+                        <label class="form-label">Nama Consignee</label>
+                        <select name="nama_notify" id="editNamaNotify" class="form-control select2" required></select>
                         <span id="editNamaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">NPWP</label>
-                        <select name="npwp_pelayaran" id="editNpwpPelayaran" class="form-control select2" required></select>
+                        <select name="npwp_notify" id="editNpwpNotify" class="form-control select2" required></select>
                         <span id="editNpwpWarning" class="text-danger mt-1" style="display:none;">NPWP sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Alamat</label>
-                        <textarea id="editAlamat" name="alamat_pelayaran" class="form-control" rows="3" required></textarea>
+                        <textarea id="editAlamat" name="alamat_notify" class="form-control" rows="3" required></textarea>
                     </div>
 
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
-                <button class="btn btn-warning"><i class="bi bi-pencil-square me-1"></i> Update</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Batal
+                </button>
+                <button class="btn btn-warning">
+                    <i class="bi bi-pencil-square me-1"></i> Update
+                </button>
             </div>
 
         </form>
     </div>
 </div>
 
+
+
 <!-- ====================== INLINE CSS ====================== -->
 <style>
-    /* ====================== COPY STYLE DARI CONSIGNEE ====================== */
     .filter-btn {
         position: relative;
         overflow: hidden;
@@ -194,13 +199,10 @@
         transform: translateY(-4px);
     }
 
-    .form-label {
-        font-weight: 600;
-        margin-bottom: 6px;
-        color: #3a3a3a;
-    }
+    /* ===============================
+   SELECT2 - MODERN PREMIUM STYLE
+   =============================== */
 
-    /* SELECT2 MODERN STYLE */
     .select2-container .select2-selection--single {
         height: 48px !important;
         padding: 8px 14px;
@@ -213,8 +215,10 @@
         transition: 0.2s ease-in-out;
     }
 
+    /* Perbaiki border input search Select2 agar tidak hitam */
     .select2-container .select2-dropdown .select2-search__field {
         border: 1px solid #435ebe !important;
+        /* warna border */
         outline: none !important;
         box-shadow: none !important;
         border-radius: 8px !important;
@@ -222,19 +226,54 @@
         color: #2d2d2d !important;
     }
 
-    .select2-container .select2-selection__rendered {
+    /* Saat fokus */
+    .select2-container .select2-dropdown .select2-search__field:focus {
+        border: 1px solid #2f49d1 !important;
+        box-shadow: 0 0 0 3px rgba(67, 94, 190, 0.25) !important;
+    }
+
+
+    /* Perbaiki border input search Select2 agar tidak hitam */
+    .select2-container .select2-dropdown .select2-search__field {
+        border: 1px solid #435ebe !important;
+        /* warna border */
+        outline: none !important;
+        box-shadow: none !important;
+        border-radius: 8px !important;
+        padding: 8px 10px !important;
+        color: #2d2d2d !important;
+    }
+
+    /* Saat fokus */
+    .select2-container .select2-dropdown .select2-search__field:focus {
+        border: 1px solid #2f49d1 !important;
+        box-shadow: 0 0 0 3px rgba(67, 94, 190, 0.25) !important;
+    }
+
+
+    /* Focused */
+    .select2-container--open .select2-selection--single {
+        border-color: #435ebe !important;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+    /* Text di dalam Select */
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
         line-height: 32px !important;
         font-size: 15px;
         color: #2d2d2d;
     }
 
-    .select2-container .select2-selection__arrow {
+    /* Posisikan arrow Select2 di tengah */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
         top: 50% !important;
         transform: translateY(-50%);
         right: 12px !important;
         height: auto !important;
     }
 
+
+    /* Dropdown */
     .select2-dropdown {
         border-radius: 10px !important;
         border: 1px solid #435ebe !important;
@@ -242,17 +281,20 @@
         padding-top: 5px;
     }
 
+    /* Item di dropdown */
     .select2-results__option {
         padding: 10px 14px;
         font-size: 14px;
         border-bottom: 1px solid #eef1f4;
     }
 
+    /* Hover item */
     .select2-results__option--highlighted {
         background-color: #e8f0fe !important;
         color: #000 !important;
     }
 
+    /* Input search di dropdown */
     .select2-search__field {
         border-radius: 8px !important;
         border-color: #435ebe;
@@ -263,11 +305,15 @@
 
     .select2-container .select2-selection__placeholder {
         color: #607080 !important;
+        /* ubah warna sesuai kebutuhan */
+
     }
 
-    .select2-container--open .select2-selection--single {
-        border-color: #435ebe !important;
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    /* Label form lebih rapi */
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #3a3a3a;
     }
 </style>
 
@@ -293,9 +339,9 @@
         // ===================================
         // INIT DATATABLE
         // ===================================
-        let tbl = $('#tblPelayaran').DataTable({
+        let tbl = $('#tblNotify').DataTable({
             ajax: {
-                url: BASE_URL + "master-data/pelayaran/list",
+                url: BASE_URL + "master-data/notify-party/list",
                 dataSrc: 'data'
             },
             columns: [{
@@ -306,13 +352,13 @@
                     data: 'kode'
                 },
                 {
-                    data: 'nama_pelayaran'
+                    data: 'nama_notify'
                 },
                 {
-                    data: 'npwp_pelayaran'
+                    data: 'npwp_notify'
                 },
                 {
-                    data: 'alamat_pelayaran',
+                    data: 'alamat_notify',
                     render: function(data) {
                         if (!data) return "-";
                         return data.length > 25 ? data.substring(0, 25) + "..." : data;
@@ -322,13 +368,13 @@
                     data: 'id',
                     render: function(id) {
                         return `
-                    <button class="btn btn-sm btn-warning btn-edit mb-2" data-id="${id}" title="Edit Pelayaran">
-                        <i class="bi bi-pencil-square"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-delete mb-2" data-id="${id}" title="Delete Pelayaran">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                `;
+                        <button class="btn btn-sm btn-warning btn-edit mb-2" data-id="${id}" title="Edit Notify Party">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-delete mb-2" data-id="${id}" title="Delete Notify Party">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    `;
                     }
                 }
             ]
@@ -426,17 +472,17 @@
             }
 
             // ============================================
-            // 1. SELECT2 KODE PELAYARAN (AUTO UPPERCASE)
+            // 1. SELECT2 KODE CONSIGNEE (AUTO UPPERCASE)
             // ============================================
             initSelect2(
-                '#kodePelayaran',
-                "master-data/pelayaran/search/kode",
-                "Masukan Kode Pelayaran"
+                '#kodeNotify',
+                "master-data/notify-party/search/kode",
+                "Masukan Kode Notify Party"
             );
-            checkExisting('#kodePelayaran', "Kode Pelayaran");
+            checkExisting('#kodeNotify', "Kode Notify Party");
 
             // Auto uppercase + minimal 4 huruf
-            $('#kodePelayaran').on('select2:select', function(e) {
+            $('#kodeNotify').on('select2:select', function(e) {
                 let val = $(this).val();
                 if (!val) return;
 
@@ -447,7 +493,7 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Minimal 4 Karakter!',
-                        text: 'Kode Pelayaran harus terdiri dari minimal 4 karakter.'
+                        text: 'Kode Notify Party harus terdiri dari minimal 4 karakter.'
                     }).then(() => {
                         $(this).val(null).trigger('change');
                     });
@@ -455,14 +501,12 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Maximal 6 Karakter!',
-                        text: 'Kode Pelayaran harus terdiri dari maksimal 6 karakter.'
+                        text: 'Kode Notify Party harus terdiri dari maksimal 6 karakter.'
                     }).then(() => {
                         $(this).val(null).trigger('change');
                     });
                 }
             });
-
-
 
             // ==========================================
             // REALTIME UPPERCASE UNTUK DROPDOWN SELECT2
@@ -489,25 +533,25 @@
 
 
             // ============================
-            // 2. SELECT2 NAMA PELAYARAN
+            // 2. SELECT2 NAMA Notify Party
             // ============================
             initSelect2(
-                '#namaPelayaran',
-                "master-data/pelayaran/search/nama",
-                "Masukan Nama Pelayaran"
+                '#namaNotify',
+                "master-data/notify-party/search/nama",
+                "Masukan Nama Notify Party"
             );
-            checkExisting('#namaPelayaran', "Nama Pelayaran");
+            checkExisting('#namaNotify', "Nama Notify Party");
 
 
             // ============================
-            // 3. SELECT2 NPWP PELAYARAN
+            // 3. SELECT2 NPWP CONSIGNEE
             // ============================
             initSelect2(
-                '#npwpPelayaran',
-                "master-data/pelayaran/search/npwp",
-                "Masukan NPWP Pelayaran"
+                '#npwpNotify',
+                "master-data/notify-party/search/npwp",
+                "Masukan NPWP Notify Party"
             );
-            checkExisting('#npwpPelayaran', "NPWP");
+            checkExisting('#npwpNotify', "NPWP");
 
         });
 
@@ -518,13 +562,13 @@
         $('#modalEdit').on('shown.bs.modal', function() {
 
             // === KODE ===
-            $('#editKodePelayaran').select2({
+            $('#editkodeNotify').select2({
                 dropdownParent: $('#modalEdit'),
-                placeholder: "Masukan Kode Pelayaran",
+                placeholder: "Masukan Kode Notify Party",
                 tags: true,
                 width: "100%",
                 ajax: {
-                    url: BASE_URL + "master-data/pelayaran/search/kode",
+                    url: BASE_URL + "master-data/notify-party/search/kode",
                     dataType: 'json',
                     delay: 0,
                     data: params => ({
@@ -537,13 +581,13 @@
             });
 
             // === NAMA ===
-            $('#editNamaPelayaran').select2({
+            $('#editNamaNotify').select2({
                 dropdownParent: $('#modalEdit'),
-                placeholder: "Masukan Nama Pelayaran",
+                placeholder: "Masukan Nama Notify Party",
                 tags: true,
                 width: "100%",
                 ajax: {
-                    url: BASE_URL + "master-data/pelayaran/search/nama",
+                    url: BASE_URL + "master-data/notify-party/search/nama",
                     dataType: 'json',
                     delay: 0,
                     data: params => ({
@@ -556,13 +600,13 @@
             });
 
             // === NPWP ===
-            $('#editNpwpPelayaran').select2({
+            $('#editNpwpNotify').select2({
                 dropdownParent: $('#modalEdit'),
-                placeholder: "Masukan NPWP Pelayaran",
+                placeholder: "Masukan NPWP Notify Party",
                 tags: true,
                 width: "100%",
                 ajax: {
-                    url: BASE_URL + "master-data/pelayaran/search/npwp",
+                    url: BASE_URL + "master-data/notify-party/search/npwp",
                     dataType: 'json',
                     delay: 0,
                     data: params => ({
@@ -584,7 +628,7 @@
         $('#formAdd').submit(function(e) {
             e.preventDefault();
 
-            $.post(BASE_URL + "master-data/pelayaran/store", $(this).serialize(), function(res) {
+            $.post(BASE_URL + "master-data/notify-party/store", $(this).serialize(), function(res) {
 
                 if (res.status === 'success') {
                     Swal.fire({
@@ -617,10 +661,10 @@
         // ===================================
         // EDIT SHOW DATA
         // ===================================
-        $('#tblPelayaran').on('click', '.btn-edit', function() {
+        $('#tblNotify').on('click', '.btn-edit', function() {
             const id = $(this).data('id');
 
-            $.get(BASE_URL + "master-data/pelayaran/edit/" + id, function(res) {
+            $.get(BASE_URL + "master-data/notify-party/edit/" + id, function(res) {
 
                 if (res.status === 'success') {
                     const d = res.data;
@@ -629,15 +673,15 @@
 
                     // SET VALUE SELECT2 (harus append data dulu)
                     let kodeOption = new Option(d.kode, d.kode, true, true);
-                    $('#editKodePelayaran').append(kodeOption).trigger('change');
+                    $('#editkodeNotify').append(kodeOption).trigger('change');
 
-                    let namaOption = new Option(d.nama_pelayaran, d.nama_pelayaran, true, true);
-                    $('#editNamaPelayaran').append(namaOption).trigger('change');
+                    let namaOption = new Option(d.nama_notify, d.nama_notify, true, true);
+                    $('#editNamaNotify').append(namaOption).trigger('change');
 
-                    let npwpOption = new Option(d.npwp_pelayaran, d.npwp_pelayaran, true, true);
-                    $('#editNpwpPelayaran').append(npwpOption).trigger('change');
+                    let npwpOption = new Option(d.npwp_notify, d.npwp_notify, true, true);
+                    $('#editNpwpNotify').append(npwpOption).trigger('change');
 
-                    $('#editAlamat').val(d.alamat_pelayaran);
+                    $('#editAlamat').val(d.alamat_notify);
 
                     $('#modalEdit').modal('show');
                 } else {
@@ -656,7 +700,7 @@
 
             const id = $('#editId').val();
 
-            $.post(BASE_URL + "master-data/pelayaran/update/" + id, $(this).serialize(), function(res) {
+            $.post(BASE_URL + "master-data/notify-party/update/" + id, $(this).serialize(), function(res) {
 
                 if (res.status === 'success') {
                     Swal.fire('Berhasil!', res.message, 'success');
@@ -679,7 +723,7 @@
         // ===================================
         // DELETE DATA
         // ===================================
-        $('#tblPelayaran').on('click', '.btn-delete', function() {
+        $('#tblNotify').on('click', '.btn-delete', function() {
             const id = $(this).data('id');
 
             Swal.fire({
@@ -691,7 +735,7 @@
             }).then(result => {
                 if (result.isConfirmed) {
 
-                    $.post(BASE_URL + "master-data/pelayaran/delete/" + id, function(res) {
+                    $.post(BASE_URL + "master-data/notify-party/delete/" + id, function(res) {
 
                         if (res.status === 'success') {
                             Swal.fire('Terhapus!', res.message, 'success');
@@ -717,15 +761,19 @@
             $('#addErrors').html('').addClass('d-none');
 
             // Reset Select2
-            $('#kodePelayaran').val(null).trigger('change');
-            $('#kodePelayaran').empty();
+            $('#kodeNotify').val(null).trigger('change');
+            $('#kodeNotify').empty();
 
-            $('#namaPelayaran').val(null).trigger('change');
-            $('#namaPelayaran').empty();
+            $('#namaNotify').val(null).trigger('change');
+            $('#namaNotify').empty();
 
-            $('#npwpPelayaran').val(null).trigger('change');
-            $('#npwpPelayaran').empty();
+            $('#npwpNotify').val(null).trigger('change');
+            $('#npwpNotify').empty();
         });
+
+
+
+
 
     });
 
@@ -735,4 +783,6 @@
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
 </script>
+
+
 <?= $this->endSection() ?>

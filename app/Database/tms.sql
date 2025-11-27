@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 27, 2025 at 02:15 PM
+-- Host: localhost:3306
+-- Generation Time: Nov 27, 2025 at 05:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -302,7 +302,10 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (193, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 07:20:42', 1),
 (194, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 08:09:02', 1),
 (195, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 10:08:14', 1),
-(196, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 11:36:38', 1);
+(196, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 11:36:38', 1),
+(197, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 14:59:17', 1),
+(198, '::1', 'Exim1', NULL, '2025-11-27 16:00:55', 0),
+(199, '::1', 'exim3@trustwaytransindo.com', 2, '2025-11-27 16:00:58', 1);
 
 -- --------------------------------------------------------
 
@@ -546,14 +549,23 @@ CREATE TABLE `master_lokasi_sandar` (
 --
 
 CREATE TABLE `master_notify_party` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `nama_notify` varchar(200) NOT NULL,
-  `npwp_notify` varchar(25) DEFAULT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
+  `nama_notify` varchar(50) NOT NULL,
+  `npwp_notify` varchar(16) DEFAULT NULL,
   `alamat_notify` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_notify_party`
+--
+
+INSERT INTO `master_notify_party` (`id`, `kode`, `nama_notify`, `npwp_notify`, `alamat_notify`, `created_at`, `updated_at`) VALUES
+(1, 'PDTF', 'PT DATA TESTER FORWARDER', '1212131314141515', 'Komplek Rukan Mitra Bahari Jl.Pakin Raya no.1 Blok C3A-6, RT.2/RW.4, Penjaringan, Kecamatan Penjaringan, Jkt Utara, Daerah Khusus Ibukota Jakarta 14440', '2025-11-27 08:43:28', '2025-11-27 08:43:28'),
+(2, 'PYMF', 'PT YOGA MAKMUR FORWARDING', '2121313141415151', 'Jl. Enggano, Tj. Priok, Kec. Tj. Priok, Jkt Utara, Daerah Khusus Ibukota Jakarta 14310', '2025-11-27 08:50:02', '2025-11-27 08:50:02'),
+(3, 'PBDF', 'PT BUDI ADUNG FORWARDING', '9090808070706060', 'Komplek, SEDAYU SQUARE, Jl. Outer Ringroad Lkr. Luar No.L-16 1, RT.1/RW.12, Cengkareng Bar., Kecamatan Cengkareng, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11730', '2025-11-27 08:52:27', '2025-11-27 08:52:27');
 
 -- --------------------------------------------------------
 
@@ -1850,7 +1862,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -1922,7 +1934,7 @@ ALTER TABLE `master_lokasi_sandar`
 -- AUTO_INCREMENT for table `master_notify_party`
 --
 ALTER TABLE `master_notify_party`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `master_pelayaran`

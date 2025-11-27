@@ -2,51 +2,133 @@
 
 namespace App\Controllers;
 
+use App\Controllers\BaseController;
 use App\Models\Master\MasterNotifyPartyModel;
-use CodeIgniter\Controller;
 
-class MasterNotifyParty extends Controller
+class MasterNotifyParty extends BaseController
 {
-    // ============================================================
-    // INDEX — TAMPIL LIST
-    // ============================================================
+    // ===============================
+    // INDEX
+    // ===============================
     public function index()
     {
-        $model = new MasterNotifyPartyModel();
-        $data['notify'] = $model->orderBy('id', 'DESC')->findAll();
-
-        return view('master/notify_party/index', $data);
+        return view('master/notify_party/index');
     }
 
-    // ============================================================
-    // STORE — SIMPAN DATA BARU
-    // ============================================================
+    // ===============================
+    // LIST DATA (AJAX)
+    // ===============================
+    public function list()
+    {
+        $model = new MasterNotifyPartyModel();
+
+        return $this->response->setJSON([
+            'data' => $model->orderBy('id', 'ASC')->findAll()
+        ]);
+    }
+
+    // ===============================
+    // SEARCH KODE (SELECT2)
+    // ===============================
+    public function searchKode()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterNotifyPartyModel();
+        $data  = $model->distinct()
+            ->select('kode')
+            ->like('kode', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['kode'],
+                'text' => $row['kode'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NAMA (SELECT2)
+    // ===============================
+    public function searchNama()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterNotifyPartyModel();
+        $data  = $model->distinct()
+            ->select('nama_notify')
+            ->like('nama_notify', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['nama_notify'],
+                'text' => $row['nama_notify'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NPWP (SELECT2)
+    // ===============================
+    public function searchNpwp()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterNotifyPartyModel();
+        $data  = $model->distinct()
+            ->select('npwp_notify')
+            ->like('npwp_notify', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['npwp_notify'],
+                'text' => $row['npwp_notify'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // STORE DATA
+    // ===============================
     public function store()
     {
-        $validation = \Config\Services::validation();
-
         $rules = [
-            'kode'        => 'required|min_length[2]|max_length[20]|is_unique[master_notify_party.kode]',
-            'nama_notify' => 'required|min_length[3]',
-            'npwp_notify' => 'permit_empty|min_length[10]|max_length[30]',
-            'alamat_notify' => 'permit_empty|min_length[5]'
+            'kode'          => 'required|min_length[4]|max_length[6]|is_unique[master_notify_party.kode]',
+            'nama_notify'   => 'required|min_length[5]|max_length[50]',
+            'npwp_notify'   => 'required|min_length[16]|max_length[16]',
+            'alamat_notify' => 'required|min_length[10]'
         ];
 
         if (!$this->validate($rules)) {
             return $this->response->setJSON([
                 'status' => 'error',
-                'errors' => $validation->getErrors()
+                'errors' => $this->validator->getErrors()
             ]);
         }
 
         $model = new MasterNotifyPartyModel();
-
-        $model->save([
-            'kode'          => $this->request->getPost('kode'),
-            'nama_notify'   => $this->request->getPost('nama_notify'),
-            'npwp_notify'   => $this->request->getPost('npwp_notify'),
-            'alamat_notify' => $this->request->getPost('alamat_notify'),
-        ]);
+        $model->save($this->request->getPost());
 
         return $this->response->setJSON([
             'status'  => 'success',
@@ -54,9 +136,9 @@ class MasterNotifyParty extends Controller
         ]);
     }
 
-    // ============================================================
-    // EDIT — GET DATA
-    // ============================================================
+    // ===============================
+    // GET DATA (EDIT)
+    // ===============================
     public function edit($id)
     {
         $model = new MasterNotifyPartyModel();
@@ -75,41 +157,37 @@ class MasterNotifyParty extends Controller
         ]);
     }
 
-    // ============================================================
-    // UPDATE — EDIT DATA
-    // ============================================================
+    // ===============================
+    // UPDATE DATA
+    // ===============================
     public function update($id)
     {
-        $model    = new MasterNotifyPartyModel();
+        $model = new MasterNotifyPartyModel();
         $existing = $model->find($id);
 
         if (!$existing) {
             return $this->response->setJSON([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Data tidak ditemukan'
             ]);
         }
 
+        // VALIDASI — abaikan id yg sedang diupdate
         $rules = [
-            'kode'        => "required|min_length[2]|max_length[20]|is_unique[master_notify_party.kode,id,{$id}]",
-            'nama_notify' => 'required|min_length[3]',
-            'npwp_notify' => 'permit_empty|min_length[10]|max_length[30]',
-            'alamat_notify' => 'permit_empty|min_length[5]'
+            'kode'          => "required|min_length[4]|max_length[6]|is_unique[master_notify_party.kode,id,$id]",
+            'nama_notify'   => 'required|min_length[5]|max_length[50]',
+            'npwp_notify'   => 'required|min_length[16]|max_length[16]',
+            'alamat_notify' => 'required|min_length[10]'
         ];
 
         if (!$this->validate($rules)) {
             return $this->response->setJSON([
                 'status' => 'error',
-                'errors' => \Config\Services::validation()->getErrors()
+                'errors' => $this->validator->getErrors()
             ]);
         }
 
-        $model->update($id, [
-            'kode'          => $this->request->getPost('kode'),
-            'nama_notify'   => $this->request->getPost('nama_notify'),
-            'npwp_notify'   => $this->request->getPost('npwp_notify'),
-            'alamat_notify' => $this->request->getPost('alamat_notify'),
-        ]);
+        $model->update($id, $this->request->getPost());
 
         return $this->response->setJSON([
             'status'  => 'success',
@@ -117,9 +195,9 @@ class MasterNotifyParty extends Controller
         ]);
     }
 
-    // ============================================================
-    // DELETE — HAPUS DATA
-    // ============================================================
+    // ===============================
+    // DELETE DATA
+    // ===============================
     public function delete($id)
     {
         $model = new MasterNotifyPartyModel();

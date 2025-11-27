@@ -49,20 +49,6 @@ $segment2 = $uri->getSegment(2);
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
-                        <a href="<?= base_url('debit-note'); ?>" class="sidebar-link">
-                            <i class="bi bi-receipt-cutoff"></i>
-                            <span>Debit Note</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item">
-                        <a href="<?= base_url('e-arsip'); ?>" class="sidebar-link">
-                            <i class="bi bi-archive-fill"></i>
-                            <span>E-Arsip</span>
-                        </a>
-                    </li>
-
                     <!-- ====================== MASTER DATA ====================== -->
                     <li class="sidebar-title">Database</li>
 
@@ -88,7 +74,7 @@ $segment2 = $uri->getSegment(2);
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'notify-party') ? 'active' : '' ?>">
-                                <a href="<?= base_url('master-data/notify-party') ?>">Notify Party</a>
+                                <a href="<?= base_url('master-data/notify-party') ?>"><i class="bi bi-people me-1"></i> Notify Party</a>
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'vessel') ? 'active' : '' ?>">
@@ -118,15 +104,15 @@ $segment2 = $uri->getSegment(2);
                         </ul>
                     </li>
 
-                    <!-- ====================== SAMPAH ====================== -->
+                    <!-- ====================== Recycle Bin ====================== -->
                     <li class="sidebar-item has-sub 
-                        <?= in_array($segment1, ['booking-job-trash','worksheet-import-trash','worksheet-export-trash']) ? 'active' : '' ?>">
+                        <?= in_array($segment1, ['booking-job-trash', 'worksheet-import-trash', 'worksheet-export-trash']) ? 'active' : '' ?>">
                         <a href="#" class="sidebar-link">
                             <i class="bi bi-trash"></i>
-                            <span>Sampah</span>
+                            <span>Recycle Bin</span>
                         </a>
 
-                        <ul class="submenu" <?= in_array($segment1, ['booking-job-trash','worksheet-import-trash','worksheet-export-trash']) ? 'style="display:block;"' : '' ?>>
+                        <ul class="submenu" <?= in_array($segment1, ['booking-job-trash', 'worksheet-import-trash', 'worksheet-export-trash']) ? 'style="display:block;"' : '' ?>>
                             <li class="submenu-item <?= ($segment2 == 'booking-job-trash') ? 'active' : '' ?>">
                                 <a href="<?= base_url('booking-job-trash') ?>">Booking Job</a>
                             </li>
@@ -176,12 +162,6 @@ $segment2 = $uri->getSegment(2);
                         </a>
                     </li>
 
-                    <li class="sidebar-item <?= ($segment1 == 'e-arsip') ? 'active' : '' ?>">
-                        <a href="<?= base_url('e-arsip'); ?>" class="sidebar-link">
-                            <i class="bi bi-archive-fill"></i>
-                            <span>E-Arsip</span>
-                        </a>
-                    </li>
 
                     <li class="sidebar-item <?= ($segment1 == 'master-data') ? 'active' : '' ?>">
                         <a href="<?= base_url('master-data'); ?>" class="sidebar-link">
@@ -217,20 +197,6 @@ $segment2 = $uri->getSegment(2);
                         <a href="<?= base_url('worksheet'); ?>" class="sidebar-link">
                             <i class="bi bi-journal-text"></i>
                             <span>Worksheet</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item <?= ($segment1 == 'debit-note') ? 'active' : '' ?>">
-                        <a href="<?= base_url('debit-note'); ?>" class="sidebar-link">
-                            <i class="bi bi-receipt-cutoff"></i>
-                            <span>Debit Note</span>
-                        </a>
-                    </li>
-
-                    <li class="sidebar-item <?= ($segment1 == 'e-arsip') ? 'active' : '' ?>">
-                        <a href="<?= base_url('e-arsip'); ?>" class="sidebar-link">
-                            <i class="bi bi-archive-fill"></i>
-                            <span>E-Arsip</span>
                         </a>
                     </li>
 

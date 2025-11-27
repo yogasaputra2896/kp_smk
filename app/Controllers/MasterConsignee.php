@@ -36,9 +36,9 @@ class MasterConsignee extends BaseController
 
         $model = new MasterConsigneeModel();
         $data  = $model->select('kode')
-                       ->like('kode', $q)
-                       ->limit(10)
-                       ->findAll();
+            ->like('kode', $q)
+            ->limit(10)
+            ->findAll();
 
         $results = [];
 
@@ -62,9 +62,9 @@ class MasterConsignee extends BaseController
 
         $model = new MasterConsigneeModel();
         $data  = $model->select('nama_consignee')
-                       ->like('nama_consignee', $q)
-                       ->limit(10)
-                       ->findAll();
+            ->like('nama_consignee', $q)
+            ->limit(10)
+            ->findAll();
 
         $results = [];
 
@@ -86,9 +86,9 @@ class MasterConsignee extends BaseController
         $model = new MasterConsigneeModel();
 
         $data = $model->select('npwp_consignee')
-                    ->like('npwp_consignee', $q)
-                    ->limit(10)
-                    ->findAll();
+            ->like('npwp_consignee', $q)
+            ->limit(10)
+            ->findAll();
 
         $results = [];
 
@@ -113,7 +113,7 @@ class MasterConsignee extends BaseController
             'kode'             => 'required|min_length[4]|max_length[6]|is_unique[master_consignee.kode]',
             'nama_consignee'   => 'required|min_length[5]|max_length[50]',
             'npwp_consignee'   => 'required|min_length[16]|max_length[16]',
-            'alamat_consignee' => 'required|min_length[10]|max_length[100]'
+            'alamat_consignee' => 'required|min_length[10]'
         ];
 
         if (!$this->validate($rules)) {
@@ -173,7 +173,7 @@ class MasterConsignee extends BaseController
             'kode' => 'required|min_length[4]|max_length[6]|is_unique[master_consignee.kode,id,{$id}]',
             'nama_consignee'   => 'required|min_length[5]|max_length[50]',
             'npwp_consignee'   => 'required|min_length[16]|max_length[16]',
-            'alamat_consignee' => 'required|min_length[10]|max_length[100]'
+            'alamat_consignee' => 'required|min_length[10]'
         ];
 
         if (!$this->validate($rules)) {

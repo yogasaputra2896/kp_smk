@@ -159,7 +159,8 @@ $routes->group('worksheet-export-trash', [
  * ==============================
  */
 
-$routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accounting'], function($routes) {
+//Consignee
+$routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
 
     $routes->get('/',              'MasterConsignee::index');
     $routes->get('list',           'MasterConsignee::list');
@@ -170,11 +171,10 @@ $routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accountin
     $routes->get('edit/(:num)',    'MasterConsignee::edit/$1');
     $routes->post('update/(:num)', 'MasterConsignee::update/$1');
     $routes->post('delete/(:num)', 'MasterConsignee::delete/$1');
-
 });
 
-
-$routes->group('master-data/pelayaran', ['filter' => 'role:admin,staff,accounting'], function($routes) {
+//Pelayaran
+$routes->group('master-data/pelayaran', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
 
     $routes->get('/',              'MasterPelayaran::index');
     $routes->get('list',           'MasterPelayaran::list');
@@ -185,11 +185,10 @@ $routes->group('master-data/pelayaran', ['filter' => 'role:admin,staff,accountin
     $routes->get('edit/(:num)',    'MasterPelayaran::edit/$1');
     $routes->post('update/(:num)', 'MasterPelayaran::update/$1');
     $routes->post('delete/(:num)', 'MasterPelayaran::delete/$1');
-
 });
 
-
-$routes->group('master-data/port', ['filter' => 'role:admin,staff,accounting'], function($routes) {
+//Port
+$routes->group('master-data/port', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
 
     $routes->get('/',              'MasterPort::index');
     $routes->get('list',           'MasterPort::list');
@@ -200,7 +199,20 @@ $routes->group('master-data/port', ['filter' => 'role:admin,staff,accounting'], 
     $routes->get('edit/(:num)',    'MasterPort::edit/$1');
     $routes->post('update/(:num)', 'MasterPort::update/$1');
     $routes->post('delete/(:num)', 'MasterPort::delete/$1');
+});
 
+//Notify Party
+$routes->group('master-data/notify-party', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
+
+    $routes->get('/',              'MasterNotifyParty::index');
+    $routes->get('list',           'MasterNotifyParty::list');
+    $routes->get('search/kode',    'MasterNotifyParty::searchKode');
+    $routes->get('search/nama',    'MasterNotifyParty::searchNama');
+    $routes->get('search/npwp',    'MasterNotifyParty::searchNpwp');
+    $routes->post('store',         'MasterNotifyParty::store');
+    $routes->get('edit/(:num)',    'MasterNotifyParty::edit/$1');
+    $routes->post('update/(:num)', 'MasterNotifyParty::update/$1');
+    $routes->post('delete/(:num)', 'MasterNotifyParty::delete/$1');
 });
 
 
