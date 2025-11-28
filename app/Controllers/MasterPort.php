@@ -134,6 +134,9 @@ class MasterPort extends Controller
         return $this->response->setJSON($results);
     }
 
+    // ===============================
+    // SEARCH NEGARA (SELECT2)
+    // ===============================
     public function searchNegara()
     {
         $q = $this->request->getGet('term');

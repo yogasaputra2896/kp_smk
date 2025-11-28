@@ -215,8 +215,19 @@ $routes->group('master-data/notify-party', ['filter' => 'role:admin,staff,accoun
     $routes->post('delete/(:num)', 'MasterNotifyParty::delete/$1');
 });
 
+//Vessel
+$routes->group('master-data/vessel', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
 
-
+    $routes->get('/',              'MasterVessel::index');
+    $routes->get('list',           'MasterVessel::list');
+    $routes->get('search/kode',    'MasterVessel::searchKode');
+    $routes->get('search/nama',    'MasterVessel::searchNama');
+    $routes->get('search/negara',   'MasterVessel::searchNegara');
+    $routes->post('store',         'MasterVessel::store');
+    $routes->get('edit/(:num)',    'MasterVessel::edit/$1');
+    $routes->post('update/(:num)', 'MasterVessel::update/$1');
+    $routes->post('delete/(:num)', 'MasterVessel::delete/$1');
+});
 
 
 /**

@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Nov 27, 2025 at 05:01 PM
+-- Host: 127.0.0.1
+-- Generation Time: Nov 28, 2025 at 12:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -305,7 +305,11 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (196, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 11:36:38', 1),
 (197, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-27 14:59:17', 1),
 (198, '::1', 'Exim1', NULL, '2025-11-27 16:00:55', 0),
-(199, '::1', 'exim3@trustwaytransindo.com', 2, '2025-11-27 16:00:58', 1);
+(199, '::1', 'exim3@trustwaytransindo.com', 2, '2025-11-27 16:00:58', 1),
+(200, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 06:35:15', 1),
+(201, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 08:04:18', 1),
+(202, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 09:44:35', 1),
+(203, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 10:58:31', 1);
 
 -- --------------------------------------------------------
 
@@ -624,13 +628,22 @@ INSERT INTO `master_port` (`id`, `kode`, `nama_port`, `negara_port`, `created_at
 --
 
 CREATE TABLE `master_vessel` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `nama_vessel` varchar(200) NOT NULL,
-  `negara_vessel` varchar(100) DEFAULT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
+  `nama_vessel` varchar(50) NOT NULL,
+  `negara_vessel` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_vessel`
+--
+
+INSERT INTO `master_vessel` (`id`, `kode`, `nama_vessel`, `negara_vessel`, `created_at`, `updated_at`) VALUES
+(1, 'MSCC', 'MSC CELINE', 'PANAMA', '2025-11-28 04:02:56', '2025-11-28 04:02:56'),
+(2, 'PHXD', 'PHOENIX D', 'PANAMA', '2025-11-28 04:10:05', '2025-11-28 04:10:05'),
+(3, 'SNSG', 'SINAR SIGIL', 'LIBERIA', '2025-11-28 04:11:43', '2025-11-28 04:11:43');
 
 -- --------------------------------------------------------
 
@@ -1862,7 +1875,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=204;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -1952,7 +1965,7 @@ ALTER TABLE `master_port`
 -- AUTO_INCREMENT for table `master_vessel`
 --
 ALTER TABLE `master_vessel`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `migrations`

@@ -78,7 +78,7 @@ $segment2 = $uri->getSegment(2);
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'vessel') ? 'active' : '' ?>">
-                                <a href="<?= base_url('master-data/vessel') ?>">Vessel</a>
+                                <a href="<?= base_url('master-data/vessel') ?>"><i class="bi bi-life-preserver me-1"></i> Vessel</a>
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'lokasi-sandar') ? 'active' : '' ?>">

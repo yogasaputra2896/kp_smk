@@ -8,25 +8,34 @@ use CodeIgniter\Controller;
 class MasterVessel extends Controller
 {
     // ============================================================
-    // INDEX — TAMPIL LIST
+    // VIEW INDEX
     // ============================================================
     public function index()
     {
-        $model = new MasterVesselModel();
-        $data['vessels'] = $model->orderBy('id', 'DESC')->findAll();
+        return view('master/vessel/index');
+    }
 
-        return view('master/vessel/index', $data);
+    // ===============================
+    // LIST DATA (AJAX)
+    // ===============================
+    public function list()
+    {
+        $model = new MasterVesselModel();
+
+        return $this->response->setJSON([
+            'data' => $model->orderBy('id', 'ASC')->findAll()
+        ]);
     }
 
     // ============================================================
-    // STORE — SIMPAN DATA BARU
+    // STORE DATA
     // ============================================================
     public function store()
     {
         $validation = \Config\Services::validation();
 
         $rules = [
-            'kode'         => 'required|min_length[2]|max_length[20]|is_unique[master_vessel.kode]',
+            'kode'         => 'required|min_length[4]|max_length[6]|is_unique[master_vessel.kode]',
             'nama_vessel'  => 'required|min_length[3]',
             'negara_vessel'=> 'required|min_length[3]'
         ];
@@ -53,7 +62,7 @@ class MasterVessel extends Controller
     }
 
     // ============================================================
-    // EDIT — GET DATA BY ID
+    // EDIT (GET DATA)
     // ============================================================
     public function edit($id)
     {
@@ -73,8 +82,88 @@ class MasterVessel extends Controller
         ]);
     }
 
+    // ===============================
+    // SEARCH KODE (SELECT2)
+    // ===============================
+    public function searchKode()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterVesselModel();
+        $data  = $model->select('kode')
+                       ->like('kode', $q)
+                       ->limit(10)
+                       ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['kode'],
+                'text'   => $row['kode'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NAMA (SELECT2)
+    // ===============================
+    public function searchNama()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterVesselModel();
+        $data  = $model->select('nama_vessel')
+                       ->like('nama_vessel', $q)
+                       ->limit(10)
+                       ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['nama_vessel'],
+                'text'   => $row['nama_vessel'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NEGARA  (SELECT2)
+    // ===============================
+    public function searchNegara()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterVesselModel();
+
+        $data = $model->distinct()
+                    ->select('negara_vessel')
+                    ->like('negara_vessel', $q)
+                    ->orderBy('negara_vessel', 'ASC')
+                    ->limit(16)
+                    ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['negara_vessel'],
+                'text' => $row['negara_vessel']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
     // ============================================================
-    // UPDATE — SIMPAN PERUBAHAN DATA
+    // UPDATE DATA
     // ============================================================
     public function update($id)
     {
@@ -90,7 +179,7 @@ class MasterVessel extends Controller
 
         // validasi
         $rules = [
-            'kode'         => "required|min_length[2]|max_length[20]|is_unique[master_vessel.kode,id,{$id}]",
+            'kode'         => "required|min_length[4]|max_length[6]|is_unique[master_vessel.kode,id,{$id}]",
             'nama_vessel'  => 'required|min_length[3]',
             'negara_vessel'=> 'required|min_length[3]'
         ];
@@ -115,7 +204,7 @@ class MasterVessel extends Controller
     }
 
     // ============================================================
-    // DELETE — HAPUS DATA
+    // DELETE 
     // ============================================================
     public function delete($id)
     {
