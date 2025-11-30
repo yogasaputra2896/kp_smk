@@ -112,11 +112,11 @@ class Dashboard extends BaseController
             case in_groups('admin'):
                 return view('dashboard/admin', $data);
 
-            case in_groups('staff'):
-                return view('dashboard/staff', $data);
+            case in_groups('exim'):
+                return view('dashboard/exim', $data);
 
-            case in_groups('accounting'):
-                return view('dashboard/accounting', $data);
+            case in_groups('document'):
+                return view('dashboard/document', $data);
 
             default:
                 return redirect()->to('login')

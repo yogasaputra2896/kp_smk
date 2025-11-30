@@ -24,11 +24,14 @@ $routes->get('dashboard', 'Dashboard::index', ['filter' => 'login']);
  */
 $routes->group('booking-job', [
     'namespace' => 'App\Controllers',
-    'filter'    => 'role:admin,staff'
+    'filter'    => 'role:admin,exim'
 ], function ($routes) {
     $routes->get('/', 'BookingJob::index');
     $routes->get('list', 'BookingJob::list');
     $routes->get('nextno', 'BookingJob::nextNo');
+    $routes->get('search-consignee', 'BookingJob::searchConsignee');
+    $routes->get('search-port', 'BookingJob::searchPort');
+    $routes->get('search-pelayaran', 'BookingJob::searchPelayaran');
     $routes->post('store', 'BookingJob::store');
     $routes->get('edit/(:num)', 'BookingJob::edit/$1');
     $routes->post('update/(:num)', 'BookingJob::update/$1');
@@ -49,7 +52,7 @@ $routes->group('booking-job', [
  */
 $routes->group('booking-job-trash', [
     'namespace' => 'App\Controllers',
-    'filter'    => 'role:admin'
+    'filter'    => 'role:admin,exim'
 ], function ($routes) {
     $routes->get('/', 'BookingJobTrash::index');
     $routes->get('list', 'BookingJobTrash::list');
@@ -58,18 +61,18 @@ $routes->group('booking-job-trash', [
 });
 
 /**
- * ==================================
- * ROUTES WORKSHEET (IMPORT & EXPORT)
- * ==================================
+ * =================
+ * ROUTES WORKSHEET 
+ * =================
  */
 $routes->group('worksheet', [
     'namespace' => 'App\Controllers',
-    'filter'    => 'role:admin,staff,accounting'
+    'filter'    => 'role:admin,document'
 ], function ($routes) {
 
     // ======= Halaman utama & list =======
     $routes->get('/', 'Worksheet::index');
-    $routes->get('list', 'Worksheet::list'); // ?type=import/export
+    $routes->get('list', 'Worksheet::list');
     $routes->get('create', 'Worksheet::create');
     $routes->post('store', 'Worksheet::store');
 
@@ -92,9 +95,9 @@ $routes->group('worksheet', [
     $routes->get('redirectToBooking', 'Worksheet::redirectToBooking');
 });
 
-// ==============================
-// WORKSHEET IMPORT EXPORT (API)
-// ==============================
+// ========================
+// WORKSHEET IMPORT EXPORT 
+// ========================
 
 // IMPORT
 $routes->get('worksheet-import/get-years', 'Worksheet::getImportYears');
@@ -118,7 +121,7 @@ $routes->get('worksheet-export/export-pdf', 'Worksheet::exportExportPDF');
 
 $routes->group('worksheet-import-trash', [
     'namespace' => 'App\Controllers',
-    'filter'    => 'role:admin'
+    'filter'    => 'role:admin,document'
 ], function ($routes) {
 
     // Halaman index trash
@@ -127,10 +130,7 @@ $routes->group('worksheet-import-trash', [
     // Load data list trash (AJAX)
     $routes->get('list', 'WorksheetImportTrash::list');
 
-    // Restore data
-    // PARAM:
-    // 1 = nama tabel (worksheet_import, worksheet_container_import, dst)
-    // 2 = ID TRASH (id dari tabel trash)
+    // Restore
     $routes->post('restore/(:segment)/(:num)', 'WorksheetImportTrash::restore/$1/$2');
 
     // Delete permanent
@@ -145,7 +145,7 @@ $routes->group('worksheet-import-trash', [
 
 $routes->group('worksheet-export-trash', [
     'namespace' => 'App\Controllers',
-    'filter'    => 'role:admin'
+    'filter'    => 'role:admin,document'
 ], function ($routes) {
     $routes->get('/', 'WorksheetExportTrash::index');
     $routes->get('list', 'WorksheetExportTrash::list');
@@ -160,8 +160,7 @@ $routes->group('worksheet-export-trash', [
  */
 
 //Consignee
-$routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
-
+$routes->group('master-data/consignee', ['filter' => 'role:admin,exim,document'], function ($routes) {
     $routes->get('/',              'MasterConsignee::index');
     $routes->get('list',           'MasterConsignee::list');
     $routes->get('search/kode', 'MasterConsignee::searchKode');
@@ -174,8 +173,7 @@ $routes->group('master-data/consignee', ['filter' => 'role:admin,staff,accountin
 });
 
 //Pelayaran
-$routes->group('master-data/pelayaran', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
-
+$routes->group('master-data/pelayaran', ['filter' => 'role:admin,exim,document'], function ($routes) {
     $routes->get('/',              'MasterPelayaran::index');
     $routes->get('list',           'MasterPelayaran::list');
     $routes->get('search/kode',    'MasterPelayaran::searchKode');
@@ -188,8 +186,7 @@ $routes->group('master-data/pelayaran', ['filter' => 'role:admin,staff,accountin
 });
 
 //Port
-$routes->group('master-data/port', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
-
+$routes->group('master-data/port', ['filter' => 'role:admin,exim,document'], function ($routes) {
     $routes->get('/',              'MasterPort::index');
     $routes->get('list',           'MasterPort::list');
     $routes->get('search/kode',    'MasterPort::searchKode');
@@ -202,8 +199,7 @@ $routes->group('master-data/port', ['filter' => 'role:admin,staff,accounting'], 
 });
 
 //Notify Party
-$routes->group('master-data/notify-party', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
-
+$routes->group('master-data/notify-party', ['filter' => 'role:admin,exim,document'], function ($routes) {
     $routes->get('/',              'MasterNotifyParty::index');
     $routes->get('list',           'MasterNotifyParty::list');
     $routes->get('search/kode',    'MasterNotifyParty::searchKode');
@@ -216,25 +212,80 @@ $routes->group('master-data/notify-party', ['filter' => 'role:admin,staff,accoun
 });
 
 //Vessel
-$routes->group('master-data/vessel', ['filter' => 'role:admin,staff,accounting'], function ($routes) {
-
+$routes->group('master-data/vessel', ['filter' => 'role:admin,exim,document'], function ($routes) {
     $routes->get('/',              'MasterVessel::index');
     $routes->get('list',           'MasterVessel::list');
     $routes->get('search/kode',    'MasterVessel::searchKode');
     $routes->get('search/nama',    'MasterVessel::searchNama');
-    $routes->get('search/negara',   'MasterVessel::searchNegara');
+    $routes->get('search/negara',  'MasterVessel::searchNegara');
     $routes->post('store',         'MasterVessel::store');
     $routes->get('edit/(:num)',    'MasterVessel::edit/$1');
     $routes->post('update/(:num)', 'MasterVessel::update/$1');
     $routes->post('delete/(:num)', 'MasterVessel::delete/$1');
 });
 
+//Lokasi Sandar
+$routes->group('master-data/lokasi-sandar', ['filter' => 'role:admin,exim,document'], function ($routes) {
+    $routes->get('/',              'MasterLokasiSandar::index');
+    $routes->get('list',           'MasterLokasiSandar::list');
+    $routes->get('search/kode',    'MasterLokasiSandar::searchKode');
+    $routes->get('search/nama',    'MasterLokasiSandar::searchNama');
+    $routes->post('store',         'MasterLokasiSandar::store');
+    $routes->get('edit/(:num)',    'MasterLokasiSandar::edit/$1');
+    $routes->post('update/(:num)', 'MasterLokasiSandar::update/$1');
+    $routes->post('delete/(:num)', 'MasterLokasiSandar::delete/$1');
+});
 
-/**
- * ==========================
- * ROUTES MANAGEMENT USER
- * ==========================
- */
+//Kemasan
+$routes->group('master-data/kemasan', ['filter' => 'role:admin,exim,document'], function ($routes) {
+    $routes->get('/',              'MasterKemasan::index');
+    $routes->get('list',           'MasterKemasan::list');
+    $routes->get('search/kode',    'MasterKemasan::searchKode');
+    $routes->get('search/nama',    'MasterKemasan::searchNama');
+    $routes->post('store',         'MasterKemasan::store');
+    $routes->get('edit/(:num)',    'MasterKemasan::edit/$1');
+    $routes->post('update/(:num)', 'MasterKemasan::update/$1');
+    $routes->post('delete/(:num)', 'MasterKemasan::delete/$1');
+});
+
+//Lartas
+$routes->group('master-data/lartas', ['filter' => 'role:admin,exim,document'], function ($routes) {
+    $routes->get('/',              'MasterLartas::index');
+    $routes->get('list',           'MasterLartas::list');
+    $routes->get('search/kode',    'MasterLartas::searchKode');
+    $routes->get('search/nama',    'MasterLartas::searchNama');
+    $routes->post('store',         'MasterLartas::store');
+    $routes->get('edit/(:num)',    'MasterLartas::edit/$1');
+    $routes->post('update/(:num)', 'MasterLartas::update/$1');
+    $routes->post('delete/(:num)', 'MasterLartas::delete/$1');
+});
+
+
+//Fasilitas
+$routes->group('master-data/fasilitas', ['filter' => 'role:admin,exim,document'], function ($routes) {
+    $routes->get('/',              'MasterFasilitas::index');
+    $routes->get('list',           'MasterFasilitas::list');
+    $routes->get('search/kode',    'MasterFasilitas::searchKode');
+    $routes->get('search/tipe',    'MasterFasilitas::searchTipe');
+    $routes->get('search/nama',    'MasterFasilitas::searchNama');
+    $routes->post('store',         'MasterFasilitas::store');
+    $routes->get('edit/(:num)',    'MasterFasilitas::edit/$1');
+    $routes->post('update/(:num)', 'MasterFasilitas::update/$1');
+    $routes->post('delete/(:num)', 'MasterFasilitas::delete/$1');
+});
+
+//informasi Tambahan
+$routes->group('master-data/info-tambahan', ['filter' => 'role:admin,exim,document'], function ($routes) {
+    $routes->get('/',              'MasterInformasiTambahan::index');
+    $routes->get('list',           'MasterInformasiTambahan::list');
+    $routes->get('search/kode',    'MasterInformasiTambahan::searchKode');
+    $routes->get('search/nama',    'MasterInformasiTambahan::searchNama');
+    $routes->post('store',         'MasterInformasiTambahan::store');
+    $routes->get('edit/(:num)',    'MasterInformasiTambahan::edit/$1');
+    $routes->post('update/(:num)', 'MasterInformasiTambahan::update/$1');
+    $routes->post('delete/(:num)', 'MasterInformasiTambahan::delete/$1');
+});
+
 /**
  * ==========================
  * ROUTES USER MANAGEMENT
@@ -246,21 +297,11 @@ $routes->group('user-management', [
 ], function ($routes) {
     // Halaman utama user management
     $routes->get('/', 'UserManagement::index');
-
-    // Daftar user (JSON)
     $routes->get('list', 'UserManagement::list');
-
-    // Tambah user baru
     $routes->post('store', 'UserManagement::store');
-
-    // Edit dan update user
     $routes->get('edit/(:num)', 'UserManagement::edit/$1');
     $routes->post('update/(:num)', 'UserManagement::update/$1');
-
-    // Hapus user (ke trash)
     $routes->post('delete/(:num)', 'UserManagement::delete/$1');
-
-    // Restore user dari trash
     $routes->post('restore/(:num)', 'UserManagement::restore/$1');
 });
 
@@ -268,49 +309,6 @@ $routes->group('user-management', [
 // ==========================================================================================================================================
 // ==========================================================================================================================================
 // ==========================================================================================================================================
-
-/**
- * ==========================
- * ROUTES UNTUK ADMIN
- * ==========================
- */
-$routes->group('admin', [
-    'namespace' => 'App\Controllers\Admin',
-    'filter'    => 'role:admin'
-], function ($routes) {
-    $routes->get('dashboard', 'Dashboard::index');
-    $routes->resource('debitnote', ['controller' => 'DebitNote']);
-    $routes->resource('earsip', ['controller' => 'Earsip']);
-});
-
-/**
- * ==========================
- * ROUTES UNTUK STAFF
- * ==========================
- */
-$routes->group('staff', [
-    'namespace' => 'App\Controllers\Staff',
-    'filter'    => 'role:staff'
-], function ($routes) {
-    $routes->get('dashboard', 'Dashboard::index');
-    $routes->get('worksheet', 'Worksheet::index');
-    $routes->get('earsip', 'Earsip::index');
-});
-
-/**
- * ==========================
- * ROUTES UNTUK ACCOUNTING
- * ==========================
- */
-$routes->group('accounting', [
-    'namespace' => 'App\Controllers\Accounting',
-    'filter'    => 'role:accounting'
-], function ($routes) {
-    $routes->get('dashboard', 'Dashboard::index');
-    $routes->get('worksheet', 'Worksheet::index');
-    $routes->get('debitnote', 'DebitNote::index');
-    $routes->get('earsip', 'Earsip::index');
-});
 
 /**
  * ==========================

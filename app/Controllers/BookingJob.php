@@ -10,6 +10,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use App\Models\Master\MasterConsigneeModel;
+use App\Models\Master\MasterPortModel;
+use App\Models\Master\MasterPelayaranModel;
 
 class BookingJob extends BaseController
 {
@@ -117,6 +120,103 @@ class BookingJob extends BaseController
             ])->setStatusCode(500);
         }
     }
+
+    // SEARCH CONSIGNEE (SELECT2)
+    public function searchConsignee()
+    {
+        $q = $this->request->getGet('term');
+
+        // Validasi input
+        if (empty($q)) {
+            return $this->response->setJSON([]);
+        }
+
+        $model = new MasterConsigneeModel();
+        $data = $model
+            ->select('id, kode, nama_consignee')
+            ->groupStart()
+            ->like('kode', $q)
+            ->orLike('nama_consignee', $q)
+            ->groupEnd()
+            ->limit(20)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_consignee']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // SEARCH PORT (SELECT2)
+    public function searchPort()
+    {
+        $q = $this->request->getGet('term');
+
+        // Validasi input
+        if (empty($q)) {
+            return $this->response->setJSON([]);
+        }
+
+        $model = new MasterPortModel();
+        $data = $model
+            ->select('id, kode, nama_port')
+            ->groupStart()
+            ->like('kode', $q)
+            ->orLike('nama_port', $q)
+            ->groupEnd()
+            ->limit(20)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_port']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // SEARCH PELAYARAN (SELECT2)
+    public function searchPelayaran()
+    {
+        $q = $this->request->getGet('term');
+
+        // Validasi input
+        if (empty($q)) {
+            return $this->response->setJSON([]);
+        }
+
+        $model = new MasterPortModel();
+        $data = $model
+            ->select('id, kode, nama_pelayaran')
+            ->groupStart()
+            ->like('kode', $q)
+            ->orLike('nama_pelayaran', $q)
+            ->groupEnd()
+            ->limit(20)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_pelayaran']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
 
     // ============================================================
     // SIMPAN DATA BOOKING JOB BARU

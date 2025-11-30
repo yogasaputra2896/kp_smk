@@ -11,36 +11,7 @@
 
 <?= $this->section('content') ?>
 
-<style>
-    .stat-card {
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-    .stat-card .card-body {
-        text-align: center;
-        padding: 1rem;
-    }
-    .stat-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-    .stat-value {
-        font-size: 1.2rem;
-    }
-    .category-title {
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-        font-weight: 700;
-        border-bottom: 2px solid #dee2e6;
-        padding-bottom: 0.25rem;
-    }
-</style>
+<link rel="stylesheet" href="<?= base_url('assets/css/pages/dashboard.css') ?>">
 
 <!-- User Statistics -->
 <div class="category-title mb-3"><i class="bi bi-bar-chart-fill me-2"></i>Statistik User</div>
@@ -57,7 +28,7 @@
     </div>
 
     <!-- User by Role -->
-    <?php foreach($userByRole as $u): ?>
+    <?php foreach ($userByRole as $u): ?>
         <div class="col-md-2 col-6">
             <div class="card text-center stat-card p-3">
                 <div class="icon mb-2">
@@ -108,38 +79,38 @@
     </div>
 
     <!-- Booking Job by Type -->
-    <?php foreach($bookingByType as $b): ?>
-        <?php 
-            // Tentukan ukuran kolom
-            if ($b['type'] == 'import_fcl_nonjaminan' || $b['type'] == 'import_fcl_jaminan') {
-                $colClass = 'col-md-3 col-6';
-            } else {
-                $colClass = 'col-md-2 col-6';
-            }
+    <?php foreach ($bookingByType as $b): ?>
+        <?php
+        // Tentukan ukuran kolom
+        if ($b['type'] == 'import_fcl_nonjaminan' || $b['type'] == 'import_fcl_jaminan') {
+            $colClass = 'col-md-3 col-6';
+        } else {
+            $colClass = 'col-md-2 col-6';
+        }
 
-            // Tentukan label dan warna icon
-            switch($b['type']) {
-                
-                case 'import_fcl_jaminan':
-                    $label = 'FCL Jaminan';
-                    $icon = 'bi-truck text-warning';
-                    break;
-                case 'import_fcl_nonjaminan':
-                    $label = 'FCL Non-Jaminan';
-                    $icon = 'bi-truck text-info';
-                    break;
-                case 'export':
-                    $label = 'Export';
-                    $icon = 'bi-box-arrow-up-right text-success';
-                    break;
-                case 'import_lcl':
-                    $label = 'LCL';
-                    $icon = 'bi-archive text-secondary';
-                    break;
-                default:
-                    $label = 'Lain-lain';
-                    $icon = 'bi-question-circle text-muted';
-            }
+        // Tentukan label dan warna icon
+        switch ($b['type']) {
+
+            case 'import_fcl_jaminan':
+                $label = 'FCL Jaminan';
+                $icon = 'bi-truck text-warning';
+                break;
+            case 'import_fcl_nonjaminan':
+                $label = 'FCL Non-Jaminan';
+                $icon = 'bi-truck text-info';
+                break;
+            case 'export':
+                $label = 'Export';
+                $icon = 'bi-box-arrow-up-right text-success';
+                break;
+            case 'import_lcl':
+                $label = 'LCL';
+                $icon = 'bi-archive text-secondary';
+                break;
+            default:
+                $label = 'Lain-lain';
+                $icon = 'bi-question-circle text-muted';
+        }
         ?>
         <div class="<?= $colClass ?>">
             <div class="card text-center stat-card p-3">
@@ -219,7 +190,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($topConsignees as $key => $c): ?>
+                <?php foreach ($topConsignees as $key => $c): ?>
                     <tr>
                         <td><?= $key + 1 ?></td>
                         <td><?= $c['consignee'] ?></td>
@@ -235,14 +206,19 @@
 <div class="row mt-4 g-3">
     <div class="col-md-6">
         <div class="card stat-card">
-            <div class="card-header"><h5><i class="bi bi-bar-chart-fill me-2"> Visualisasi Booking Job</i></h5></div>
+            <div class="card-header">
+                <h5><i class="bi bi-bar-chart-fill me-2"> Visualisasi Booking Job</i></h5>
+            </div>
             <div class="card-body">
-                <canvas id="chartBookingJob"></canvas></div>
+                <canvas id="chartBookingJob"></canvas>
+            </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card stat-card">
-            <div class="card-header"><h5><i class="bi bi-pie-chart-fill"> Visualisasi Worksheet Import vs Export</i></h5></div>
+            <div class="card-header">
+                <h5><i class="bi bi-pie-chart-fill"> Visualisasi Worksheet Import vs Export</i></h5>
+            </div>
             <div class="card-body d-flex justify-content-center">
                 <canvas id="chartWorksheet" style="max-width: 200px; max-height: 225px;"></canvas>
             </div>
@@ -250,47 +226,15 @@
         </div>
     </div>
 </div>
+<?= $this->endSection() ?>
 
+<?= $this->section('pageScripts') ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= base_url('assets/js/pages/dashboard/chart.js') ?>"></script>
+
 <script>
-    // Chart Booking Job
-    const ctxBooking = document.getElementById('chartBookingJob').getContext('2d');
-    new Chart(ctxBooking, {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode(array_column($chartBookingJob, 'type')) ?>,
-            datasets: [{
-                label: 'Total Booking Job',
-                data: <?= json_encode(array_column($chartBookingJob, 'total')) ?>,
-                backgroundColor: '#435ebe', // warna bar diubah
-                borderColor: '#435ebe',     // border bar sama dengan background
-                borderWidth: 1
-            }]
-        },
-        options: { 
-            responsive: true, 
-            scales: { y: { beginAtZero: true } },
-            plugins: { legend: { display: true } } // optional: hilangkan legend
-        }
-    });
-
-
-    // Chart Worksheet
-    const ctxWorksheet = document.getElementById('chartWorksheet').getContext('2d');
-    new Chart(ctxWorksheet, {
-        type: 'doughnut',
-        data: {
-            labels: ['Import', 'Export'],
-            datasets: [{
-                label: 'Worksheet',
-                data: [<?= $chartWorksheet['import'] ?>, <?= $chartWorksheet['export'] ?>],
-                backgroundColor: ['#ffc107','#198754'],
-                borderColor: ['#ffc107','#198754'],
-                borderWidth: 1
-            }]
-        },
-        options: { responsive: true }
-    });
+    window.chartBookingLabels = <?= json_encode(array_column($chartBookingJob, 'type')) ?>;
+    window.chartBookingData = <?= json_encode(array_column($chartBookingJob, 'total')) ?>;
+    window.chartWorksheetData = [<?= $chartWorksheet['import'] ?>, <?= $chartWorksheet['export'] ?>];
 </script>
-
 <?= $this->endSection() ?>

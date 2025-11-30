@@ -8,7 +8,7 @@
 <div class="page-heading">
     <h3>Manajemen User</h3>
     <p class="text-subtitle text-muted">
-        Modul ini digunakan untuk mengelola akun pengguna sistem — mencakup tambah, edit, hapus, aktivasi, dan pengaturan role (Admin, Staff, Accounting).
+        Modul ini digunakan untuk mengelola akun pengguna sistem — mencakup tambah, edit, hapus, aktivasi, dan pengaturan role (Admin, Exim, Document).
         Dilengkapi juga dengan pencarian & ekspor data user untuk mendukung dokumentasi sistem.
     </p>
 </div>
@@ -85,8 +85,8 @@
                         <select name="role" id="role" class="form-select" required>
                             <option value="">-- Pilih Role --</option>
                             <option value="admin">Admin</option>
-                            <option value="staff">Staff</option>
-                            <option value="accounting">Accounting</option>
+                            <option value="exim">Exim</option>
+                            <option value="document">Document</option>
                         </select>
                     </div>
                 </div>
@@ -125,8 +125,8 @@
                         <select name="role" id="editRole" class="form-select" required>
                             <option value="">-- Pilih Role --</option>
                             <option value="admin">Admin</option>
-                            <option value="staff">Staff</option>
-                            <option value="accounting">Accounting</option>
+                            <option value="exim">Exim</option>
+                            <option value="document">Document</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -203,8 +203,8 @@
                     render: role => {
                         if (!role) return '<span class="badge bg-secondary">Tanpa Role</span>';
                         const color = role === 'admin' ? 'bg-primary' :
-                            role === 'staff' ? 'bg-success' :
-                            role === 'accounting' ? 'bg-warning text-dark' : 'bg-secondary';
+                            role === 'exim' ? 'bg-success' :
+                            role === 'document' ? 'bg-warning text-dark' : 'bg-secondary';
                         return `<span class="badge ${color}">${role}</span>`;
                     },
                     className: "text-center"

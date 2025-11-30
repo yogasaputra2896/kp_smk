@@ -38,7 +38,7 @@
             <!-- Tombol kiri -->
             <div class="d-flex gap-2 flex-wrap">
 
-                <?php if (in_groups('admin') || in_groups('staff')): ?>
+                <?php if (in_groups('admin') || in_groups('document')): ?>
                     <!-- Tambah Worksheet -->
                     <button id="btnAdd" class="btn btn-primary">
                         <i class="bi bi-calendar-plus me-2"></i>
@@ -587,8 +587,8 @@
 
             tbl = $('#tblWorksheet').DataTable({
                 fixedColumns: isMobile ? false : {
-                    left: 2,  // fix kolom kiri
-                    right: 2  // fix kolom kanan
+                    left: 2, // fix kolom kiri
+                    right: 2 // fix kolom kanan
                 },
                 scrollX: true, // WAJIB agar mobile tetap bisa scroll
                 ajax: {
@@ -599,7 +599,9 @@
                     dataSrc: 'data'
                 },
                 columns: type === 'import' ? columnsImport : columnsExport,
-                order: [[0, 'DESC']]
+                order: [
+                    [0, 'DESC']
+                ]
             });
 
         }
@@ -667,9 +669,9 @@
 
         // ====================== SAMPAH WORKSHEET ======================
         $('#btnTrash').on('click', function() {
-            let trashUrl = currentType === 'export'
-                ? '<?= base_url('worksheet-export-trash') ?>'
-                : '<?= base_url('worksheet-import-trash') ?>';
+            let trashUrl = currentType === 'export' ?
+                '<?= base_url('worksheet-export-trash') ?>' :
+                '<?= base_url('worksheet-import-trash') ?>';
 
             // Redirect ke halaman trash
             window.location.href = trashUrl;
@@ -721,7 +723,7 @@
         });
 
         // ====================== DELETE WORKSHEET ======================
-        $('#tblWorksheet').on('click', '.btn-delete', function () {
+        $('#tblWorksheet').on('click', '.btn-delete', function() {
             const id = $(this).data('id');
             const no_ws = $(this).data('no_ws'); // jika tombol punya data-no_ws
 
@@ -747,15 +749,15 @@
 
                 // pilih controller berdasarkan jenis (import/export)
                 const deleteUrl =
-                    currentType === 'import'
-                        ? `${BASE_URL}/worksheet/import/delete/${id}`
-                        : `${BASE_URL}/worksheet/export/delete/${id}`;
+                    currentType === 'import' ?
+                    `${BASE_URL}/worksheet/import/delete/${id}` :
+                    `${BASE_URL}/worksheet/export/delete/${id}`;
 
                 $.ajax({
                     url: deleteUrl,
                     type: 'POST',
                     dataType: 'json',
-                    success: function (res) {
+                    success: function(res) {
                         Swal.close();
 
                         if (res.status === 'ok') {
@@ -776,7 +778,7 @@
                             });
                         }
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
@@ -787,8 +789,8 @@
             });
         });
 
-         // ====================== OPEN MODAL ======================
-        document.getElementById('btnExportWorksheet').addEventListener('click', function () {
+        // ====================== OPEN MODAL ======================
+        document.getElementById('btnExportWorksheet').addEventListener('click', function() {
             $('#modalExportExcel').modal('show');
 
             // Default = Import
@@ -804,13 +806,13 @@
         });
 
         // ====================== CHANGE TYPE → RELOAD YEARS ======================
-        document.getElementById('wsType').addEventListener('change', function () {
+        document.getElementById('wsType').addEventListener('change', function() {
             const type = this.value;
 
-            const yearsUrl = 
-                type === 'export'
-                ? '<?= base_url("worksheet-export/get-years") ?>'
-                : '<?= base_url("worksheet-import/get-years") ?>';
+            const yearsUrl =
+                type === 'export' ?
+                '<?= base_url("worksheet-export/get-years") ?>' :
+                '<?= base_url("worksheet-import/get-years") ?>';
 
             // Load tahun berdasarkan type
             fetch(yearsUrl)
@@ -828,17 +830,17 @@
         });
 
         // ====================== LOAD MONTHS ======================
-        document.getElementById('wsYear').addEventListener('change', function () {
+        document.getElementById('wsYear').addEventListener('change', function() {
 
             const type = document.getElementById('wsType').value;
             const year = this.value;
 
             if (!type || !year) return;
 
-            const monthsUrl = 
-                type === 'export'
-                ? '<?= base_url("worksheet-export/get-months") ?>'
-                : '<?= base_url("worksheet-import/get-months") ?>';
+            const monthsUrl =
+                type === 'export' ?
+                '<?= base_url("worksheet-export/get-months") ?>' :
+                '<?= base_url("worksheet-import/get-months") ?>';
 
             fetch(`${monthsUrl}/${year}`)
                 .then(res => res.json())
@@ -852,7 +854,7 @@
         });
 
         // ====================== EXPORT NOW ======================
-        document.getElementById('btnExportCombined').addEventListener('click', function () {
+        document.getElementById('btnExportCombined').addEventListener('click', function() {
 
             const type = document.getElementById('wsType').value;
             const year = document.getElementById('wsYear').value;
@@ -863,10 +865,10 @@
                 return;
             }
 
-            const exportUrl = 
-                type === 'export'
-                ? '<?= base_url("worksheet-export/export-excel") ?>'
-                : '<?= base_url("worksheet-import/export-excel") ?>';
+            const exportUrl =
+                type === 'export' ?
+                '<?= base_url("worksheet-export/export-excel") ?>' :
+                '<?= base_url("worksheet-import/export-excel") ?>';
 
             // Redirect to download file
             window.location.href = `${exportUrl}?year=${year}&month=${month}`;
@@ -874,16 +876,16 @@
 
         // ====================== OPEN MODAL ======================
         // OPEN MODAL PDF
-        document.getElementById('btnExportWorksheePdf').addEventListener('click', function () {
+        document.getElementById('btnExportWorksheePdf').addEventListener('click', function() {
             $('#modalExportPDF').modal('show');
             loadYearsPDF("import");
         });
 
         // LOAD TAHUN PDF
         function loadYearsPDF(type) {
-            const url = type === 'export'
-                ? '<?= base_url("worksheet-export/get-years") ?>'
-                : '<?= base_url("worksheet-import/get-years") ?>';
+            const url = type === 'export' ?
+                '<?= base_url("worksheet-export/get-years") ?>' :
+                '<?= base_url("worksheet-import/get-years") ?>';
 
             fetch(url)
                 .then(res => res.json())
@@ -899,19 +901,19 @@
         }
 
         // CHANGE TYPE PDF
-        document.getElementById('wsTypePDF').addEventListener('change', function () {
+        document.getElementById('wsTypePDF').addEventListener('change', function() {
             loadYearsPDF(this.value);
         });
 
         // LOAD BULAN PDF
-        document.getElementById('wsYearPDF').addEventListener('change', function () {
+        document.getElementById('wsYearPDF').addEventListener('change', function() {
             const type = document.getElementById('wsTypePDF').value;
             const year = this.value;
             if (!type || !year) return;
 
-            const url = type === 'export'
-                ? '<?= base_url("worksheet-export/get-months") ?>'
-                : '<?= base_url("worksheet-import/get-months") ?>';
+            const url = type === 'export' ?
+                '<?= base_url("worksheet-export/get-months") ?>' :
+                '<?= base_url("worksheet-import/get-months") ?>';
 
             fetch(`${url}/${year}`)
                 .then(res => res.json())
@@ -925,17 +927,17 @@
         });
 
         // EXPORT PDF
-        document.getElementById('btnExportPDFNow').addEventListener('click', function () {
-            const type  = document.getElementById('wsTypePDF').value;
-            const year  = document.getElementById('wsYearPDF').value;
+        document.getElementById('btnExportPDFNow').addEventListener('click', function() {
+            const type = document.getElementById('wsTypePDF').value;
+            const year = document.getElementById('wsYearPDF').value;
             const month = document.getElementById('wsMonthPDF').value;
 
             if (!type) return alert("Pilih jenis worksheet!");
             if (!year) return alert("Pilih tahun!");
 
-            const url = type === 'export'
-                ? '<?= base_url("worksheet-export/export-pdf") ?>'
-                : '<?= base_url("worksheet-import/export-pdf") ?>';
+            const url = type === 'export' ?
+                '<?= base_url("worksheet-export/export-pdf") ?>' :
+                '<?= base_url("worksheet-import/export-pdf") ?>';
 
             window.location.href = `${url}?year=${year}&month=${month}`;
         });
@@ -954,6 +956,5 @@
             timer: 2000
         });
     <?php endif; ?>
-
 </script>
 <?= $this->endSection() ?>

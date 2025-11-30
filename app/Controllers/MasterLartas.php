@@ -12,10 +12,19 @@ class MasterLartas extends Controller
     // ============================================================
     public function index()
     {
-        $model = new MasterLartasModel();
-        $data['lartas'] = $model->orderBy('id', 'DESC')->findAll();
+        return view('master/lartas/index');
+    }
 
-        return view('master/lartas/index', $data);
+    // ===============================
+    // LIST DATA (AJAX)
+    // ===============================
+    public function list()
+    {
+        $model = new MasterLartasModel();
+
+        return $this->response->setJSON([
+            'data' => $model->orderBy('id', 'ASC')->findAll()
+        ]);
     }
 
     // ============================================================
@@ -26,8 +35,8 @@ class MasterLartas extends Controller
         $validation = \Config\Services::validation();
 
         $rules = [
-            'kode'       => 'required|min_length[1]|max_length[20]|is_unique[master_lartas.kode]',
-            'nama_lartas' => 'required|min_length[2]',
+            'kode'       => 'required|min_length[2]|max_length[6]|is_unique[master_lartas.kode]',
+            'nama_lartas' => 'required|min_length[5]',
         ];
 
         if (!$this->validate($rules)) {
@@ -70,6 +79,58 @@ class MasterLartas extends Controller
         ]);
     }
 
+    // ===============================
+    // SEARCH KODE (SELECT2)
+    // ===============================
+    public function searchKode()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterLartasModel();
+        $data  = $model->select('kode')
+            ->like('kode', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['kode'],
+                'text'   => $row['kode'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NAMA (SELECT2)
+    // ===============================
+    public function searchNama()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterLartasModel();
+        $data  = $model->select('nama_lartas')
+            ->like('nama_lartas', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['nama_lartas'],
+                'text'   => $row['nama_lartas'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
     // ============================================================
     // UPDATE — SIMPAN PERUBAHAN
     // ============================================================
@@ -86,8 +147,8 @@ class MasterLartas extends Controller
         }
 
         $rules = [
-            'kode'       => "required|min_length[1]|max_length[20]|is_unique[master_lartas.kode,id,{$id}]",
-            'nama_lartas' => 'required|min_length[2]',
+            'kode'       => "required|min_length[2]|max_length[6]|is_unique[master_lartas.kode,id,{$id}]",
+            'nama_lartas' => 'required|min_length[5]',
         ];
 
         if (!$this->validate($rules)) {

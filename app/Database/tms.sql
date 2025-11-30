@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 28, 2025 at 12:12 PM
+-- Host: localhost:3306
+-- Generation Time: Nov 30, 2025 at 06:09 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -53,8 +53,8 @@ CREATE TABLE `auth_groups` (
 
 INSERT INTO `auth_groups` (`id`, `name`, `description`) VALUES
 (1, 'admin', 'Administrator'),
-(2, 'staff', 'Staff Exim'),
-(3, 'accounting', 'Staff Accounting');
+(2, 'exim', 'Staff Exim'),
+(3, 'document', 'Staff Document');
 
 -- --------------------------------------------------------
 
@@ -85,7 +85,7 @@ CREATE TABLE `auth_groups_users` (
 INSERT INTO `auth_groups_users` (`group_id`, `user_id`) VALUES
 (1, 1),
 (2, 2),
-(3, 3);
+(3, 4);
 
 -- --------------------------------------------------------
 
@@ -309,7 +309,18 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (200, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 06:35:15', 1),
 (201, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 08:04:18', 1),
 (202, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 09:44:35', 1),
-(203, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 10:58:31', 1);
+(203, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-28 10:58:31', 1),
+(204, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 08:01:09', 1),
+(205, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 11:19:44', 1),
+(206, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 14:03:04', 1),
+(207, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-11-30 14:35:46', 1),
+(208, '::1', 'Exim1', NULL, '2025-11-30 14:54:32', 0),
+(209, '::1', 'exim3@trustwaytransindo.com', 2, '2025-11-30 14:54:57', 1),
+(210, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-11-30 15:04:24', 1),
+(211, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 15:14:33', 1),
+(212, '::1', 'exim3@trustwaytransindo.com', 2, '2025-11-30 15:22:11', 1),
+(213, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-11-30 15:25:10', 1),
+(214, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 15:29:48', 1);
 
 -- --------------------------------------------------------
 
@@ -397,10 +408,6 @@ INSERT INTO `booking_job` (`id`, `no_job`, `type`, `consignee`, `party`, `eta`, 
 (22, 'EX/25/300002', 'export', 'PT TESTER DATA', '2 X 20', '2025-09-30', 'TANJUNG PRIOK', 'CE25-00002', 'KMTC LINE', 'KMTC000001', 'MKMTC000001', '2025-09-30 02:20:11', '2025-11-14 08:06:00', 'worksheet'),
 (23, 'EX/25/300003', 'export', 'PT TESTER DATA', '3 X 20', '2025-09-29', 'TANJUNG PERAK', 'CE25-00003', 'MCC LINE', 'MCC000001', 'MMCC000001', '2025-09-30 02:21:35', '2025-11-14 08:06:06', 'worksheet'),
 (24, 'EX/25/300004', 'export', 'PT TESTER DATA', '4 X 20', '2025-09-28', 'TANJUNG PRIOK', 'CE25-00004', 'SITC LINE', 'SITC000001', 'MSITC000001', '2025-09-30 02:23:07', '2025-11-14 08:06:15', 'worksheet'),
-(28, 'IM/25/100001', 'import_lcl', 'PT TESTER DATA', '1 PK', '2025-09-30', 'SHANGHAI', 'C25-000001', 'WAN HAI LINE', 'WAN123456', 'MWAN123456', '2025-09-30 08:32:17', '2025-10-04 10:20:52', 'worksheet'),
-(29, 'IM/25/100002', 'import_lcl', 'PT TESTER DATA', '2 PK', '2025-09-29', 'PORT KELANG', 'C25-000002', 'KMTC LINE', 'KMTC000003', 'MKMTC000003', '2025-09-30 08:40:26', '2025-11-11 02:11:20', 'worksheet'),
-(30, 'IM/25/100003', 'import_lcl', 'PT TESTER DATA', '3 PK', '2025-09-28', 'SHEKOU', 'C25-000003', 'ONE LINE', 'ONE000003', 'MONE000003', '2025-09-30 08:41:36', '2025-09-30 08:41:36', 'open job'),
-(31, 'IM/25/100004', 'import_lcl', 'PT TESTER DATA', '4 PK', '2025-09-27', 'INCHEON', 'C25-000004', 'WAN HAI LINE', 'WAN000001', 'MWAN000001', '2025-09-30 08:42:36', '2025-09-30 08:42:36', 'open job'),
 (33, 'IM/25/400002', 'import_fcl_jaminan', 'PT TESTER DATA', '1 X 20', '2025-09-10', 'PORT KELANG', 'C25-000010', 'ONE LINE', 'ONE000010', 'MONE000010', '2025-09-30 10:37:57', '2025-11-14 06:58:51', 'worksheet'),
 (34, 'IM/25/400003', 'import_fcl_jaminan', 'PT TESTER DATA', '2 x 20', '2025-09-19', 'INCHEON', 'C25-000011', 'SITC LINE', 'SITC000010', 'MSITC000010', '2025-09-30 10:38:52', '2025-11-11 02:09:52', 'open job'),
 (35, 'IM/25/400004', 'import_fcl_jaminan', 'PT TESTER DATA', '2 x 20', '2025-09-16', 'SHANGHAI', 'C25-000012', 'MCC LINE', 'MCC000010', 'MMCC000010', '2025-09-30 10:39:58', '2025-09-30 10:39:58', 'open job'),
@@ -414,8 +421,7 @@ INSERT INTO `booking_job` (`id`, `no_job`, `type`, `consignee`, `party`, `eta`, 
 (47, 'IM/25/500002', 'lain', 'PT TESTER DATA', '2 PK', '2025-10-04', 'SHANGHAI', 'TRUCKING ONLY', ' KMTC LINE', 'KMTCT000001', '-', '2025-10-04 12:06:47', '2025-11-14 07:15:02', 'worksheet'),
 (48, 'IM/25/500003', 'lain', 'PT TESTER DATA', '2 PK', '2025-10-04', '-', 'BUAT LARTAS LS', '-', 'INV123456', '-', '2025-10-04 12:11:23', '2025-10-04 12:11:23', 'open job'),
 (49, 'IM/25/500004', 'lain', 'PT TESTER DATA', '5 PK', '2025-10-04', 'BANGKOK', 'BUAT ASURANSI', 'KMTC LINE', 'INV654321', '-', '2025-10-04 12:12:34', '2025-10-04 12:12:34', 'open job'),
-(50, 'IM/25/500005', 'lain', 'PT TESTER DATA', '1 X 20', '2025-10-04', 'KUALA LUMPUR', 'TRUCKING ONLY', 'ONE LINE', 'ONE0101010', '-', '2025-10-04 12:13:52', '2025-10-04 12:13:52', 'open job'),
-(52, 'IM/25/100005', 'import_lcl', 'PT TESTER DATA', '5 PK', '2025-11-14', 'PORT KELANG', 'C25-001528', 'WAN HAI LINE', 'WAN000028', 'WAN987654321', '2025-11-14 07:09:22', '2025-11-14 07:09:22', 'open job');
+(50, 'IM/25/500005', 'lain', 'PT TESTER DATA', '1 X 20', '2025-10-04', 'KUALA LUMPUR', 'TRUCKING ONLY', 'ONE LINE', 'ONE0101010', '-', '2025-10-04 12:13:52', '2025-10-04 12:13:52', 'open job');
 
 -- --------------------------------------------------------
 
@@ -447,7 +453,12 @@ CREATE TABLE `booking_job_trash` (
 --
 
 INSERT INTO `booking_job_trash` (`id`, `no_job`, `type`, `consignee`, `party`, `eta`, `pol`, `no_pib_po`, `shipping_line`, `bl`, `master_bl`, `created_at`, `updated_at`, `deleted_by`, `deleted_at`, `status`) VALUES
-(26, 'IM/25/100005', 'import_lcl', 'PT TESTER DATA', '5 PK', '2025-09-20', 'SHANGHAI', 'C25-000005', 'SITC LINE', 'SITC000002', 'MSITC000002', '2025-10-19 13:50:56', '2025-10-19 13:50:56', 'Admin', '2025-10-19 13:50:56', 'open job');
+(26, 'IM/25/100005', 'import_lcl', 'PT TESTER DATA', '5 PK', '2025-09-20', 'SHANGHAI', 'C25-000005', 'SITC LINE', 'SITC000002', 'MSITC000002', '2025-10-19 13:50:56', '2025-10-19 13:50:56', 'Admin', '2025-10-19 13:50:56', 'open job'),
+(27, 'IM/25/100001', 'import_lcl', 'PT TESTER DATA', '1 PK', '2025-09-30', 'SHANGHAI', 'C25-000001', 'WAN HAI LINE', 'WAN123456', 'MWAN123456', '2025-11-30 16:33:52', '2025-11-30 16:33:52', 'Admin', '2025-11-30 16:33:52', 'worksheet'),
+(28, 'IM/25/100002', 'import_lcl', 'PT TESTER DATA', '2 PK', '2025-09-29', 'PORT KELANG', 'C25-000002', 'KMTC LINE', 'KMTC000003', 'MKMTC000003', '2025-11-30 16:33:56', '2025-11-30 16:33:56', 'Admin', '2025-11-30 16:33:56', 'worksheet'),
+(29, 'IM/25/100003', 'import_lcl', 'PT TESTER DATA', '3 PK', '2025-09-28', 'SHEKOU', 'C25-000003', 'ONE LINE', 'ONE000003', 'MONE000003', '2025-11-30 16:34:00', '2025-11-30 16:34:00', 'Admin', '2025-11-30 16:34:00', 'open job'),
+(30, 'IM/25/100004', 'import_lcl', 'PT TESTER DATA', '4 PK', '2025-09-27', 'INCHEON', 'C25-000004', 'WAN HAI LINE', 'WAN000001', 'MWAN000001', '2025-11-30 16:34:03', '2025-11-30 16:34:03', 'Admin', '2025-11-30 16:34:03', 'open job'),
+(31, 'IM/25/100005', 'import_lcl', 'PT TESTER DATA', '5 PK', '2025-11-14', 'PORT KELANG', 'C25-001528', 'WAN HAI LINE', 'WAN000028', 'WAN987654321', '2025-11-30 16:34:06', '2025-11-30 16:34:06', 'Admin', '2025-11-30 16:34:06', 'open job');
 
 -- --------------------------------------------------------
 
@@ -472,7 +483,9 @@ CREATE TABLE `master_consignee` (
 INSERT INTO `master_consignee` (`id`, `kode`, `nama_consignee`, `npwp_consignee`, `alamat_consignee`, `created_at`, `updated_at`) VALUES
 (1, 'PDTR', 'PT DATA TESTER', '1234567890123456', 'Jalan Test Dulu Bang', '2025-11-24 04:47:01', '2025-11-26 21:16:39'),
 (2, 'PYMS', 'PT YOGA MAKMUR SEJAHTERA', '1111222233334444', 'Jalan Semoga Beneran Punya', '2025-11-26 02:39:35', '2025-11-26 21:16:58'),
-(3, 'PBAS', 'PT BUDI ADUNG SENTOSA', '6543211234566541', 'Jalan Budi Agung Nih Bos', '2025-11-26 04:06:33', '2025-11-26 21:17:13');
+(3, 'PBAS', 'PT BUDI ADUNG SENTOSA', '6543211234566541', 'Jalan Budi Agung Nih Bos', '2025-11-26 04:06:33', '2025-11-26 21:17:13'),
+(4, 'PBMT', 'PT BAGAS MAJU TERUS', '0393747464842642', 'Jalan Sunter Selatan Dekat Danau', '2025-11-30 01:43:06', '2025-11-30 01:43:06'),
+(5, 'PGSS', 'PT GUSTI SEHAT SENTOSA', '3576458976534564', 'Jalan Deli Lorong 3', '2025-11-30 01:44:58', '2025-11-30 01:44:58');
 
 -- --------------------------------------------------------
 
@@ -481,13 +494,24 @@ INSERT INTO `master_consignee` (`id`, `kode`, `nama_consignee`, `npwp_consignee`
 --
 
 CREATE TABLE `master_fasilitas` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `tipe_fasilitas` varchar(100) NOT NULL,
-  `nama_fasilitas` varchar(200) NOT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(7) NOT NULL,
+  `tipe_fasilitas` varchar(25) NOT NULL,
+  `nama_fasilitas` varchar(50) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_fasilitas`
+--
+
+INSERT INTO `master_fasilitas` (`id`, `kode`, `tipe_fasilitas`, `nama_fasilitas`, `created_at`, `updated_at`) VALUES
+(1, 'ATIGA', 'ELECTRONIC COO', 'FORM D - ASEAN TRADE IN GOODS AGREEMENT', '2025-11-30 05:57:35', '2025-11-30 05:57:35'),
+(2, 'AANZFTA', 'CERTIFICATE OF ORIGIN', 'FORM AANZ - ASEAN AUSTRALIA NEW ZEALAND FREE TRADE', '2025-11-30 06:00:13', '2025-11-30 06:00:13'),
+(3, 'AKFTA', 'ELECTRONIC COO', 'FORM AK - ASEAN KOREA FREE TRADE AGREEMENT', '2025-11-30 06:04:25', '2025-11-30 06:04:25'),
+(4, 'ACFTA', 'ELECTRONIC COO', 'FORM E -ASEAN - CHINA FREE TRADE AREA', '2025-11-30 06:05:22', '2025-11-30 06:05:22'),
+(5, 'AIFTA', 'CERTIFICATE OF ORIGIN', 'FORM AI - ASEAN INDIA FREE TRADE AGREEMENT', '2025-11-30 06:08:36', '2025-11-30 06:08:36');
 
 -- --------------------------------------------------------
 
@@ -496,12 +520,23 @@ CREATE TABLE `master_fasilitas` (
 --
 
 CREATE TABLE `master_informasi_tambahan` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
   `nama_pengurusan` varchar(200) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_informasi_tambahan`
+--
+
+INSERT INTO `master_informasi_tambahan` (`id`, `kode`, `nama_pengurusan`, `created_at`, `updated_at`) VALUES
+(1, 'PDMI', 'PERUBAHAN DATA MANIFES INWARD', '2025-11-30 07:28:59', '2025-11-30 07:28:59'),
+(2, 'PDMO', 'PERUBAHAN DATA MANIFES OUTWARD', '2025-11-30 07:29:23', '2025-11-30 07:29:23'),
+(3, 'RAP', 'REJECT AJU PIB', '2025-11-30 07:30:11', '2025-11-30 07:30:11'),
+(4, 'API', 'ANALYZING POINT IMPORT', '2025-11-30 07:30:38', '2025-11-30 07:30:38'),
+(5, 'PDPJH', 'PERUBAHAN DATA PIB JALUR HIJAU', '2025-11-30 07:31:29', '2025-11-30 07:31:29');
 
 -- --------------------------------------------------------
 
@@ -510,12 +545,23 @@ CREATE TABLE `master_informasi_tambahan` (
 --
 
 CREATE TABLE `master_kemasan` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `jenis_kemasan` varchar(200) NOT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
+  `jenis_kemasan` varchar(50) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_kemasan`
+--
+
+INSERT INTO `master_kemasan` (`id`, `kode`, `jenis_kemasan`, `created_at`, `updated_at`) VALUES
+(1, 'PK', 'PACKAGE', '2025-11-30 04:54:12', '2025-11-30 04:54:12'),
+(2, 'PX', 'PALLET', '2025-11-30 04:57:04', '2025-11-30 04:57:04'),
+(3, 'BX', 'BOX', '2025-11-30 04:57:19', '2025-11-30 04:57:19'),
+(4, 'CT', 'CARTON', '2025-11-30 04:57:32', '2025-11-30 04:57:32'),
+(5, 'DR', 'DRUM', '2025-11-30 04:58:59', '2025-11-30 04:58:59');
 
 -- --------------------------------------------------------
 
@@ -524,12 +570,23 @@ CREATE TABLE `master_kemasan` (
 --
 
 CREATE TABLE `master_lartas` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
   `nama_lartas` varchar(200) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_lartas`
+--
+
+INSERT INTO `master_lartas` (`id`, `kode`, `nama_lartas`, `created_at`, `updated_at`) VALUES
+(1, 'LS', 'LAPORAN SURVEYOR', '2025-11-30 05:19:12', '2025-11-30 05:19:12'),
+(2, 'KLH', 'KEMENTRIAN LINGKUNGAN HIDUP', '2025-11-30 05:19:44', '2025-11-30 05:19:44'),
+(3, 'BPOM', 'SURAT PERSETUJUAN MUAT BPOM', '2025-11-30 05:20:11', '2025-11-30 05:22:15'),
+(4, 'PI', 'SURAT PERSETUJUAN IMPORT DEP DAG', '2025-11-30 05:20:26', '2025-11-30 05:21:30'),
+(5, 'KT', 'KARANTINA TUMBUHAN', '2025-11-30 05:24:14', '2025-11-30 05:24:14');
 
 -- --------------------------------------------------------
 
@@ -538,13 +595,24 @@ CREATE TABLE `master_lartas` (
 --
 
 CREATE TABLE `master_lokasi_sandar` (
-  `id` bigint(20) NOT NULL,
-  `kode` varchar(20) NOT NULL,
-  `nama_sandar` varchar(200) NOT NULL,
+  `id` int(10) NOT NULL,
+  `kode` varchar(6) NOT NULL,
+  `nama_sandar` varchar(100) NOT NULL,
   `alamat_sandar` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `master_lokasi_sandar`
+--
+
+INSERT INTO `master_lokasi_sandar` (`id`, `kode`, `nama_sandar`, `alamat_sandar`, `created_at`, `updated_at`) VALUES
+(1, 'TPK1', 'JAKARTA INTERNATIONAL CONTAINER TERMINAL', 'Jl. Raya Sulawesi No.1, RT.7/RW.1, Ujung, Kec. Tj. Priok, Jkt Utara, Daerah Khusus Ibukota Jakarta 14310', '2025-11-30 01:29:01', '2025-11-30 01:56:41'),
+(2, 'NCT1', 'NEW PRIOK CONTAINER TERMINAL', 'Jl. Terminal Kalibaru Raya Kav.B No.1, Kali Baru, Cilincing, North Jakarta City, Jakarta 14110', '2025-11-30 01:31:02', '2025-11-30 01:56:50'),
+(3, 'KOJA', 'KOJA CONTAINER TERMINAL', 'Digul No.1, RW.1, Koja, Kec. Koja, Jkt Utara, Daerah Khusus Ibukota Jakarta 14220', '2025-11-30 01:40:42', '2025-11-30 01:40:42'),
+(4, 'RAYA', 'AGUNG RAYA', 'Jl. Bangka No.5, RT.7/RW.16, Tj. Priok, Kec. Tj. Priok, Jkt Utara, Daerah Khusus Ibukota Jakarta 14310', '2025-11-30 02:00:02', '2025-11-30 02:00:02'),
+(5, 'IMUT', 'INTI MANDIRI UTAMA TRANS', 'Jl. Bugis Raya No. 15 Kebon Bawang Tanjung Priok Jakarta Utara', '2025-11-30 02:02:33', '2025-11-30 02:02:33');
 
 -- --------------------------------------------------------
 
@@ -594,7 +662,9 @@ CREATE TABLE `master_pelayaran` (
 INSERT INTO `master_pelayaran` (`id`, `kode`, `nama_pelayaran`, `npwp_pelayaran`, `alamat_pelayaran`, `created_at`, `updated_at`) VALUES
 (1, 'ONEI', 'PT OCEAN NETWORK EXPRESS INDONESIA', '9999888833332222', 'AIA Central Building, Jl. Jend. Sudirman No.Kav. 48A, RT.5/RW.4, Karet Semanggi, Setiabudi, South Jakarta City, Jakarta 12930', '2025-11-27 01:23:54', '2025-11-27 01:55:51'),
 (2, 'KMTC', 'PT SAMUDERA AGENCIES INDONESIA', '7777222211113333', 'Lippo Kuningan, 21st Floor, Jl. HR Rasuna Said No.Kav. B-12, RT.6/RW.7, Kuningan, Karet Kuningan, Kecamatan Setiabudi, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12940', '2025-11-27 01:50:06', '2025-11-27 01:50:06'),
-(3, 'MSCL', 'PT. PERUSAHAAN PELAYARAN NUSANTARA PANURJWAN', '2222444477775555', 'Capital Place Building, 39th Floor Jl. Jend. Gatot Subroto Kav. 18 ID - 12710 JAKARTA, JAVA', '2025-11-27 01:55:16', '2025-11-27 01:55:16');
+(3, 'MSCL', 'PT. PERUSAHAAN PELAYARAN NUSANTARA PANURJWAN', '2222444477775555', 'Capital Place Building, 39th Floor Jl. Jend. Gatot Subroto Kav. 18 ID - 12710 JAKARTA, JAVA', '2025-11-27 01:55:16', '2025-11-27 01:55:16'),
+(4, 'CMAL', 'PT CONTAINER MARITIME ACTIVITIES', '0989765467451234', 'Permata Kuningan Building 21-22 Fl Jl. Kuningan Mulia Kav 9C, Guntur, Setia Budi JAKARTA, INDONESIA\r\n12980 JAKARTA', '2025-11-30 01:47:27', '2025-11-30 01:47:27'),
+(5, 'SITC', 'PT SITC INDONESIA', '6545787634536786', 'Gama Tower, 36th Floor Unit ABC Jl. H. R. Rasuna Said Kav. C-22 Kuningan Jakarta\r\n12940, Indonesia', '2025-11-30 01:50:04', '2025-11-30 01:50:04');
 
 -- --------------------------------------------------------
 
@@ -619,7 +689,8 @@ INSERT INTO `master_port` (`id`, `kode`, `nama_port`, `negara_port`, `created_at
 (1, 'IDJKT', 'TANJUNG PRIOK', 'INDONESIA', '2025-11-27 05:00:22', '2025-11-27 05:00:22'),
 (2, 'IDCGK', 'CENGKARENG / SOEKARNO', 'INDONESIA', '2025-11-27 05:07:01', '2025-11-27 05:07:01'),
 (3, 'IDSUB', 'TANJUNG PERAK', 'INDONESIA', '2025-11-27 05:10:43', '2025-11-27 05:10:43'),
-(4, 'CNXGG', 'XINGANG', 'CHINA', '2025-11-27 05:18:45', '2025-11-27 05:18:45');
+(4, 'CNXGG', 'XINGANG', 'CHINA', '2025-11-27 05:18:45', '2025-11-27 05:18:45'),
+(5, 'SGSIN', 'SINGAPORE', 'SINGAPORE', '2025-11-30 01:55:52', '2025-11-30 01:55:52');
 
 -- --------------------------------------------------------
 
@@ -700,7 +771,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `email`, `username`, `password_hash`, `reset_hash`, `reset_at`, `reset_expires`, `activate_hash`, `status`, `status_message`, `active`, `force_pass_reset`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'yogasaputra2896@gmail.com', 'Admin', '$2y$10$Qxxbcq/MJ1lDOWB6P179qOzk5GZgL9nAUQSFUUsG3.n8S6uH3A5.G', NULL, NULL, NULL, 'f39d1e936f604c944bcc80301836ab1c', NULL, NULL, 1, 0, '2025-09-15 08:58:13', '2025-09-15 08:58:13', NULL),
 (2, 'exim3@trustwaytransindo.com', 'Exim3', '$2y$10$bw2vbtf1QGMNspj9gtOpd.UPjtDxEgY04K67eFGxbUKwafJ5s/A6G', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-09-22 04:05:53', '2025-09-22 04:05:53', NULL),
-(3, 'accounting1@trustwaytransindo.com', 'Accounting1', '$2y$10$QbcZm0AEA2kBbA/rmdOxn./ZCtCGvayMyXZKEXBDCo1IFAvokZHfa', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-09-22 04:11:54', '2025-09-22 04:11:54', NULL);
+(4, 'dokumen1@trustwaytransindo.com', 'Dokumen1', '$2y$10$E/6lJ7cKMuC6lw30NR1NiuEYAfPOBvF2b6rbYu7HnhsnQjT5adFvW', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-11-30 14:35:39', '2025-11-30 14:35:39', NULL);
 
 -- --------------------------------------------------------
 
@@ -773,18 +844,6 @@ CREATE TABLE `worksheet_container_import` (
   `id_ws` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `worksheet_container_import`
---
-
-INSERT INTO `worksheet_container_import` (`id`, `no_container`, `ukuran`, `tipe`, `created_at`, `id_ws`) VALUES
-(77, 'CSNU1181201', '20', 'DRY', '2025-11-13 00:19:43', 19),
-(78, 'ASNU7654321', '40', 'REEFER', '2025-11-13 00:19:43', 19),
-(82, 'OOLU123456', '20', 'DRY', '2025-11-13 00:20:19', 20),
-(83, 'ULLU123456', '20', 'DRY', '2025-11-13 00:20:19', 20),
-(84, 'OLLU123456', '20', 'DRY', '2025-11-13 00:20:20', 20),
-(88, 'TENU2132654', '40', 'DRY', '2025-11-14 04:42:02', 28);
-
 -- --------------------------------------------------------
 
 --
@@ -801,6 +860,18 @@ CREATE TABLE `worksheet_container_import_trash` (
   `deleted_by` varchar(100) DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_container_import_trash`
+--
+
+INSERT INTO `worksheet_container_import_trash` (`id`, `no_container`, `ukuran`, `tipe`, `created_at`, `id_ws`, `deleted_by`, `deleted_at`) VALUES
+(2, 'TENU2132654', '40', 'DRY', '2025-11-14 04:42:02', 13, 'Admin', '2025-11-30 17:08:34'),
+(3, 'OOLU123456', '20', 'DRY', '2025-11-13 00:20:19', 14, 'Admin', '2025-11-30 17:08:37'),
+(4, 'ULLU123456', '20', 'DRY', '2025-11-13 00:20:19', 14, 'Admin', '2025-11-30 17:08:37'),
+(5, 'OLLU123456', '20', 'DRY', '2025-11-13 00:20:20', 14, 'Admin', '2025-11-30 17:08:37'),
+(6, 'CSNU1181201', '20', 'DRY', '2025-11-13 00:19:43', 15, 'Admin', '2025-11-30 17:08:41'),
+(7, 'ASNU7654321', '40', 'REEFER', '2025-11-13 00:19:43', 15, 'Admin', '2025-11-30 17:08:41');
 
 -- --------------------------------------------------------
 
@@ -856,14 +927,6 @@ CREATE TABLE `worksheet_do_import` (
   `id_ws` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `worksheet_do_import`
---
-
-INSERT INTO `worksheet_do_import` (`id`, `tipe_do`, `pengambil_do`, `tgl_mati_do`, `created_at`, `id_ws`) VALUES
-(105, 'Delivery Order', 'Aan', '2025-11-12', '2025-11-13 07:19:43', 19),
-(138, 'Delivery Order', 'Aan', '2025-11-14', '2025-11-20 10:56:36', 27);
-
 -- --------------------------------------------------------
 
 --
@@ -880,6 +943,14 @@ CREATE TABLE `worksheet_do_import_trash` (
   `deleted_by` varchar(100) DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_do_import_trash`
+--
+
+INSERT INTO `worksheet_do_import_trash` (`id`, `tipe_do`, `pengambil_do`, `tgl_mati_do`, `created_at`, `id_ws`, `deleted_by`, `deleted_at`) VALUES
+(6, 'Delivery Order', 'Aan', '2025-11-12', '2025-11-13 07:19:43', 15, 'Admin', '2025-11-30 17:08:41'),
+(7, 'Delivery Order', 'Aan', '2025-11-14', '2025-11-20 10:56:36', 16, 'Admin', '2025-11-30 17:08:43');
 
 -- --------------------------------------------------------
 
@@ -1079,13 +1150,6 @@ CREATE TABLE `worksheet_fasilitas_import` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `worksheet_fasilitas_import`
---
-
-INSERT INTO `worksheet_fasilitas_import` (`id`, `id_ws`, `tipe_fasilitas`, `nama_fasilitas`, `tgl_fasilitas`, `no_fasilitas`, `created_at`) VALUES
-(41, 27, 'ECOO', 'FORM E', '2025-11-13', 'E123456789', '2025-11-20 10:56:37');
-
 -- --------------------------------------------------------
 
 --
@@ -1103,6 +1167,13 @@ CREATE TABLE `worksheet_fasilitas_import_trash` (
   `deleted_by` varchar(100) DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_fasilitas_import_trash`
+--
+
+INSERT INTO `worksheet_fasilitas_import_trash` (`id`, `id_ws`, `tipe_fasilitas`, `nama_fasilitas`, `tgl_fasilitas`, `no_fasilitas`, `created_at`, `deleted_by`, `deleted_at`) VALUES
+(6, 16, 'ECOO', 'FORM E', '2025-11-13', 'E123456789', '2025-11-20 10:56:37', 'Admin', '2025-11-30 17:08:43');
 
 -- --------------------------------------------------------
 
@@ -1161,18 +1232,6 @@ CREATE TABLE `worksheet_import` (
   `deleted_at` datetime NOT NULL,
   `status` varchar(20) NOT NULL DEFAULT 'not completed'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `worksheet_import`
---
-
-INSERT INTO `worksheet_import` (`id`, `no_ws`, `no_aju`, `pengurusan_pib`, `tgl_aju`, `no_po`, `io_number`, `pib_nopen`, `tgl_nopen`, `tgl_sppb`, `penjaluran`, `tgl_spjm`, `shipper`, `consignee`, `notify_party`, `vessel`, `no_voyage`, `pol`, `terminal`, `shipping_line`, `commodity`, `party`, `jenis_con`, `qty`, `kemasan`, `net`, `gross`, `bl`, `tgl_bl`, `master_bl`, `tgl_master`, `no_invoice`, `tgl_invoice`, `eta`, `dok_ori`, `tgl_ori`, `pengurusan_do`, `asuransi`, `top`, `jenis_trucking`, `jenis_tambahan`, `pengurusan_lartas`, `jenis_fasilitas`, `berita_acara`, `created_at`, `updated_at`, `deleted_by`, `deleted_at`, `status`) VALUES
-(19, 'IM/25/100002', '00000000686820251018000002', 'Pembuatan Draft PIB', '2025-11-11', '-', '-', '123457', '2025-11-11', '2025-11-11', 'SPJM', '2025-11-08', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '120E', 'PORT KELANG', 'JICT', 'KMTC LINE', 'ALUMINIUM ALLOY', '2 PK', 'FCL', '2', 'Package', 100.00, 100.00, 'KMTC000003', '2025-11-11', 'MKMTC000003', '2025-11-11', 'INV000003', '2025-11-11', '2025-09-29', 'Belum Ada', NULL, 'Pengambilan Delivery Order', 'CIF', 'PREPAID', 'Pengurusan Trucking', 'Tidak Ada Tambahan', 'Pembuatan Lartas', 'Tidak Ada Fasilitas', '', '2025-11-11 02:11:19', '2025-11-13 07:19:43', NULL, '0000-00-00 00:00:00', 'completed'),
-(20, 'IM/25/400001', '00000000686820251018000003', 'Pembuatan Draft PIB', '2025-11-13', '-', '-', '123458', '2025-11-13', '2025-11-13', 'SPPB', NULL, 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '150E', 'PORT KELANG', 'KOJA', 'MCC LINE', 'TEST NAMA BARANG', '3 X 20', 'FCL', '3000', 'Carton', 10000.00, 15000.00, 'MCC123456', '2025-11-13', 'MMCC123456', '2025-11-13', 'INV0000456', '2025-11-13', '2025-09-23', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'CIF', 'PREPAID', 'Pengurusan Trucking', 'Tidak Ada Tambahan', 'Pembuatan Lartas', 'Tidak Ada Fasilitas', '', '2025-11-11 02:11:37', '2025-11-13 07:20:19', NULL, '0000-00-00 00:00:00', 'completed'),
-(21, 'IM/25/600001', 'C25-000014', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'SHEKOU', NULL, 'SITC', NULL, '2 x 20', 'FCL', NULL, NULL, NULL, NULL, 'SITC123456', NULL, 'MSITC123456', NULL, NULL, NULL, '2025-09-23', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2025-11-11 02:11:50', '2025-11-11 09:47:20', NULL, '0000-00-00 00:00:00', 'not completed'),
-(22, 'IM/25/500001', 'BUAT ASURANSI ONLY', 'Draft PIB Sendiri', '2025-11-13', '', '', '', '2025-11-13', '2025-11-13', 'SPPB', NULL, 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '', 'WAN WAN', '150E', 'INCHEON', 'JICT', 'OOCL LINE', 'TEST NAMA BARANG', '2 BG', 'LCL', '2', 'Bag', 10.00, 10.00, 'OOLU000001', '2025-11-13', '', '0000-00-00', 'INV000001', '2025-11-13', '2025-10-04', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'Pembuatan Asuransi', 'PREPAID', 'Trucking Sendiri', 'Tidak Ada Tambahan', 'Lartas Sendiri', 'Tidak Ada Fasilitas', 'BUAT ASURANSI ONLY', '2025-11-11 02:12:16', '2025-11-24 01:41:11', NULL, '0000-00-00 00:00:00', 'completed'),
-(27, 'IM/25/100001', '00000000686820251018000001', 'Pembuatan Draft PIB', '2025-10-18', 'POIF-25-0001', '-', '123456', '2025-10-18', '2025-11-11', 'SPPB', NULL, 'SHELL OIL CO LTD', 'PT TESTER DATA', 'PT TESTER DATA GRUB', 'ONE MADRID', '0001W', 'KUALA LUMPUR', 'NPCT', 'WAN HAI LINE', 'BAHAN BAKAR SHELL', '1 PK', 'LCL', '1', 'Package', 1000.00, 1000.00, 'WAN123456', '2025-11-11', 'MWAN123456', '2025-10-18', 'INV123456', '2025-10-18', '2025-09-30', 'Sudah Ada', '2025-11-13', 'Pengambilan Delivery Order', 'Pembuatan Asuransi', 'PREPAID', 'Pengurusan Trucking', 'Pengurusan Tambahan', 'Pembuatan Lartas', 'Fasilitas Sendiri', '', '2025-11-20 07:15:29', '2025-11-20 10:56:35', NULL, '0000-00-00 00:00:00', 'completed'),
-(28, 'IM/25/400002', '00000000686820251018000004', 'Pembuatan Draft PIB', '2025-11-14', '', '', '216598', '2025-11-14', '2025-11-14', 'SPJM', '2025-11-14', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '', 'MSC YOGA', '315E', 'PORT KELANG', 'NPCT', 'ONE LINE', 'TEST NAMA BARANG', '1 X 20', 'FCL', '50', 'Pallet', 4000.00, 5000.00, 'ONE000010', '2025-11-14', 'MONE000010', '2025-11-14', 'INV653297898', '2025-11-14', '2025-09-10', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'CIF', 'PREPAID', 'Trucking Sendiri', 'Tidak Ada Tambahan', 'Lartas Sendiri', 'Tidak Ada Fasilitas', '', '2025-11-20 07:15:37', '2025-11-20 07:15:37', NULL, '0000-00-00 00:00:00', 'completed');
 
 -- --------------------------------------------------------
 
@@ -1237,7 +1296,13 @@ CREATE TABLE `worksheet_import_trash` (
 --
 
 INSERT INTO `worksheet_import_trash` (`id`, `no_ws`, `no_aju`, `pengurusan_pib`, `tgl_aju`, `no_po`, `io_number`, `pib_nopen`, `tgl_nopen`, `tgl_sppb`, `penjaluran`, `tgl_spjm`, `shipper`, `consignee`, `notify_party`, `vessel`, `no_voyage`, `pol`, `terminal`, `shipping_line`, `commodity`, `party`, `jenis_con`, `qty`, `kemasan`, `net`, `gross`, `bl`, `tgl_bl`, `master_bl`, `tgl_master`, `no_invoice`, `tgl_invoice`, `eta`, `dok_ori`, `tgl_ori`, `pengurusan_do`, `asuransi`, `top`, `jenis_trucking`, `jenis_tambahan`, `pengurusan_lartas`, `jenis_fasilitas`, `berita_acara`, `created_at`, `updated_at`, `deleted_by`, `deleted_at`, `status`) VALUES
-(10, 'IM/25/500002', 'TRUCKING ONLY', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'SHANGHAI', NULL, ' KMTC LINE', NULL, '2 PK', 'FCL', NULL, NULL, NULL, NULL, 'KMTCT000001', NULL, '-', NULL, NULL, NULL, '2025-10-04', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-14 07:15:02', '2025-11-14 07:15:02', 'Admin', '2025-11-20 12:03:24', 'not completed');
+(10, 'IM/25/500002', 'TRUCKING ONLY', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'SHANGHAI', NULL, ' KMTC LINE', NULL, '2 PK', 'FCL', NULL, NULL, NULL, NULL, 'KMTCT000001', NULL, '-', NULL, NULL, NULL, '2025-10-04', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-14 07:15:02', '2025-11-14 07:15:02', 'Admin', '2025-11-20 12:03:24', 'not completed'),
+(11, 'IM/25/600001', 'C25-000014', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PT TESTER DATA', NULL, NULL, NULL, 'SHEKOU', NULL, 'SITC', NULL, '2 x 20', 'FCL', NULL, NULL, NULL, NULL, 'SITC123456', NULL, 'MSITC123456', NULL, NULL, NULL, '2025-09-23', NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2025-11-11 02:11:50', '2025-11-11 09:47:20', 'Admin', '2025-11-30 17:08:27', 'not completed'),
+(12, 'IM/25/500001', 'BUAT ASURANSI ONLY', 'Draft PIB Sendiri', '2025-11-13', '', '', '', '2025-11-13', '2025-11-13', 'SPPB', NULL, 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '', 'WAN WAN', '150E', 'INCHEON', 'JICT', 'OOCL LINE', 'TEST NAMA BARANG', '2 BG', 'LCL', '2', 'Bag', 10.00, 10.00, 'OOLU000001', '2025-11-13', '', '0000-00-00', 'INV000001', '2025-11-13', '2025-10-04', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'Pembuatan Asuransi', 'PREPAID', 'Trucking Sendiri', 'Tidak Ada Tambahan', 'Lartas Sendiri', 'Tidak Ada Fasilitas', 'BUAT ASURANSI ONLY', '2025-11-11 02:12:16', '2025-11-24 01:41:11', 'Admin', '2025-11-30 17:08:31', 'completed'),
+(13, 'IM/25/400002', '00000000686820251018000004', 'Pembuatan Draft PIB', '2025-11-14', '', '', '216598', '2025-11-14', '2025-11-14', 'SPJM', '2025-11-14', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '', 'MSC YOGA', '315E', 'PORT KELANG', 'NPCT', 'ONE LINE', 'TEST NAMA BARANG', '1 X 20', 'FCL', '50', 'Pallet', 4000.00, 5000.00, 'ONE000010', '2025-11-14', 'MONE000010', '2025-11-14', 'INV653297898', '2025-11-14', '2025-09-10', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'CIF', 'PREPAID', 'Trucking Sendiri', 'Tidak Ada Tambahan', 'Lartas Sendiri', 'Tidak Ada Fasilitas', '', '2025-11-20 07:15:37', '2025-11-20 07:15:37', 'Admin', '2025-11-30 17:08:34', 'completed'),
+(14, 'IM/25/400001', '00000000686820251018000003', 'Pembuatan Draft PIB', '2025-11-13', '-', '-', '123458', '2025-11-13', '2025-11-13', 'SPPB', NULL, 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '150E', 'PORT KELANG', 'KOJA', 'MCC LINE', 'TEST NAMA BARANG', '3 X 20', 'FCL', '3000', 'Carton', 10000.00, 15000.00, 'MCC123456', '2025-11-13', 'MMCC123456', '2025-11-13', 'INV0000456', '2025-11-13', '2025-09-23', 'Belum Ada', NULL, 'Delivery Order Sendiri', 'CIF', 'PREPAID', 'Pengurusan Trucking', 'Tidak Ada Tambahan', 'Pembuatan Lartas', 'Tidak Ada Fasilitas', '', '2025-11-11 02:11:37', '2025-11-13 07:20:19', 'Admin', '2025-11-30 17:08:37', 'completed'),
+(15, 'IM/25/100002', '00000000686820251018000002', 'Pembuatan Draft PIB', '2025-11-11', '-', '-', '123457', '2025-11-11', '2025-11-11', 'SPJM', '2025-11-08', 'SHIPPER TEST DATA CO LTD', 'PT TESTER DATA', '-', 'WAN WAN', '120E', 'PORT KELANG', 'JICT', 'KMTC LINE', 'ALUMINIUM ALLOY', '2 PK', 'FCL', '2', 'Package', 100.00, 100.00, 'KMTC000003', '2025-11-11', 'MKMTC000003', '2025-11-11', 'INV000003', '2025-11-11', '2025-09-29', 'Belum Ada', NULL, 'Pengambilan Delivery Order', 'CIF', 'PREPAID', 'Pengurusan Trucking', 'Tidak Ada Tambahan', 'Pembuatan Lartas', 'Tidak Ada Fasilitas', '', '2025-11-11 02:11:19', '2025-11-13 07:19:43', 'Admin', '2025-11-30 17:08:41', 'completed'),
+(16, 'IM/25/100001', '00000000686820251018000001', 'Pembuatan Draft PIB', '2025-10-18', 'POIF-25-0001', '-', '123456', '2025-10-18', '2025-11-11', 'SPPB', NULL, 'SHELL OIL CO LTD', 'PT TESTER DATA', 'PT TESTER DATA GRUB', 'ONE MADRID', '0001W', 'KUALA LUMPUR', 'NPCT', 'WAN HAI LINE', 'BAHAN BAKAR SHELL', '1 PK', 'LCL', '1', 'Package', 1000.00, 1000.00, 'WAN123456', '2025-11-11', 'MWAN123456', '2025-10-18', 'INV123456', '2025-10-18', '2025-09-30', 'Sudah Ada', '2025-11-13', 'Pengambilan Delivery Order', 'Pembuatan Asuransi', 'PREPAID', 'Pengurusan Trucking', 'Pengurusan Tambahan', 'Pembuatan Lartas', 'Fasilitas Sendiri', '', '2025-11-20 07:15:29', '2025-11-20 10:56:35', 'Admin', '2025-11-30 17:08:43', 'completed');
 
 -- --------------------------------------------------------
 
@@ -1290,13 +1355,6 @@ CREATE TABLE `worksheet_informasi_tambahan_import` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `worksheet_informasi_tambahan_import`
---
-
-INSERT INTO `worksheet_informasi_tambahan_import` (`id`, `id_ws`, `nama_pengurusan`, `tgl_pengurusan`, `created_at`) VALUES
-(57, 27, 'Redress Manifest', '2025-11-12', '2025-11-20 10:56:37');
-
 -- --------------------------------------------------------
 
 --
@@ -1312,6 +1370,13 @@ CREATE TABLE `worksheet_informasi_tambahan_import_trash` (
   `deleted_by` varchar(100) DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_informasi_tambahan_import_trash`
+--
+
+INSERT INTO `worksheet_informasi_tambahan_import_trash` (`id`, `id_ws`, `nama_pengurusan`, `tgl_pengurusan`, `created_at`, `deleted_by`, `deleted_at`) VALUES
+(6, 16, 'Redress Manifest', '2025-11-12', '2025-11-20 10:56:37', 'Admin', '2025-11-30 17:08:43');
 
 -- --------------------------------------------------------
 
@@ -1367,16 +1432,6 @@ CREATE TABLE `worksheet_lartas_import` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `worksheet_lartas_import`
---
-
-INSERT INTO `worksheet_lartas_import` (`id`, `id_ws`, `nama_lartas`, `no_lartas`, `tgl_lartas`, `created_at`) VALUES
-(122, 19, 'Laporan Surveyor', 'LS123456789', '2025-11-12', '2025-11-13 07:19:43'),
-(124, 20, 'Laporan Surveyor', 'LS987654321', '2025-11-13', '2025-11-13 07:20:20'),
-(197, 27, 'Laporan Surveyor', 'LS123456789', '2025-11-12', '2025-11-20 10:56:36'),
-(198, 27, 'SURAT PERSETUJUAN MUAT BPOM', 'BPOM123456789', '2025-11-12', '2025-11-20 10:56:37');
-
 -- --------------------------------------------------------
 
 --
@@ -1393,6 +1448,16 @@ CREATE TABLE `worksheet_lartas_import_trash` (
   `deleted_by` varchar(100) DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_lartas_import_trash`
+--
+
+INSERT INTO `worksheet_lartas_import_trash` (`id`, `id_ws`, `nama_lartas`, `no_lartas`, `tgl_lartas`, `created_at`, `deleted_by`, `deleted_at`) VALUES
+(11, 14, 'Laporan Surveyor', 'LS987654321', '2025-11-13', '2025-11-13 07:20:20', 'Admin', '2025-11-30 17:08:37'),
+(12, 15, 'Laporan Surveyor', 'LS123456789', '2025-11-12', '2025-11-13 07:19:43', 'Admin', '2025-11-30 17:08:41'),
+(13, 16, 'Laporan Surveyor', 'LS123456789', '2025-11-12', '2025-11-20 10:56:36', 'Admin', '2025-11-30 17:08:43'),
+(14, 16, 'SURAT PERSETUJUAN MUAT BPOM', 'BPOM123456789', '2025-11-12', '2025-11-20 10:56:37', 'Admin', '2025-11-30 17:08:43');
 
 -- --------------------------------------------------------
 
@@ -1455,17 +1520,6 @@ CREATE TABLE `worksheet_trucking_import` (
   `id_ws` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `worksheet_trucking_import`
---
-
-INSERT INTO `worksheet_trucking_import` (`id`, `no_mobil`, `tipe_mobil`, `nama_supir`, `alamat`, `telp_supir`, `created_at`, `id_ws`) VALUES
-(147, 'B 12345 UUF', 'TRAILER', 'Budi', 'Gudang Marunda', '088291954971', '2025-11-13 07:19:43', 19),
-(151, 'B 12345 UUF', 'TRAILER', 'Budi', 'Gudang Daanmogot', '088291954971', '2025-11-13 07:20:20', 20),
-(152, 'B 54321 UUI', 'TRAILER', 'Bagas', 'Gudang Daanmogot', '0812345678', '2025-11-13 07:20:20', 20),
-(153, 'B 11111 UUU', 'TRAILER', 'Jono', 'Gudang Daanmogot', '0812345678', '2025-11-13 07:20:20', 20),
-(191, 'B 12345 UUF', 'WING BOX', 'Bagas', 'Gudang Tigaraksa', '088291954971', '2025-11-20 10:56:35', 27);
-
 -- --------------------------------------------------------
 
 --
@@ -1484,6 +1538,17 @@ CREATE TABLE `worksheet_trucking_import_trash` (
   `deleted_by` varchar(100) DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `worksheet_trucking_import_trash`
+--
+
+INSERT INTO `worksheet_trucking_import_trash` (`id`, `no_mobil`, `tipe_mobil`, `nama_supir`, `alamat`, `telp_supir`, `created_at`, `id_ws`, `deleted_by`, `deleted_at`) VALUES
+(6, 'B 12345 UUF', 'TRAILER', 'Budi', 'Gudang Daanmogot', '088291954971', '2025-11-13 07:20:20', 14, 'Admin', '2025-11-30 17:08:37'),
+(7, 'B 54321 UUI', 'TRAILER', 'Bagas', 'Gudang Daanmogot', '0812345678', '2025-11-13 07:20:20', 14, 'Admin', '2025-11-30 17:08:37'),
+(8, 'B 11111 UUU', 'TRAILER', 'Jono', 'Gudang Daanmogot', '0812345678', '2025-11-13 07:20:20', 14, 'Admin', '2025-11-30 17:08:37'),
+(9, 'B 12345 UUF', 'TRAILER', 'Budi', 'Gudang Marunda', '088291954971', '2025-11-13 07:19:43', 15, 'Admin', '2025-11-30 17:08:41'),
+(10, 'B 12345 UUF', 'WING BOX', 'Bagas', 'Gudang Tigaraksa', '088291954971', '2025-11-20 10:56:35', 16, 'Admin', '2025-11-30 17:08:43');
 
 --
 -- Indexes for dumped tables
@@ -1875,7 +1940,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=204;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -1905,43 +1970,43 @@ ALTER TABLE `booking_job`
 -- AUTO_INCREMENT for table `booking_job_trash`
 --
 ALTER TABLE `booking_job_trash`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `master_consignee`
 --
 ALTER TABLE `master_consignee`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_fasilitas`
 --
 ALTER TABLE `master_fasilitas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_informasi_tambahan`
 --
 ALTER TABLE `master_informasi_tambahan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_kemasan`
 --
 ALTER TABLE `master_kemasan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_lartas`
 --
 ALTER TABLE `master_lartas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_lokasi_sandar`
 --
 ALTER TABLE `master_lokasi_sandar`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_notify_party`
@@ -1953,13 +2018,13 @@ ALTER TABLE `master_notify_party`
 -- AUTO_INCREMENT for table `master_pelayaran`
 --
 ALTER TABLE `master_pelayaran`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_port`
 --
 ALTER TABLE `master_port`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `master_vessel`
@@ -1977,7 +2042,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user_trash`
@@ -2007,7 +2072,7 @@ ALTER TABLE `worksheet_container_import`
 -- AUTO_INCREMENT for table `worksheet_container_import_trash`
 --
 ALTER TABLE `worksheet_container_import_trash`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `worksheet_do_export`
@@ -2031,7 +2096,7 @@ ALTER TABLE `worksheet_do_import`
 -- AUTO_INCREMENT for table `worksheet_do_import_trash`
 --
 ALTER TABLE `worksheet_do_import_trash`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `worksheet_export`
@@ -2067,7 +2132,7 @@ ALTER TABLE `worksheet_fasilitas_import`
 -- AUTO_INCREMENT for table `worksheet_fasilitas_import_trash`
 --
 ALTER TABLE `worksheet_fasilitas_import_trash`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `worksheet_import`
@@ -2079,7 +2144,7 @@ ALTER TABLE `worksheet_import`
 -- AUTO_INCREMENT for table `worksheet_import_trash`
 --
 ALTER TABLE `worksheet_import_trash`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `worksheet_informasi_tambahan_export`
@@ -2103,7 +2168,7 @@ ALTER TABLE `worksheet_informasi_tambahan_import`
 -- AUTO_INCREMENT for table `worksheet_informasi_tambahan_import_trash`
 --
 ALTER TABLE `worksheet_informasi_tambahan_import_trash`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `worksheet_lartas_export`
@@ -2127,7 +2192,7 @@ ALTER TABLE `worksheet_lartas_import`
 -- AUTO_INCREMENT for table `worksheet_lartas_import_trash`
 --
 ALTER TABLE `worksheet_lartas_import_trash`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `worksheet_trucking_export`
@@ -2151,7 +2216,7 @@ ALTER TABLE `worksheet_trucking_import`
 -- AUTO_INCREMENT for table `worksheet_trucking_import_trash`
 --
 ALTER TABLE `worksheet_trucking_import_trash`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables

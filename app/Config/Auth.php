@@ -16,7 +16,7 @@ class Auth extends \Myth\Auth\Config\Auth
      *
      * @var string
      */
-    public $defaultUserGroup = 'staff';
+    public $defaultUserGroup = 'exim';
 
     /**
      * --------------------------------------------------------------------
@@ -176,7 +176,7 @@ class Auth extends \Myth\Auth\Config\Auth
      *
      * @var bool
      */
-    public $allowRegistration = false;
+    public $allowRegistration = true;
 
     /**
      * --------------------------------------------------------------------
@@ -384,5 +384,4 @@ class Auth extends \Myth\Auth\Config\Auth
      * @var int
      */
     public $resetTime = 3600;
-    
 }

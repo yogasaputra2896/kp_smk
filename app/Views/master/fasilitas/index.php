@@ -1,14 +1,14 @@
 <?= $this->extend('layouts/layout') ?>
 
-<?= $this->section('title') ?>Master Consignee<?= $this->endSection() ?>
+<?= $this->section('title') ?>Master Fasilitas<?= $this->endSection() ?>
 
 <!-- ====================== HEADER ====================== -->
 <?= $this->section('pageTitle') ?>
 <div class="page-heading">
-    <h3 class="heading-title">Master Data Consignee</h3>
+    <h3 class="heading-title">Master Data Fasilitas</h3>
 
     <p class="text-subtitle text-muted">
-        Master Data Consignee digunakan untuk menyimpan informasi importir/Exportir atau penerima barang.
+        Master Data Fasilitas digunakan untuk menyimpan informasi Fasilitas.
         Data pada modul ini akan digunakan otomatis di modul Booking Job dan Worksheet
         agar proses input lebih cepat, konsisten dan tidak terjadi kesalahan penulisan data.
     </p>
@@ -25,7 +25,7 @@
             <div class="d-flex gap-2 flex-wrap">
                 <button id="btnAdd" class="btn btn-primary">
                     <i class="bi bi-plus-circle me-2"></i>
-                    Tambah Consignee
+                    Tambah Fasilitas
                 </button>
             </div>
 
@@ -40,14 +40,13 @@
 
         <!-- TABLE -->
         <div class="table-responsive">
-            <table id="tblConsignee" class="table table-striped table-bordered w-100">
+            <table id="tblFasilitas" class="table table-striped table-bordered w-100">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Kode</th>
-                        <th>Nama Consignee</th>
-                        <th>NPWP</th>
-                        <th>Alamat</th>
+                        <th>Tipe</th>
+                        <th>Nama Fasilitas</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -64,7 +63,7 @@
         <form id="formAdd" class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Tambah Consignee</h5>
+                <h5 class="modal-title">Tambah Fasilitas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -76,27 +75,20 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Kode</label>
-                        <select name="kode" id="kodeConsignee" class="form-control select2" required></select>
+                        <select name="kode" id="kodeFasilitas" class="form-control select2" required></select>
                         <span id="kodeWarning" class="text-danger mt-1" style="display:none;">Kode sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Nama Consignee</label>
-                        <select name="nama_consignee" id="namaConsignee" class="form-control select2" required></select>
+                        <label class="form-label">Tipe Fasilitas</label>
+                        <select name="tipe_fasilitas" id="tipeFasilitas" class="form-control select2" required></select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Fasilitas</label>
+                        <select name="nama_fasilitas" id="namaFasilitas" class="form-control select2" required></select>
                         <span id="namaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
                     </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">NPWP</label>
-                        <select name="npwp_consignee" id="npwpConsignee" class="form-control select2" required></select>
-                        <span id="namaWarning" class="text-danger mt-1" style="display:none;">Npwp sudah terdaftar!</span>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Alamat</label>
-                        <textarea name="alamat_consignee" class="form-control" rows="3" placeholder="Masukan Alamat Consignee" required></textarea>
-                    </div>
-
 
                 </div>
             </div>
@@ -116,7 +108,7 @@
         <form id="formEdit" class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Edit Consignee</h5>
+                <h5 class="modal-title">Edit Fasilitas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -129,37 +121,28 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Kode</label>
-                        <select name="kode" id="editKodeConsignee" class="form-control select2" required></select>
+                        <select name="kode" id="editKodeFasilitas" class="form-control select2" required></select>
                         <span id="editKodeWarning" class="text-danger mt-1" style="display:none;">Kode sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Nama Consignee</label>
-                        <select name="nama_consignee" id="editNamaConsignee" class="form-control select2" required></select>
-                        <span id="editNamaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
+                        <label class="form-label">Tipe Fasilitas</label>
+                        <select name="tipe_fasilitas" id="editTipeFasilitas" class="form-control select2" required></select>
+                        <span id="editTipeWarning" class="text-danger mt-1" style="display:none;">Tipe sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">NPWP</label>
-                        <select name="npwp_consignee" id="editNpwpConsignee" class="form-control select2" required></select>
-                        <span id="editNpwpWarning" class="text-danger mt-1" style="display:none;">NPWP sudah terdaftar!</span>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Alamat</label>
-                        <textarea id="editAlamat" name="alamat_consignee" class="form-control" rows="3" required></textarea>
+                        <label class="form-label">Nama Fasilitas</label>
+                        <select name="nama_fasilitas" id="editNamaFasilitas" class="form-control select2" required></select>
+                        <span id="editTipeWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
                     </div>
 
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Batal
-                </button>
-                <button class="btn btn-warning">
-                    <i class="bi bi-pencil-square me-1"></i> Update
-                </button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
+                <button class="btn btn-warning"><i class="bi bi-pencil-square me-1"></i> Update</button>
             </div>
 
         </form>
@@ -169,6 +152,7 @@
 <script>
     const BASE_URL = "<?= base_url() ?>/";
 </script>
+
 
 <?= $this->endSection() ?>
 
@@ -184,5 +168,5 @@
 <script src="<?= base_url('assets/vendors/jquery/dataTables.fixedColumns.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendors/sweetalert2/sweetalert2.all.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendors/select2/dist/js/select2.full.min.js') ?>"></script>
-<script src="<?= base_url('assets/js/pages/master/consignee.js') ?>"></script>
+<script src="<?= base_url('assets/js/pages/master/fasilitas.js') ?>"></script>
 <?= $this->endSection() ?>

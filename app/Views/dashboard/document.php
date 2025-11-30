@@ -1,41 +1,11 @@
 <?= $this->extend('layouts/layout') ?>
-<?= $this->section('title') ?>Accounting Dashboard<?= $this->endSection() ?>
+<?= $this->section('title') ?>Document Dashboard<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <div class="page-heading">
-    <h3>Dashboard Accounting</h3>
-    <p class="text-subtitle text-muted">Selamat Datang Di Dashboard Accounting - Trustway System Management Kepabeanan</p>
+    <h3>Dashboard Staff Document</h3>
+    <p class="text-subtitle text-muted">Selamat Datang Di Dashboard Document - Trustway System Management Kepabeanan</p>
 </div>
-
-<style>
-    .stat-card {
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-    .stat-card .card-body {
-        text-align: center;
-        padding: 1rem;
-    }
-    .stat-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-    .stat-value {
-        font-size: 1.2rem;
-    }
-    .category-title {
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-        font-weight: 700;
-        border-bottom: 2px solid #dee2e6;
-        padding-bottom: 0.25rem;
-    }
-</style>
+<link rel="stylesheet" href="<?= base_url('assets/css/pages/dashboard.css') ?>">
 
 <!-- Worksheet Statistics -->
 <div class="category-title mb-3"><i class="bi bi-bar-chart-fill me-2"></i>Statistik Worksheet</div>
@@ -85,5 +55,27 @@
     </div>
 </div>
 
+<!-- Grafik -->
+<div class="row mt-4 g-3">
+    <div class="col-md-6">
+        <div class="card stat-card">
+            <div class="card-header">
+                <h5><i class="bi bi-pie-chart-fill"> Visualisasi Worksheet Import vs Export</i></h5>
+            </div>
+            <div class="card-body d-flex justify-content-center">
+                <canvas id="chartWorksheet" style="max-width: 200px; max-height: 225px;"></canvas>
+            </div>
 
+        </div>
+    </div>
+</div>
+<?= $this->endSection() ?>
+
+<?= $this->section('pageScripts') ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="<?= base_url('assets/js/pages/dashboard/chart.js') ?>"></script>
+
+<script>
+    window.chartWorksheetData = [<?= $chartWorksheet['import'] ?>, <?= $chartWorksheet['export'] ?>];
+</script>
 <?= $this->endSection() ?>

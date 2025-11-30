@@ -12,10 +12,19 @@ class MasterFasilitas extends Controller
     // ============================================================
     public function index()
     {
-        $model = new MasterFasilitasModel();
-        $data['fasilitas'] = $model->orderBy('id', 'DESC')->findAll();
+        return view('master/fasilitas/index');
+    }
 
-        return view('master/fasilitas/index', $data);
+    // ===============================
+    // LIST DATA (AJAX)
+    // ===============================
+    public function list()
+    {
+        $model = new MasterFasilitasModel();
+
+        return $this->response->setJSON([
+            'data' => $model->orderBy('id', 'ASC')->findAll()
+        ]);
     }
 
     // ============================================================
@@ -26,9 +35,9 @@ class MasterFasilitas extends Controller
         $validation = \Config\Services::validation();
 
         $rules = [
-            'kode'          => 'required|min_length[1]|max_length[20]|is_unique[master_fasilitas.kode]',
-            'tipe_fasilitas' => 'required|min_length[2]',
-            'nama_fasilitas' => 'required|min_length[2]',
+            'kode'          => 'required|min_length[2]|max_length[7]|is_unique[master_fasilitas.kode]',
+            'tipe_fasilitas' => 'required|min_length[5]',
+            'nama_fasilitas' => 'required|min_length[5]',
         ];
 
         if (!$this->validate($rules)) {
@@ -72,6 +81,87 @@ class MasterFasilitas extends Controller
         ]);
     }
 
+    // ===============================
+    // SEARCH KODE (SELECT2)
+    // ===============================
+    public function searchKode()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterFasilitasModel();
+        $data  = $model->select('kode')
+            ->like('kode', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['kode'],
+                'text'   => $row['kode'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH TIPE (SELECT2)
+    // ===============================
+    public function searchTipe()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterFasilitasModel();
+
+        $data = $model->distinct()
+            ->select('tipe_fasilitas')
+            ->like('tipe_fasilitas', $q)
+            ->orderBy('tipe_fasilitas', 'ASC')
+            ->limit(16)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['tipe_fasilitas'],
+                'text' => $row['tipe_fasilitas']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+
+    // ===============================
+    // SEARCH NAMA (SELECT2)
+    // ===============================
+    public function searchNama()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterFasilitasModel();
+        $data  = $model->select('nama_fasilitas')
+            ->like('nama_fasilitas', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['nama_fasilitas'],
+                'text'   => $row['nama_fasilitas'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
     // ============================================================
     // UPDATE — SIMPAN PERUBAHAN
     // ============================================================
@@ -88,9 +178,9 @@ class MasterFasilitas extends Controller
         }
 
         $rules = [
-            'kode'           => "required|min_length[1]|max_length[20]|is_unique[master_fasilitas.kode,id,{$id}]",
-            'tipe_fasilitas' => 'required|min_length[2]',
-            'nama_fasilitas' => 'required|min_length[2]',
+            'kode'           => "required|min_length[2]|max_length[7]|is_unique[master_fasilitas.kode,id,{$id}]",
+            'tipe_fasilitas' => 'required|min_length[5]',
+            'nama_fasilitas' => 'required|min_length[5]',
         ];
 
         if (!$this->validate($rules)) {

@@ -7,15 +7,22 @@ use CodeIgniter\Controller;
 
 class MasterInformasiTambahan extends Controller
 {
-    // ============================================================
-    // INDEX — LIST DATA
-    // ============================================================
+
     public function index()
     {
-        $model = new MasterInformasiTambahanModel();
-        $data['info'] = $model->orderBy('id', 'DESC')->findAll();
+        return view('master/info_tambahan/index');
+    }
 
-        return view('master/informasi_tambahan/index', $data);
+    // ===============================
+    // LIST DATA (AJAX)
+    // ===============================
+    public function list()
+    {
+        $model = new MasterInformasiTambahanModel();
+
+        return $this->response->setJSON([
+            'data' => $model->orderBy('id', 'ASC')->findAll()
+        ]);
     }
 
     // ============================================================
@@ -26,8 +33,8 @@ class MasterInformasiTambahan extends Controller
         $validation = \Config\Services::validation();
 
         $rules = [
-            'kode'           => 'required|min_length[1]|max_length[20]|is_unique[master_informasi_tambahan.kode]',
-            'nama_pengurusan' => 'required|min_length[2]',
+            'kode'           => 'required|min_length[2]|max_length[6]|is_unique[master_informasi_tambahan.kode]',
+            'nama_pengurusan' => 'required|min_length[5]',
         ];
 
         if (!$this->validate($rules)) {
@@ -68,6 +75,58 @@ class MasterInformasiTambahan extends Controller
             'status' => 'success',
             'data'   => $data
         ]);
+    }
+
+    // ===============================
+    // SEARCH KODE (SELECT2)
+    // ===============================
+    public function searchKode()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterInformasiTambahanModel();
+        $data  = $model->select('kode')
+            ->like('kode', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['kode'],
+                'text'   => $row['kode'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    // ===============================
+    // SEARCH NAMA (SELECT2)
+    // ===============================
+    public function searchNama()
+    {
+        $q = $this->request->getGet('term');
+
+        $model = new MasterInformasiTambahanModel();
+        $data  = $model->select('nama_pengurusan')
+            ->like('nama_pengurusan', $q)
+            ->limit(10)
+            ->findAll();
+
+        $results = [];
+
+        foreach ($data as $row) {
+            $results[] = [
+                'id'     => $row['nama_pengurusan'],
+                'text'   => $row['nama_pengurusan'],
+                'exists' => true
+            ];
+        }
+
+        return $this->response->setJSON($results);
     }
 
     // ============================================================
