@@ -25,8 +25,8 @@
   </div>
 
   <!-- JS hanya Bootstrap, tanpa main.js -->
-  <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
   <?= $this->renderSection('pageScripts') ?>
+  <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
 </body>
 
 </html>

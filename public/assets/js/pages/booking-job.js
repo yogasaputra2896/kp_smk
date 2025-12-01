@@ -203,51 +203,115 @@
             });
     });
 
+    //  generate no pib
+    $('#modalBooking').on('shown.bs.modal', function () {
+
+        const jenisNomor = document.getElementById('jenisNomor');
+        const noPibPo = document.getElementById('noPibPo');
+    
+        jenisNomor.addEventListener('change', async function () {
+            if (this.value === 'PIB') {
+    
+                const response = await fetch('/booking-job/generate-no-pib');
+                const data = await response.json();
+    
+                console.log("DARI SERVER:", data);
+    
+                noPibPo.value = data.no_pib_po;
+    
+            } else {
+                noPibPo.value = "";
+            }
+        });
+    });
+
+
+    $('#modalEditBooking').on('shown.bs.modal', function (e) {
+
+        const editJenisNomor = document.getElementById('editJenisNomor');
+        const editNoPibPo = document.getElementById('editNoPibPo');
+
+        // ---- Saat dropdown diubah ----
+        editJenisNomor.addEventListener('change', async function () {
+
+            if (this.value === 'PIB') {
+                // Auto generate dari server
+                const response = await fetch('/booking-job/generate-no-pib');
+                const data = await response.json();
+
+                console.log("Generate Edit:", data);
+
+                editNoPibPo.value = data.no_pib_po;
+
+            } else {
+                // Jika bukan PIB → manual
+                editNoPibPo.value = "";
+            }
+        });
+
+    });
+
+
     // ====================== SELECT2: IMPORTIR/EXPORTIR ======================
     $('#modalBooking').on('shown.bs.modal', function() {
+
+        // ------------------ RESET VALUE SETIAP MODAL DIBUKA ------------------
+        $('#namaConsignee').val(null).trigger('change');  // kosongkan
+        $('#namaPort').val(null).trigger('change');  // kosongkan
+        $('#namaPelayaran').val(null).trigger('change');  // kosongkan
+
+        // ------------------ HANCURKAN SELECT2 LAMA JIKA ADA ------------------
         if ($('#namaConsignee').hasClass('select2-hidden-accessible')) {
             $('#namaConsignee').select2('destroy');
         }
 
+        // ------------------ INIT SELECT2 ULANG ------------------
         $('#namaConsignee').select2({
             placeholder: "Cari Importir / Exportir...",
             allowClear: true,
             width: '100%',
             minimumInputLength: 1,
             dropdownParent: $('#modalBooking'),
+
             ajax: {
                 url: `${BASE_URL}/booking-job/search-consignee`,
                 dataType: "json",
                 delay: 250,
                 data: function(params) {
-                    console.log('Searching for:', params.term); // Debug
-                    return {
-                        term: params.term || ''
-                    };
+                    return { term: params.term || '' };
                 },
                 processResults: function(data) {
-                    console.log('Data received:', data); // Debug
-                    return {
-                        results: data
-                    };
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    console.error('Status:', status);
-                    console.error('Response:', xhr.responseText);
+                    return { results: data };
                 }
-            }
+            },
+
+            templateResult: data => data.text,
+            templateSelection: data => data.text || data.id
+        });
+
+        // ------------------ OVERRIDE VALUE AGAR KIRIM NAMA, BUKAN ID ------------------
+        $('#namaConsignee').on('select2:select', function(e) {
+            let nama = e.params.data.text;
+            let newOption = new Option(nama, nama, true, true);
+            $(this).empty().append(newOption).trigger('change');
+            console.log("Kirim ke server (consignee):", nama);
         });
     });
 
+    // ------------------ DESTROY SELECT2 SAAT MODAL DITUTUP ------------------
     $('#modalBooking').on('hidden.bs.modal', function() {
         if ($('#namaConsignee').hasClass('select2-hidden-accessible')) {
             $('#namaConsignee').select2('destroy');
         }
+        $('#namaConsignee').val(null); // reset value utama
     });
+
+
+    
 
     // ====================== SELECT2: PORT ======================
     $('#modalBooking').on('shown.bs.modal', function() {
+
         if ($('#namaPort').hasClass('select2-hidden-accessible')) {
             $('#namaPort').select2('destroy');
         }
@@ -258,29 +322,28 @@
             width: '100%',
             minimumInputLength: 1,
             dropdownParent: $('#modalBooking'),
+
             ajax: {
                 url: `${BASE_URL}/booking-job/search-port`,
                 dataType: "json",
                 delay: 250,
-                data: function(params) {
-                    console.log('Searching for:', params.term); // Debug
-                    return {
-                        term: params.term || ''
-                    };
-                },
-                processResults: function(data) {
-                    console.log('Data received:', data); // Debug
-                    return {
-                        results: data
-                    };
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    console.error('Status:', status);
-                    console.error('Response:', xhr.responseText);
-                }
-            }
+                data: params => ({ term: params.term || '' }),
+                processResults: data => ({ results: data })
+            },
+
+            templateResult: data => data.text,               
+            templateSelection: data => data.text || data.id  
         });
+
+        // ========== OVERRIDE VALUE AGAR SIMPAN NAMA, BUKAN ID ==========
+        $('#namaPort').on('select2:select', function(e) {
+
+            let nama = e.params.data.text;
+            let newOption = new Option(nama, nama, true, true);
+            $(this).empty().append(newOption).trigger('change');
+            console.log("Kirim ke server (PORT):", nama);
+        });
+
     });
 
     $('#modalBooking').on('hidden.bs.modal', function() {
@@ -289,8 +352,10 @@
         }
     });
 
+
     // ====================== SELECT2: PELAYARAN ======================
     $('#modalBooking').on('shown.bs.modal', function() {
+
         if ($('#namaPelayaran').hasClass('select2-hidden-accessible')) {
             $('#namaPelayaran').select2('destroy');
         }
@@ -301,29 +366,29 @@
             width: '100%',
             minimumInputLength: 1,
             dropdownParent: $('#modalBooking'),
+
             ajax: {
                 url: `${BASE_URL}/booking-job/search-pelayaran`,
                 dataType: "json",
                 delay: 250,
-                data: function(params) {
-                    console.log('Searching for:', params.term); // Debug
-                    return {
-                        term: params.term || ''
-                    };
-                },
-                processResults: function(data) {
-                    console.log('Data received:', data); // Debug
-                    return {
-                        results: data
-                    };
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', error);
-                    console.error('Status:', status);
-                    console.error('Response:', xhr.responseText);
-                }
-            }
+                data: params => ({ term: params.term || '' }),
+                processResults: data => ({ results: data })
+            },
+
+            // tampil nama, bukan ID
+            templateResult: data => data.text,
+            templateSelection: data => data.text || data.id
         });
+
+        // ========== OVERRIDE VALUE AGAR SIMPAN NAMA, BUKAN ID ==========
+        $('#namaPelayaran').on('select2:select', function(e) {
+
+            let nama = e.params.data.text;
+            let newOption = new Option(nama, nama, true, true);
+            $(this).empty().append(newOption).trigger('change');
+            console.log("Kirim ke server (PEL):", nama);
+        });
+
     });
 
     $('#modalBooking').on('hidden.bs.modal', function() {
@@ -331,6 +396,8 @@
             $('#namaPelayaran').select2('destroy');
         }
     });
+
+    
 
     // ====================== SUBMIT FORM TAMBAH ======================
     $('#formBooking').on('submit', function(e) {
@@ -351,6 +418,15 @@
                         timer: 2000,
                         showConfirmButton: false
                     });
+                
+                    // ========== KOSONGKAN SELECT2 ==========
+                    $('#namaConsignee').val(null).trigger('change');
+                    $('#namaPort').val(null).trigger('change');
+                    $('#namaPelayaran').val(null).trigger('change');
+                
+                    // reset input lainnya
+                    $('#formBooking')[0].reset();
+                
                     $('#modalBooking').modal('hide');
                     tbl.ajax.reload();
                 } else {
@@ -455,7 +531,16 @@
                         timer: 2000,
                         showConfirmButton: false
                     });
-                    $('#modalEditBooking').modal('hide');
+                
+                    // ========== KOSONGKAN SELECT2 ==========
+                    $('#namaConsignee').val(null).trigger('change');
+                    $('#namaPort').val(null).trigger('change');
+                    $('#namaPelayaran').val(null).trigger('change');
+                
+                    // reset input lainnya
+                    $('#formBooking')[0].reset();
+                
+                    $('#modalBooking').modal('hide');
                     tbl.ajax.reload();
                 } else {
                     Swal.fire({

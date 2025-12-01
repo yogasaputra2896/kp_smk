@@ -43,6 +43,7 @@
                 </button>
 
                 <!-- Export Excel -->
+                <?php if (in_groups('admin')): ?>
                 <button id="btnExport" class="btn btn-success">
                     <i class="bi bi-file-earmark-spreadsheet me-2"></i>
                     <span class="d-none d-sm-inline">Export Excel</span>
@@ -55,6 +56,7 @@
                     <span class="d-none d-sm-inline">Export Pdf</span>
                     <span class="d-inline d-sm-none">Pdf</span>
                 </button>
+                <?php endif; ?>
             </div>
 
 
@@ -196,11 +198,17 @@
                         <input type="text" name="no_job" id="noJob" class="form-control" required>
                     </div>
 
-                    <!-- No PIB/PO -->
+                    <!-- Input Nomor -->
                     <div class="col-md-6">
-                        <label for="noPibPo" class="form-label">No PIB/PEB/PO</label>
+                        <label for="noPibPo" class="form-label">Nomor</label>
+                        <select name="jenis_nomor" id="jenisNomor" class="form-select mb-1" required>
+                            <option value="">-- Pilih Jenis Nomor --</option>
+                            <option value="PIB">No PIB/PEB</option>
+                            <option value="PIB-SENDIRI">No PIB/PEB Sendiri</option>
+                            <option value="PO-SENDIRI">No PO Sendiri</option>
+                        </select>
                         <input type="text" name="no_pib_po" id="noPibPo" class="form-control"
-                            placeholder="Nomor PIB/PEB/PO" required>
+                            placeholder="Masukkan Nomor" required>
                     </div>
 
                     <!-- Consignee -->
@@ -225,14 +233,14 @@
 
                     <!-- POL -->
                     <div class="col-md-6">
-                        <label for="pol" class="form-label">POL/POD</label>
-                        <select name="nama_port" id="namaPort" class="form-control"></select>
+                        <label for="namaPort" class="form-label">POL/POD</label>
+                        <select name="pol" id="namaPort" class="form-control"></select>
                     </div>
 
                     <!-- Shipping Line -->
                     <div class="col-md-6">
-                        <label for="shippingLine" class="form-label">Pelayaran / Shipping Line</label>
-                        <select name="nama_pelayaran" id="namaPelayaran" class="form-control"></select>
+                        <label for="namaPelayaran" class="form-label">Pelayaran / Shipping Line</label>
+                        <select name="shipping_line" id="namaPelayaran" class="form-control"></select>
                     </div>
 
                     <!-- BL -->
@@ -293,9 +301,20 @@
 
                     <!-- No PIB/PO -->
                     <div class="col-md-6">
-                        <label for="editNoPibPo" class="form-label">No PIB/PEB/PO</label>
+                        <label class="form-label">No PIB/PEB/PO</label>
+
+                        <!-- Dropdown jenis nomor -->
+                        <select name="edit_jenis_nomor" id="editJenisNomor" class="form-select mb-1" required>
+                            <option value="">-- Pilih Jenis Nomor --</option>
+                            <option value="PIB">No PIB/PEB</option>
+                            <option value="PIB-SENDIRI">No PIB/PEB Sendiri</option>
+                            <option value="PO-SENDIRI">No PO Sendiri</option>
+                        </select>
+
+                        <!-- Input nomor -->
                         <input type="text" name="no_pib_po" id="editNoPibPo" class="form-control" required>
                     </div>
+
 
                     <!-- Consignee -->
                     <div class="col-md-6">

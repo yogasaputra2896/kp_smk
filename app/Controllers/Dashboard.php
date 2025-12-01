@@ -42,6 +42,11 @@ class Dashboard extends BaseController
         // Statistik umum
         $totalBooking           = $this->bookingJobModel->countAllResults();
         $totalTrashBooking      = $this->bookingJobTrashModel->countAllResults();
+
+        // Total booking berdasarkan status
+        $totalOpenJob = $this->bookingJobModel->where('status', 'open job')->countAllResults();
+        $totalWorksheetStatus = $this->bookingJobModel->where('status', 'worksheet')->countAllResults();
+
         $totalWorksheetImport   = $this->worksheetImportModel->countAllResults();
         $totalWorksheetExport   = $this->worksheetExportModel->countAllResults();
         $totalWorksheet         = $totalWorksheetImport + $totalWorksheetExport;
@@ -95,6 +100,8 @@ class Dashboard extends BaseController
             'totalBooking'                => $totalBooking,
             'bookingByType'               => $bookingByType,
             'totalTrashBooking'           => $totalTrashBooking,
+            'totalOpenJob'                => $totalOpenJob,
+            'totalWorksheetStatus'        => $totalWorksheetStatus,
             'totalWorksheet'              => $totalWorksheet,
             'totalWorksheetImport'        => $totalWorksheetImport,
             'totalWorksheetExport'        => $totalWorksheetExport,

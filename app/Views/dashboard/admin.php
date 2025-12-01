@@ -57,7 +57,7 @@
 <div class="category-title mb-3"><i class="bi bi-bar-chart-fill me-2"></i>Statistik Booking Job</div>
 <div class="row g-3">
     <!-- Total Booking Job -->
-    <div class="col-md-6 col-6">
+    <div class="col-lg-3 col-md-6 col-6">
         <div class="card text-center stat-card p-3">
             <div class="icon mb-2">
                 <i class="bi bi-calendar-check-fill fs-2 text-primary"></i>
@@ -67,8 +67,30 @@
         </div>
     </div>
 
+    <!-- Total Open Job -->
+    <div class="col-lg-3 col-md-6 col-6">
+        <div class="card text-center stat-card p-3">
+            <div class="icon mb-2">
+                <i class="bi bi-calendar-check fs-2 text-primary"></i>
+            </div>
+            <div class="stat-title mb-1">Total Status Open Job</div>
+            <div class="stat-value fw-bold"><?= $totalOpenJob ?></div>
+        </div>
+    </div>
+
+    <!-- Total Open Job -->
+    <div class="col-lg-3 col-md-6 col-6">
+        <div class="card text-center stat-card p-3">
+            <div class="icon mb-2">
+                <i class="bi bi-journal-text fs-2 text-success"></i>
+            </div>
+            <div class="stat-title mb-1">Total Status Worksheet</div>
+            <div class="stat-value fw-bold"><?= $totalWorksheetStatus ?></div>
+        </div>
+    </div>
+
     <!-- Deleted Booking Job -->
-    <div class="col-md-6 col-6">
+    <div class="col-lg-3 col-md-6 col-6">
         <div class="card text-center stat-card p-3">
             <div class="icon mb-2">
                 <i class="bi bi-trash3-fill fs-2 text-danger"></i>

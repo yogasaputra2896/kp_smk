@@ -121,6 +121,43 @@ class BookingJob extends BaseController
         }
     }
 
+
+    public function generateNoPIB()
+    {
+        $model = new BookingJobModel();
+
+        // 1. Prefix tetap
+        $prefix = "000020030484";
+
+        // 2. Tanggal sekarang YYYYMMDD
+        $tanggal = date("Ymd");
+
+        // 3. Ambil data terakhir (berdasarkan id)
+        $lastData = $model->orderBy('id', 'DESC')->first();
+
+        if ($lastData && !empty($lastData['no_pib_po'])) {
+            // Ambil 6 digit terakhir sebagai urutan
+            $lastNumber = substr($lastData['no_pib_po'], -6);
+            $nextNumber = intval($lastNumber) + 1;
+        } else {
+            // Kalau belum ada → mulai 1
+            $nextNumber = 1;
+        }
+
+        // 4. Format urutan 6 digit
+        $urut = str_pad($nextNumber, 6, "0", STR_PAD_LEFT);
+
+        // 5. Gabung semua
+        $noPIB = $prefix . $tanggal . $urut;
+
+        // 6. Kembalikan JSON (PERHATIKAN: key = no_pib_po)
+        return $this->response->setJSON([
+            'no_pib_po' => $noPIB
+        ]);
+    }
+
+
+
     // SEARCH CONSIGNEE (SELECT2)
     public function searchConsignee()
     {
@@ -195,7 +232,7 @@ class BookingJob extends BaseController
             return $this->response->setJSON([]);
         }
 
-        $model = new MasterPortModel();
+        $model = new MasterPelayaranModel();
         $data = $model
             ->select('id, kode, nama_pelayaran')
             ->groupStart()

@@ -29,6 +29,7 @@ $routes->group('booking-job', [
     $routes->get('/', 'BookingJob::index');
     $routes->get('list', 'BookingJob::list');
     $routes->get('nextno', 'BookingJob::nextNo');
+    $routes->get('generate-no-pib', 'BookingJob::generateNoPIB');
     $routes->get('search-consignee', 'BookingJob::searchConsignee');
     $routes->get('search-port', 'BookingJob::searchPort');
     $routes->get('search-pelayaran', 'BookingJob::searchPelayaran');
