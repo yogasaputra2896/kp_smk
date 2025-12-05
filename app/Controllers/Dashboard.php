@@ -11,6 +11,7 @@ use App\Models\WorksheetImportTrash\WorkSheetImportTrashModel;
 use App\Models\WorksheetExportTrash\WorkSheetExportTrashModel;
 use App\Models\User\UserModel;
 use App\Models\User\UserTrashModel;
+use App\Models\Log\LogActivityModel;
 
 class Dashboard extends BaseController
 {
@@ -22,6 +23,7 @@ class Dashboard extends BaseController
     protected $worksheetExportTrashModel;
     protected $userModel;
     protected $userTrashModel;
+    protected $logActivityModel;
 
     public function __construct()
     {
@@ -33,11 +35,23 @@ class Dashboard extends BaseController
         $this->worksheetExportTrashModel  = new WorkSheetExportTrashModel();
         $this->userModel                  = new UserModel();
         $this->userTrashModel             = new UserTrashModel();
+        $this->logActivityModel           = new LogActivityModel();
     }
 
     public function index()
     {
+        /**
+         * @var \Myth\Auth\Entities\User $user
+         */
         $user = user(); // data user yang login
+
+        // Ambil role user sekarang
+        $groupModel = model('Myth\Auth\Models\GroupModel');
+        $roles = $groupModel->getGroupsForUser($user->id);
+        $currentRole = isset($roles[0]['name']) ? $roles[0]['name'] : 'unknown';
+
+        // === LOG ACTIVITY ===
+        $logs = $this->logActivityModel->getLogsByRole($currentRole);
 
         // Statistik umum
         $totalBooking           = $this->bookingJobModel->countAllResults();
@@ -58,11 +72,23 @@ class Dashboard extends BaseController
         $totalDeletedWorksheetExport = $this->worksheetExportTrashModel->countAllResults();
         $totalDeletedWorksheet       = $totalDeletedWorksheetImport + $totalDeletedWorksheetExport;
 
+        // Booking Job per hari dalam 1 bulan ini
+        $startMonth = date('Y-m-01'); // tanggal 1 bulan ini
+        $endMonth   = date('Y-m-t');  // tanggal terakhir bulan ini
+
         // Booking Job per type
         $bookingByType = $this->bookingJobModel
             ->select('type, COUNT(id) as total')
             ->groupBy('type')
             ->findAll();
+
+        $bookingPerDay = $this->bookingJobModel
+        ->select("DATE(created_at) as date, COUNT(id) as total")
+        ->where("DATE(created_at) >=", $startMonth)
+        ->where("DATE(created_at) <=", $endMonth)
+        ->groupBy("DATE(created_at)")
+        ->orderBy("date", "ASC")
+        ->findAll();
 
         // User per role
         $db = \Config\Database::connect();
@@ -94,24 +120,28 @@ class Dashboard extends BaseController
             'export' => $totalWorksheetExport
         ];
 
+
+
         $data = [
             'user'                        => $user,
             'title'                       => 'Dashboard',
             'totalBooking'                => $totalBooking,
             'bookingByType'               => $bookingByType,
+            'bookingPerDay'               => $bookingPerDay,
             'totalTrashBooking'           => $totalTrashBooking,
             'totalOpenJob'                => $totalOpenJob,
             'totalWorksheetStatus'        => $totalWorksheetStatus,
             'totalWorksheet'              => $totalWorksheet,
             'totalWorksheetImport'        => $totalWorksheetImport,
             'totalWorksheetExport'        => $totalWorksheetExport,
-            'totalDeletedWorksheet'       => $totalDeletedWorksheet, // tambahan
+            'totalDeletedWorksheet'       => $totalDeletedWorksheet, 
             'totalUser'                   => $totalUser,
             'totalDeletedUser'            => $totalDeletedUser,
             'userByRole'                  => $userByRole,
             'topConsignees'               => $topConsignees,
             'chartBookingJob'             => $chartBookingJob,
             'chartWorksheet'              => $chartWorksheet,
+            'logs'                        => $logs
         ];
 
         // Tampilkan view sesuai role

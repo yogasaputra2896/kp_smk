@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Nov 30, 2025 at 06:09 PM
+-- Host: 127.0.0.1
+-- Generation Time: Dec 05, 2025 at 01:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -84,7 +84,10 @@ CREATE TABLE `auth_groups_users` (
 
 INSERT INTO `auth_groups_users` (`group_id`, `user_id`) VALUES
 (1, 1),
+(1, 1),
 (2, 2),
+(2, 2),
+(3, 4),
 (3, 4);
 
 -- --------------------------------------------------------
@@ -320,7 +323,35 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (211, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 15:14:33', 1),
 (212, '::1', 'exim3@trustwaytransindo.com', 2, '2025-11-30 15:22:11', 1),
 (213, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-11-30 15:25:10', 1),
-(214, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 15:29:48', 1);
+(214, '::1', 'yogasaputra2896@gmail.com', 1, '2025-11-30 15:29:48', 1),
+(215, '::1', 'Exim3', NULL, '2025-12-01 02:27:50', 0),
+(216, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-01 02:28:02', 1),
+(217, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-01 09:02:39', 1),
+(218, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-01 09:36:07', 1),
+(219, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-01 11:32:49', 1),
+(220, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 02:11:19', 1),
+(221, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 02:34:22', 1),
+(222, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 04:10:38', 1),
+(223, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 04:12:20', 1),
+(224, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 04:25:45', 1),
+(225, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 04:29:48', 1),
+(226, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 04:30:00', 1),
+(227, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 04:34:04', 1),
+(228, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 06:51:30', 1),
+(229, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 07:17:41', 1),
+(230, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 07:23:18', 1),
+(231, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 11:35:56', 1),
+(232, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 11:47:38', 1),
+(233, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 11:50:52', 1),
+(234, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 11:56:59', 1),
+(235, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 11:59:16', 1),
+(236, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 12:01:58', 1),
+(237, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 12:03:13', 1),
+(238, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 12:04:22', 1),
+(239, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 12:14:32', 1),
+(240, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 12:19:35', 1),
+(241, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 12:23:29', 1),
+(242, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-05 12:24:36', 1);
 
 -- --------------------------------------------------------
 
@@ -402,26 +433,21 @@ CREATE TABLE `booking_job` (
 --
 
 INSERT INTO `booking_job` (`id`, `no_job`, `type`, `consignee`, `party`, `eta`, `pol`, `no_pib_po`, `shipping_line`, `bl`, `master_bl`, `created_at`, `updated_at`, `status`) VALUES
-(11, 'IM/25/600001', 'import_fcl_nonjaminan', 'PT TESTER DATA', '2 x 20', '2025-09-23', 'SHEKOU', 'C25-000014', 'SITC', 'SITC123456', 'MSITC123456', '2025-09-23 08:58:39', '2025-11-11 02:11:50', 'worksheet'),
-(12, 'IM/25/400001', 'import_fcl_jaminan', 'PT TESTER DATA', '1 X 20', '2025-09-23', 'PORT KELANG', 'C25-001234', 'MCC LINE', 'MCC123456', 'MMCC123456', '2025-09-23 08:55:00', '2025-11-11 02:11:37', 'worksheet'),
-(21, 'EX/25/300001', 'export', 'PT TESTER DATA', '1 X 20', '2025-09-01', 'TANJUNG PERAK', 'CE25-00001', 'ONE LINE', 'ONE123444', 'MONE123444', '2025-09-24 08:48:41', '2025-11-14 08:05:55', 'worksheet'),
-(22, 'EX/25/300002', 'export', 'PT TESTER DATA', '2 X 20', '2025-09-30', 'TANJUNG PRIOK', 'CE25-00002', 'KMTC LINE', 'KMTC000001', 'MKMTC000001', '2025-09-30 02:20:11', '2025-11-14 08:06:00', 'worksheet'),
-(23, 'EX/25/300003', 'export', 'PT TESTER DATA', '3 X 20', '2025-09-29', 'TANJUNG PERAK', 'CE25-00003', 'MCC LINE', 'MCC000001', 'MMCC000001', '2025-09-30 02:21:35', '2025-11-14 08:06:06', 'worksheet'),
-(24, 'EX/25/300004', 'export', 'PT TESTER DATA', '4 X 20', '2025-09-28', 'TANJUNG PRIOK', 'CE25-00004', 'SITC LINE', 'SITC000001', 'MSITC000001', '2025-09-30 02:23:07', '2025-11-14 08:06:15', 'worksheet'),
-(33, 'IM/25/400002', 'import_fcl_jaminan', 'PT TESTER DATA', '1 X 20', '2025-09-10', 'PORT KELANG', 'C25-000010', 'ONE LINE', 'ONE000010', 'MONE000010', '2025-09-30 10:37:57', '2025-11-14 06:58:51', 'worksheet'),
-(34, 'IM/25/400003', 'import_fcl_jaminan', 'PT TESTER DATA', '2 x 20', '2025-09-19', 'INCHEON', 'C25-000011', 'SITC LINE', 'SITC000010', 'MSITC000010', '2025-09-30 10:38:52', '2025-11-11 02:09:52', 'open job'),
-(35, 'IM/25/400004', 'import_fcl_jaminan', 'PT TESTER DATA', '2 x 20', '2025-09-16', 'SHANGHAI', 'C25-000012', 'MCC LINE', 'MCC000010', 'MMCC000010', '2025-09-30 10:39:58', '2025-09-30 10:39:58', 'open job'),
-(37, 'IM/25/600002', 'import_fcl_nonjaminan', 'PT TESTER DATA', '1 X 20', '2025-09-18', 'SHEKOU', 'C25-000015', 'ONE LINE', 'ONE000011', 'MONE000011', '2025-09-30 10:42:36', '2025-11-14 07:14:45', 'worksheet'),
-(38, 'IM/25/600003', 'import_fcl_nonjaminan', 'PT TESTER DATA', '4 X 20', '2025-09-17', 'PORT KELANG', 'C25-000016', 'WAN HAI LINE', 'WAN000002', 'MWAN000002', '2025-09-30 10:46:08', '2025-10-01 10:55:47', 'open job'),
-(39, 'IM/25/600004', 'import_fcl_nonjaminan', 'PT TESTER DATA', '2 x 20', '2025-09-25', 'SHEKOU', 'C25-000017', 'SITC LINE', 'SITC000011', 'MSITC000011', '2025-09-30 10:46:57', '2025-09-30 10:46:57', 'open job'),
-(43, 'IM/25/400005', 'import_fcl_jaminan', 'PT TESTER DATA', '2 x 20', '2025-09-27', 'PORT KELANG', 'C25-000013', 'KMTC LINE', 'KMTC000010', 'MKMTC000010', '2025-10-01 10:41:54', '2025-10-01 10:55:26', 'open job'),
-(44, 'IM/25/600005', 'import_fcl_nonjaminan', 'PT TESTER DATA', '4 X 20', '2025-09-15', 'SHANGHAI', 'C25-000017', 'ONE LINE', 'ONE000012', 'MONE000012', '2025-10-01 10:41:58', '2025-10-01 10:41:58', 'open job'),
-(45, 'EX/25/300005', 'export', 'PT TESTER DATA', '5 x 20', '2025-09-28', 'TANJUNG PRIOK', 'CE25-00005', 'ONE LINE', 'ONE000002', 'MONE000002', '2025-10-01 10:48:17', '2025-11-14 08:06:21', 'worksheet'),
-(46, 'IM/25/500001', 'lain', 'PT TESTER DATA', '2 BAG', '2025-10-04', 'INCHEON', 'BUAT ASURANSI', 'OOCL LINE', 'OOLU000001', '-', '2025-10-04 12:04:13', '2025-11-11 02:12:16', 'worksheet'),
-(47, 'IM/25/500002', 'lain', 'PT TESTER DATA', '2 PK', '2025-10-04', 'SHANGHAI', 'TRUCKING ONLY', ' KMTC LINE', 'KMTCT000001', '-', '2025-10-04 12:06:47', '2025-11-14 07:15:02', 'worksheet'),
-(48, 'IM/25/500003', 'lain', 'PT TESTER DATA', '2 PK', '2025-10-04', '-', 'BUAT LARTAS LS', '-', 'INV123456', '-', '2025-10-04 12:11:23', '2025-10-04 12:11:23', 'open job'),
-(49, 'IM/25/500004', 'lain', 'PT TESTER DATA', '5 PK', '2025-10-04', 'BANGKOK', 'BUAT ASURANSI', 'KMTC LINE', 'INV654321', '-', '2025-10-04 12:12:34', '2025-10-04 12:12:34', 'open job'),
-(50, 'IM/25/500005', 'lain', 'PT TESTER DATA', '1 X 20', '2025-10-04', 'KUALA LUMPUR', 'TRUCKING ONLY', 'ONE LINE', 'ONE0101010', '-', '2025-10-04 12:13:52', '2025-10-04 12:13:52', 'open job');
+(55, 'IM/25/100001', 'import_lcl', 'PT DATA TESTER', '2 PK', '2025-12-01', 'XINGANG', '00002003048420251201000001', 'PT SITC INDONESIA', 'SITC123456', '-', '2025-12-01 04:30:11', '2025-12-01 04:30:11', 'open job'),
+(56, 'IM/25/100002', 'import_lcl', 'PT YOGA MAKMUR SEJAHTERA', '1 PK', '2025-12-01', 'SINGAPORE', '00002003048420251201000002', 'PT CONTAINER MARITIME ACTIVITIES', 'CMA123456', '-', '2025-12-01 09:37:47', '2025-12-01 09:37:47', 'open job'),
+(57, 'IM/25/100003', 'import_lcl', 'PT DATA TESTER', '5 PK', '2025-11-30', 'XINGANG', '00002003048420251201000003', 'PT OCEAN NETWORK EXPRESS INDONESIA', 'ONE123456', '-', '2025-12-01 10:05:25', '2025-12-01 10:05:25', 'open job'),
+(58, 'IM/25/400001', 'import_fcl_jaminan', 'PT BUDI ADUNG SENTOSA', '1 X 20', '2025-12-06', 'SINGAPORE', '00002003048420251201000004', 'PT SAMUDERA AGENCIES INDONESIA', 'MSC123456', '-', '2025-12-01 10:06:34', '2025-12-01 10:06:34', 'open job'),
+(59, 'IM/25/400002', 'import_fcl_jaminan', 'PT BAGAS MAJU TERUS', '2 X 20', '2025-12-13', 'XINGANG', '00002003048420251201000005', 'PT OCEAN NETWORK EXPRESS INDONESIA', 'ONE654321', '-', '2025-12-01 10:07:30', '2025-12-01 10:07:30', 'open job'),
+(60, 'IM/25/400003', 'import_fcl_jaminan', 'PT BUDI ADUNG SENTOSA', '3 X 20', '2025-12-20', 'SINGAPORE', '00002003048420251201000006', 'PT CONTAINER MARITIME ACTIVITIES', 'CMA654321', '-', '2025-12-01 10:09:00', '2025-12-01 10:09:00', 'open job'),
+(61, 'IM/25/600001', 'import_fcl_nonjaminan', 'PT GUSTI SEHAT SENTOSA', '4 X 20', '2025-12-20', 'SINGAPORE', '00002003048420251201000007', 'PT. SKR INTERNASIONAL', 'SNK123456', '-', '2025-12-01 10:12:20', '2025-12-01 10:12:20', 'open job'),
+(62, 'IM/25/600002', 'import_fcl_nonjaminan', 'PT GUSTI SEHAT SENTOSA', '7 X 20', '2025-12-27', 'SINGAPORE', '00002003048420251201000008', 'PT. SKR INTERNASIONAL', 'SNK654321', '-', '2025-12-01 10:14:32', '2025-12-01 10:14:32', 'open job'),
+(63, 'IM/25/600003', 'import_fcl_nonjaminan', 'PT GUSTI SEHAT SENTOSA', '1 x 40', '2025-12-06', 'SINGAPORE', '00002003048420251201000009', 'PT. SKR INTERNASIONAL', 'SKR12121212', '-', '2025-12-01 11:33:53', '2025-12-01 11:33:53', 'open job'),
+(65, 'IM/25/500001', 'lain', 'PT DATA TESTER', '2 PK', '2025-12-01', 'SINGAPORE', 'PENGURUSAN ASURANSI ONLY', 'PT SAMUDERA AGENCIES INDONESIA', 'SMI123456', '-', '2025-12-01 11:38:23', '2025-12-01 11:38:23', 'open job'),
+(66, 'IM/25/500002', 'lain', 'PT DATA TESTER', '2 PK', '2025-12-01', 'SINGAPORE', 'PENGURUSAN TRUCKING ONLY', 'PT OCEAN NETWORK EXPRESS INDONESIA', 'ONE2121212', '-', '2025-12-01 11:39:53', '2025-12-01 11:39:53', 'open job'),
+(67, 'IM/25/500003', 'lain', 'PT DATA TESTER', '1 X 20', '2025-12-01', 'XINGANG', 'PENGURSAN DO ONLY', 'PT SITC INDONESIA', 'SITC565656', '-', '2025-12-01 11:40:52', '2025-12-01 11:40:52', 'open job'),
+(68, 'EX/25/300001', 'export', 'PT YOGA MAKMUR SEJAHTERA', '1 X 20', '2025-12-06', 'TANJUNG PRIOK', '00002003048420251201000001', 'PT OCEAN NETWORK EXPRESS INDONESIA', 'ONE31313131', '-', '2025-12-01 11:42:51', '2025-12-01 11:42:51', 'open job'),
+(69, 'EX/25/300002', 'export', 'PT YOGA MAKMUR SEJAHTERA', '4 X 20', '2025-12-20', 'TANJUNG PERAK', '00002003048420251201000002', 'PT SITC INDONESIA', 'SITC454545', '-', '2025-12-01 11:48:56', '2025-12-01 11:48:56', 'open job'),
+(70, 'EX/25/300003', 'export', 'PT YOGA MAKMUR SEJAHTERA', '2 X 20', '2025-12-27', 'TANJUNG PRIOK', '00002003048420251201000003', 'PT SAMUDERA AGENCIES INDONESIA', 'SMI65656565', '-', '2025-12-01 11:49:37', '2025-12-01 11:49:37', 'open job');
 
 -- --------------------------------------------------------
 
@@ -453,12 +479,32 @@ CREATE TABLE `booking_job_trash` (
 --
 
 INSERT INTO `booking_job_trash` (`id`, `no_job`, `type`, `consignee`, `party`, `eta`, `pol`, `no_pib_po`, `shipping_line`, `bl`, `master_bl`, `created_at`, `updated_at`, `deleted_by`, `deleted_at`, `status`) VALUES
-(26, 'IM/25/100005', 'import_lcl', 'PT TESTER DATA', '5 PK', '2025-09-20', 'SHANGHAI', 'C25-000005', 'SITC LINE', 'SITC000002', 'MSITC000002', '2025-10-19 13:50:56', '2025-10-19 13:50:56', 'Admin', '2025-10-19 13:50:56', 'open job'),
-(27, 'IM/25/100001', 'import_lcl', 'PT TESTER DATA', '1 PK', '2025-09-30', 'SHANGHAI', 'C25-000001', 'WAN HAI LINE', 'WAN123456', 'MWAN123456', '2025-11-30 16:33:52', '2025-11-30 16:33:52', 'Admin', '2025-11-30 16:33:52', 'worksheet'),
-(28, 'IM/25/100002', 'import_lcl', 'PT TESTER DATA', '2 PK', '2025-09-29', 'PORT KELANG', 'C25-000002', 'KMTC LINE', 'KMTC000003', 'MKMTC000003', '2025-11-30 16:33:56', '2025-11-30 16:33:56', 'Admin', '2025-11-30 16:33:56', 'worksheet'),
-(29, 'IM/25/100003', 'import_lcl', 'PT TESTER DATA', '3 PK', '2025-09-28', 'SHEKOU', 'C25-000003', 'ONE LINE', 'ONE000003', 'MONE000003', '2025-11-30 16:34:00', '2025-11-30 16:34:00', 'Admin', '2025-11-30 16:34:00', 'open job'),
-(30, 'IM/25/100004', 'import_lcl', 'PT TESTER DATA', '4 PK', '2025-09-27', 'INCHEON', 'C25-000004', 'WAN HAI LINE', 'WAN000001', 'MWAN000001', '2025-11-30 16:34:03', '2025-11-30 16:34:03', 'Admin', '2025-11-30 16:34:03', 'open job'),
-(31, 'IM/25/100005', 'import_lcl', 'PT TESTER DATA', '5 PK', '2025-11-14', 'PORT KELANG', 'C25-001528', 'WAN HAI LINE', 'WAN000028', 'WAN987654321', '2025-11-30 16:34:06', '2025-11-30 16:34:06', 'Admin', '2025-11-30 16:34:06', 'open job');
+(53, 'IM/25/100001', 'import_lcl', '1', '2 PK', '2025-12-01', '4', '00002003048420251201000001', '5', 'SITC123456', '-', '2025-12-01 04:29:31', '2025-12-01 04:29:31', 'Exim3', '2025-12-01 04:29:31', 'open job'),
+(54, 'IM/25/600004', 'import_fcl_nonjaminan', 'PT GUSTI SEHAT SENTOSA', '2 x 20', '2025-12-27', 'XINGANG', '00002003048420251201000010', 'PT. SKR INTERNASIONAL', 'SKR111111', '-', '2025-12-01 11:36:05', '2025-12-01 11:36:05', 'Exim3', '2025-12-01 11:36:05', 'open job');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `log_activity`
+--
+
+CREATE TABLE `log_activity` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `role` varchar(50) NOT NULL,
+  `activity` text NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `log_activity`
+--
+
+INSERT INTO `log_activity` (`id`, `user_id`, `role`, `activity`, `created_at`) VALUES
+(1, 2, 'exim', 'Logout dari sistem', '2025-12-05 12:23:25'),
+(2, 2, 'exim', 'Login ke sistem', '2025-12-05 12:23:29'),
+(3, 2, 'exim', 'Logout dari sistem', '2025-12-05 12:24:18'),
+(4, 2, 'exim', 'Login ke sistem', '2025-12-05 12:24:36');
 
 -- --------------------------------------------------------
 
@@ -664,7 +710,8 @@ INSERT INTO `master_pelayaran` (`id`, `kode`, `nama_pelayaran`, `npwp_pelayaran`
 (2, 'KMTC', 'PT SAMUDERA AGENCIES INDONESIA', '7777222211113333', 'Lippo Kuningan, 21st Floor, Jl. HR Rasuna Said No.Kav. B-12, RT.6/RW.7, Kuningan, Karet Kuningan, Kecamatan Setiabudi, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12940', '2025-11-27 01:50:06', '2025-11-27 01:50:06'),
 (3, 'MSCL', 'PT. PERUSAHAAN PELAYARAN NUSANTARA PANURJWAN', '2222444477775555', 'Capital Place Building, 39th Floor Jl. Jend. Gatot Subroto Kav. 18 ID - 12710 JAKARTA, JAVA', '2025-11-27 01:55:16', '2025-11-27 01:55:16'),
 (4, 'CMAL', 'PT CONTAINER MARITIME ACTIVITIES', '0989765467451234', 'Permata Kuningan Building 21-22 Fl Jl. Kuningan Mulia Kav 9C, Guntur, Setia Budi JAKARTA, INDONESIA\r\n12980 JAKARTA', '2025-11-30 01:47:27', '2025-11-30 01:47:27'),
-(5, 'SITC', 'PT SITC INDONESIA', '6545787634536786', 'Gama Tower, 36th Floor Unit ABC Jl. H. R. Rasuna Said Kav. C-22 Kuningan Jakarta\r\n12940, Indonesia', '2025-11-30 01:50:04', '2025-11-30 01:50:04');
+(5, 'SITC', 'PT SITC INDONESIA', '6545787634536786', 'Gama Tower, 36th Floor Unit ABC Jl. H. R. Rasuna Said Kav. C-22 Kuningan Jakarta\r\n12940, Indonesia', '2025-11-30 01:50:04', '2025-11-30 01:50:04'),
+(6, 'SKRI', 'PT. SKR INTERNASIONAL', '4381917382469517', 'Gedung Equity Tower Lt. 19, Jl. Jenderal Sudirman Lot 9, Senayan, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12190', '2025-12-01 03:11:17', '2025-12-01 03:11:17');
 
 -- --------------------------------------------------------
 
@@ -1630,6 +1677,13 @@ ALTER TABLE `booking_job_trash`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `log_activity`
+--
+ALTER TABLE `log_activity`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user_id` (`user_id`);
+
+--
 -- Indexes for table `master_consignee`
 --
 ALTER TABLE `master_consignee`
@@ -1940,7 +1994,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=243;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -1964,13 +2018,19 @@ ALTER TABLE `auth_tokens`
 -- AUTO_INCREMENT for table `booking_job`
 --
 ALTER TABLE `booking_job`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `booking_job_trash`
 --
 ALTER TABLE `booking_job_trash`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+
+--
+-- AUTO_INCREMENT for table `log_activity`
+--
+ALTER TABLE `log_activity`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `master_consignee`
@@ -2018,7 +2078,7 @@ ALTER TABLE `master_notify_party`
 -- AUTO_INCREMENT for table `master_pelayaran`
 --
 ALTER TABLE `master_pelayaran`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `master_port`
@@ -2248,6 +2308,12 @@ ALTER TABLE `auth_tokens`
 ALTER TABLE `auth_users_permissions`
   ADD CONSTRAINT `auth_users_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `auth_permissions` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `auth_users_permissions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `log_activity`
+--
+ALTER TABLE `log_activity`
+  ADD CONSTRAINT `fk_log_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `worksheet_container_export`

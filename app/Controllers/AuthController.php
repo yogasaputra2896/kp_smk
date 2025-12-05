@@ -26,8 +26,7 @@ class AuthController extends Controller
     {
         // Most services in this controller require
         // the session to be started - so fire it up!
-        $this->session = service('session');
-
+        helper('log');
         $this->config = config('Auth');
         $this->auth   = service('authentication');
     }
@@ -93,6 +92,7 @@ class AuthController extends Controller
             return redirect()->to(route_to('reset-password') . '?token=' . $this->auth->user()->reset_hash)->withCookies();
         }
 
+        addLog('Login ke sistem');
         $redirectURL = site_url('dashboard');
         unset($_SESSION['redirect_url']);
 
@@ -106,9 +106,11 @@ class AuthController extends Controller
     public function logout()
     {
         if ($this->auth->check()) {
+            addLog('Logout dari sistem');
             $this->auth->logout();
         }
 
+        
         return redirect()->to(site_url('login'));
     }
 
