@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/vendors/sweetalert2/sweetalert2.min.css') ?>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
 
 </head>
@@ -43,12 +45,13 @@
     </div>
 
     <!-- JS -->
+    <script src="<?= base_url('assets/vendors/jquery/jquery-3.6.0.min.js') ?>"></script>
+    <script src="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.js') ?>"></script>
     <script src="<?= base_url('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') ?>"></script>
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/js/main.js') ?>"></script>
-    <script src="<?= base_url('assets/vendors/jquery/jquery-3.6.0.min.js') ?>"></script>
-    <script src="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.js') ?>"></script>
     <script src="<?= base_url('assets/vendors/sweetalert2/sweetalert2.all.min.js') ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 
 
     <!-- Script tambahan tiap halaman -->

@@ -22,6 +22,7 @@ if (!function_exists('addLog')) {
 
         return $log->insert([
             'user_id'    => $user->id,
+            'username'   => $user->username, // ⬅️ Tambahkan ini
             'role'       => $roleName,
             'activity'   => $activity,
             'created_at' => date('Y-m-d H:i:s'),

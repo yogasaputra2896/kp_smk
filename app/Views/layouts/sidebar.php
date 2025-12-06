@@ -121,13 +121,13 @@ $segment2 = $uri->getSegment(2);
 
                         <ul class="submenu" <?= in_array($segment1, ['booking-job-trash', 'worksheet-import-trash', 'worksheet-export-trash']) ? 'style="display:block;"' : '' ?>>
                             <li class="submenu-item <?= ($segment2 == 'booking-job-trash') ? 'active' : '' ?>">
-                                <a href="<?= base_url('booking-job-trash') ?>">Booking Job</a>
+                                <a href="<?= base_url('booking-job-trash') ?>"><i class="bi bi-calendar-check-fill"></i> Booking Job</a>
                             </li>
                             <li class="submenu-item <?= ($segment2 == 'worksheet-import-trash') ? 'active' : '' ?>">
-                                <a href="<?= base_url('worksheet-import-trash') ?>">Worksheet Import</a>
+                                <a href="<?= base_url('worksheet-import-trash') ?>"><i class="bi bi-journal-text"></i> WS Import</a>
                             </li>
                             <li class="submenu-item <?= ($segment2 == 'worksheet-export-trash') ? 'active' : '' ?>">
-                                <a href="<?= base_url('worksheet-export-trash') ?>">Worksheet Export</a>
+                                <a href="<?= base_url('worksheet-export-trash') ?>"><i class="bi bi-journal-text"></i> WS Export</a>
                             </li>
                         </ul>
                     </li>

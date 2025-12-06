@@ -107,3 +107,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 });
+
+$(document).ready(function() {
+    $('#tblLog').DataTable({
+        scrollCollapse: true,
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        order: [[3, "desc"]]
+    });
+});

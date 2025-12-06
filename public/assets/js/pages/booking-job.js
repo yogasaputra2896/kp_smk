@@ -1,16 +1,110 @@
 // ====================== BOOKING JOB MODULE ======================
-(function() {
+(function () {
     // ====================== CONFIG ======================
-    const config = window.BookingJobConfig || {};
-    const LIST_URL = config.listUrl;
-    const NEXTNO_URL = config.nextNoUrl;
+    const config    = window.BookingJobConfig || {};
+    const LIST_URL  = config.listUrl;
+    const NEXTNO_URL= config.nextNoUrl;
     const STORE_URL = config.storeUrl;
-    const BASE_URL = config.baseUrl;
-    const CSRF_NAME = config.csrfName;
-    const CSRF_HASH = config.csrfHash;
-    const AUTO_ADD = config.autoAdd || false;
+    const BASE_URL  = config.baseUrl;
+    const AUTO_ADD  = config.autoAdd || false;
 
     let currentType = 'import_lcl';
+
+    // ====================== HELPER: SWEETALERT ======================
+    function showLoading(title = 'Memuat...', text = 'Mohon tunggu sebentar') {
+        Swal.fire({
+            title,
+            text,
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+    }
+
+    function showSuccess(message, timer = 2000) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: message,
+            timer,
+            showConfirmButton: false
+        });
+    }
+
+    function showError(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: message || 'Terjadi kesalahan.'
+        });
+    }
+
+    function showWarning(message) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Gagal!',
+            text: message || 'Proses gagal dilakukan.'
+        });
+    }
+
+    // ====================== HELPER: UNIVERSAL SELECT2 ======================
+    /**
+     * Init Select2 universal untuk TAMBAH & EDIT
+     * selector   : '#namaConsignee', '#editConsignee', dll
+     * url        : endpoint AJAX
+     * placeholder: teks placeholder
+     * modalId    : '#modalBooking' / '#modalEditBooking'
+     * oldValue   : nilai lama (hanya untuk edit), boleh null
+     */
+    function initSelect2Universal(selector, url, placeholder, modalId, oldValue = null) {
+        const $el = $(selector);
+
+        // Destroy jika sudah ada
+        if ($el.hasClass('select2-hidden-accessible')) {
+            $el.select2('destroy');
+        }
+
+        // Set value lama (untuk edit)
+        if (oldValue && oldValue !== '') {
+            $el.html(`<option selected>${oldValue}</option>`);
+        } else {
+            $el.html('');
+        }
+
+        // Init Select2
+        $el.select2({
+            theme: 'bootstrap-5',
+            placeholder: placeholder,
+            allowClear: true,
+            width: '100%',
+            minimumInputLength: 0,
+            dropdownParent: $(modalId),
+            ajax: {
+                url: url,
+                dataType: 'json',
+                delay: 150,
+                data: params => ({ term: params.term || '' }),
+                processResults: data => ({ results: data })
+            },
+            templateResult: data => data.text,
+            templateSelection: data => data.text || data.id
+        });
+
+        // Override: yang disimpan SELALU nama, bukan ID
+        $el.off('select2:select').on('select2:select', function (e) {
+            const nama = e.params.data.text;
+            $(this).html(`<option selected>${nama}</option>`).trigger('change');
+        });
+    }
+
+    function destroySelect2List(selectors) {
+        selectors.forEach(sel => {
+            const $el = $(sel);
+            if ($el.hasClass('select2-hidden-accessible')) {
+                $el.select2('destroy');
+            }
+            $el.val(null);
+        });
+    }
 
     // ====================== INIT DATATABLES ======================
     const isMobile = window.innerWidth < 576;
@@ -22,7 +116,7 @@
         },
         ajax: {
             url: LIST_URL,
-            data: function(d) {
+            data: function (d) {
                 d.type = currentType;
             },
             dataSrc: 'data'
@@ -30,7 +124,7 @@
         columns: [
             {
                 data: null,
-                render: function(data, type, row, meta) {
+                render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
@@ -45,19 +139,18 @@
             { data: 'master_bl' },
             {
                 data: 'status',
-                render: function(data) {
+                render: function (data) {
                     if (data === 'open job') {
                         return '<span class="badge bg-primary">Open Job</span>';
                     } else if (data === 'worksheet') {
                         return '<span class="badge bg-success">Worksheet</span>';
-                    } else {
-                        return data;
                     }
+                    return data;
                 }
             },
             {
                 data: 'id',
-                render: function(data, type, row) {
+                render: function (data, type, row) {
                     if (row.status === 'worksheet') {
                         return `
                             <div class="aksi-grid">
@@ -109,13 +202,13 @@
     });
 
     // ====================== DELETE DATA ======================
-    $('#tblBookings').on('click', '.btn-delete', function() {
+    $('#tblBookings').on('click', '.btn-delete', function () {
         const id = $(this).data('id');
         const no_job = $(this).data('no_job');
 
         Swal.fire({
             title: 'Apakah Anda yakin?',
-            text: `Data Booking Job dengan nomor:'${no_job}' akan dihapus!`,
+            text: `Data Booking Job dengan nomor: '${no_job}' akan dihapus!`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -125,57 +218,38 @@
         }).then((result) => {
             if (!result.isConfirmed) return;
 
-            Swal.fire({
-                title: 'Menghapus...',
-                text: 'Mohon tunggu sebentar',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+            showLoading('Menghapus...', 'Mohon tunggu sebentar');
 
             $.ajax({
                 url: `${BASE_URL}/booking-job/delete/${id}`,
                 type: 'POST',
                 dataType: 'json',
-                success: function(res) {
+                success: function (res) {
                     Swal.close();
                     if (res.status === 'ok') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Terhapus!',
-                            text: res.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
+                        showSuccess(res.message);
                         tbl.ajax.reload(null, false);
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: res.message
-                        });
+                        showError(res.message);
                     }
                 },
-                error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: xhr.responseText || 'Terjadi kesalahan pada server.'
-                    });
+                error: function (xhr) {
+                    showError(xhr.responseText || 'Terjadi kesalahan pada server.');
                 }
             });
         });
     });
 
     // ====================== FILTER JOB TYPE ======================
-    $('.filter-btn').on('click', function() {
+    $('.filter-btn').on('click', function () {
         currentType = $(this).data('type');
         $('.filter-btn').removeClass('active btn-primary').addClass('btn-outline-primary');
         $(this).removeClass('btn-outline-primary').addClass('btn-primary active');
-        tbl.search('').page('first').ajax.reload(function() {}, true);
+        tbl.search('').page('first').ajax.reload(function () { }, true);
     });
 
     // ====================== BUKA MODAL TAMBAH ======================
-    $('#btnAdd').on('click', function() {
+    $('#btnAdd').on('click', function () {
         $('#formBooking')[0].reset();
         $('#noJob').val('');
         $('#formErrors').addClass('d-none').html('');
@@ -183,14 +257,14 @@
     });
 
     // ====================== GENERATE NOMOR JOB ======================
-    $('#jobType').on('change', function() {
+    $('#jobType').on('change', function () {
         const type = $(this).val();
         if (!type) {
             $('#noJob').val('');
             return;
         }
         $.get(NEXTNO_URL, { type: type })
-            .done(function(res) {
+            .done(function (res) {
                 if (res.status === 'ok') {
                     $('#noJob').val(res.no_job);
                 } else {
@@ -198,209 +272,61 @@
                     alert(res.message || 'Gagal membuat nomor job');
                 }
             })
-            .fail(function() {
+            .fail(function () {
                 alert('Gagal request nomor job. Cek koneksi atau route.');
             });
     });
 
-    //  generate no pib
-    $('#modalBooking').on('shown.bs.modal', function () {
+    // ====================== GENERATE NO PIB (TAMBAH) ======================
+    const $jenisNomor = $('#jenisNomor');
+    const $noPibPo    = $('#noPibPo');
 
-        const jenisNomor = document.getElementById('jenisNomor');
-        const noPibPo = document.getElementById('noPibPo');
-    
-        jenisNomor.addEventListener('change', async function () {
+    if ($jenisNomor.length && $noPibPo.length) {
+        $jenisNomor.off('change').on('change', async function () {
             if (this.value === 'PIB') {
-    
-                const response = await fetch('/booking-job/generate-no-pib');
-                const data = await response.json();
-    
-                console.log("DARI SERVER:", data);
-    
-                noPibPo.value = data.no_pib_po;
-    
-            } else {
-                noPibPo.value = "";
-            }
-        });
-    });
-
-
-    $('#modalEditBooking').on('shown.bs.modal', function (e) {
-
-        const editJenisNomor = document.getElementById('editJenisNomor');
-        const editNoPibPo = document.getElementById('editNoPibPo');
-
-        // ---- Saat dropdown diubah ----
-        editJenisNomor.addEventListener('change', async function () {
-
-            if (this.value === 'PIB') {
-                // Auto generate dari server
-                const response = await fetch('/booking-job/generate-no-pib');
-                const data = await response.json();
-
-                console.log("Generate Edit:", data);
-
-                editNoPibPo.value = data.no_pib_po;
-
-            } else {
-                // Jika bukan PIB → manual
-                editNoPibPo.value = "";
-            }
-        });
-
-    });
-
-
-    // ====================== SELECT2: IMPORTIR/EXPORTIR ======================
-    $('#modalBooking').on('shown.bs.modal', function() {
-
-        // ------------------ RESET VALUE SETIAP MODAL DIBUKA ------------------
-        $('#namaConsignee').val(null).trigger('change');  // kosongkan
-        $('#namaPort').val(null).trigger('change');  // kosongkan
-        $('#namaPelayaran').val(null).trigger('change');  // kosongkan
-
-        // ------------------ HANCURKAN SELECT2 LAMA JIKA ADA ------------------
-        if ($('#namaConsignee').hasClass('select2-hidden-accessible')) {
-            $('#namaConsignee').select2('destroy');
-        }
-
-        // ------------------ INIT SELECT2 ULANG ------------------
-        $('#namaConsignee').select2({
-            placeholder: "Cari Importir / Exportir...",
-            allowClear: true,
-            width: '100%',
-            minimumInputLength: 1,
-            dropdownParent: $('#modalBooking'),
-
-            ajax: {
-                url: `${BASE_URL}/booking-job/search-consignee`,
-                dataType: "json",
-                delay: 250,
-                data: function(params) {
-                    return { term: params.term || '' };
-                },
-                processResults: function(data) {
-                    return { results: data };
+                try {
+                    const response = await fetch(`${BASE_URL}/booking-job/generate-no-pib`);
+                    const data = await response.json();
+                    console.log('DARI SERVER (Tambah):', data);
+                    $noPibPo.val(data.no_pib_po);
+                } catch (err) {
+                    console.error('Gagal generate no PIB (Tambah)', err);
+                    $noPibPo.val('');
                 }
-            },
-
-            templateResult: data => data.text,
-            templateSelection: data => data.text || data.id
+            } else {
+                $noPibPo.val('');
+            }
         });
+    }
 
-        // ------------------ OVERRIDE VALUE AGAR KIRIM NAMA, BUKAN ID ------------------
-        $('#namaConsignee').on('select2:select', function(e) {
-            let nama = e.params.data.text;
-            let newOption = new Option(nama, nama, true, true);
-            $(this).empty().append(newOption).trigger('change');
-            console.log("Kirim ke server (consignee):", nama);
-        });
+    // ====================== SELECT2: TAMBAH (UNIVERSAL) ======================
+    $('#modalBooking').on('shown.bs.modal', function () {
+        initSelect2Universal(
+            '#namaConsignee',
+            `${BASE_URL}/booking-job/search-consignee`,
+            'Cari Importir / Exportir...',
+            '#modalBooking'
+        );
+        initSelect2Universal(
+            '#namaPort',
+            `${BASE_URL}/booking-job/search-port`,
+            'Cari POL/POD...',
+            '#modalBooking'
+        );
+        initSelect2Universal(
+            '#namaPelayaran',
+            `${BASE_URL}/booking-job/search-pelayaran`,
+            'Cari Shipping Line...',
+            '#modalBooking'
+        );
     });
 
-    // ------------------ DESTROY SELECT2 SAAT MODAL DITUTUP ------------------
-    $('#modalBooking').on('hidden.bs.modal', function() {
-        if ($('#namaConsignee').hasClass('select2-hidden-accessible')) {
-            $('#namaConsignee').select2('destroy');
-        }
-        $('#namaConsignee').val(null); // reset value utama
+    $('#modalBooking').on('hidden.bs.modal', function () {
+        destroySelect2List(['#namaConsignee', '#namaPort', '#namaPelayaran']);
     });
-
-
-    
-
-    // ====================== SELECT2: PORT ======================
-    $('#modalBooking').on('shown.bs.modal', function() {
-
-        if ($('#namaPort').hasClass('select2-hidden-accessible')) {
-            $('#namaPort').select2('destroy');
-        }
-
-        $('#namaPort').select2({
-            placeholder: "Cari POL/POD...",
-            allowClear: true,
-            width: '100%',
-            minimumInputLength: 1,
-            dropdownParent: $('#modalBooking'),
-
-            ajax: {
-                url: `${BASE_URL}/booking-job/search-port`,
-                dataType: "json",
-                delay: 250,
-                data: params => ({ term: params.term || '' }),
-                processResults: data => ({ results: data })
-            },
-
-            templateResult: data => data.text,               
-            templateSelection: data => data.text || data.id  
-        });
-
-        // ========== OVERRIDE VALUE AGAR SIMPAN NAMA, BUKAN ID ==========
-        $('#namaPort').on('select2:select', function(e) {
-
-            let nama = e.params.data.text;
-            let newOption = new Option(nama, nama, true, true);
-            $(this).empty().append(newOption).trigger('change');
-            console.log("Kirim ke server (PORT):", nama);
-        });
-
-    });
-
-    $('#modalBooking').on('hidden.bs.modal', function() {
-        if ($('#namaPort').hasClass('select2-hidden-accessible')) {
-            $('#namaPort').select2('destroy');
-        }
-    });
-
-
-    // ====================== SELECT2: PELAYARAN ======================
-    $('#modalBooking').on('shown.bs.modal', function() {
-
-        if ($('#namaPelayaran').hasClass('select2-hidden-accessible')) {
-            $('#namaPelayaran').select2('destroy');
-        }
-
-        $('#namaPelayaran').select2({
-            placeholder: "Cari Shipping Line...",
-            allowClear: true,
-            width: '100%',
-            minimumInputLength: 1,
-            dropdownParent: $('#modalBooking'),
-
-            ajax: {
-                url: `${BASE_URL}/booking-job/search-pelayaran`,
-                dataType: "json",
-                delay: 250,
-                data: params => ({ term: params.term || '' }),
-                processResults: data => ({ results: data })
-            },
-
-            // tampil nama, bukan ID
-            templateResult: data => data.text,
-            templateSelection: data => data.text || data.id
-        });
-
-        // ========== OVERRIDE VALUE AGAR SIMPAN NAMA, BUKAN ID ==========
-        $('#namaPelayaran').on('select2:select', function(e) {
-
-            let nama = e.params.data.text;
-            let newOption = new Option(nama, nama, true, true);
-            $(this).empty().append(newOption).trigger('change');
-            console.log("Kirim ke server (PEL):", nama);
-        });
-
-    });
-
-    $('#modalBooking').on('hidden.bs.modal', function() {
-        if ($('#namaPelayaran').hasClass('select2-hidden-accessible')) {
-            $('#namaPelayaran').select2('destroy');
-        }
-    });
-
-    
 
     // ====================== SUBMIT FORM TAMBAH ======================
-    $('#formBooking').on('submit', function(e) {
+    $('#formBooking').on('submit', function (e) {
         e.preventDefault();
         const data = $(this).serialize();
 
@@ -409,35 +335,22 @@
             type: 'POST',
             data: data,
             dataType: 'json',
-            success: function(res) {
+            success: function (res) {
                 if (res.status === 'ok') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: res.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                
-                    // ========== KOSONGKAN SELECT2 ==========
+                    showSuccess(res.message);
+
                     $('#namaConsignee').val(null).trigger('change');
                     $('#namaPort').val(null).trigger('change');
                     $('#namaPelayaran').val(null).trigger('change');
-                
-                    // reset input lainnya
+
                     $('#formBooking')[0].reset();
-                
                     $('#modalBooking').modal('hide');
                     tbl.ajax.reload();
                 } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Gagal!',
-                        text: res.message
-                    });
+                    showWarning(res.message);
                 }
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 let msg = 'Terjadi kesalahan saat menyimpan booking.';
                 try {
                     const json = JSON.parse(xhr.responseText);
@@ -445,131 +358,146 @@
                 } catch (e) {
                     msg = xhr.responseText || msg;
                 }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: msg
-                });
+                showError(msg);
             }
         });
     });
 
-    // ====================== EDIT BOOKING ======================
-    $('#tblBookings').on('click', '.btn-edit', function() {
+    // =====================================================================
+    // ======================== BAGIAN EDIT BOOKING =========================
+    // =====================================================================
+
+    // ====================== BUKA MODAL EDIT ======================
+    $('#tblBookings').on('click', '.btn-edit', function () {
         const id = $(this).data('id');
 
-        Swal.fire({
-            title: 'Memuat data...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        });
+        $('#editFormErrors').addClass('d-none').html('');
+
+        showLoading('Memuat data...');
 
         $.ajax({
             url: BASE_URL + '/booking-job/edit/' + id,
             type: 'GET',
             dataType: 'json',
-            success: function(res) {
+
+            success: function (res) {
                 Swal.close();
-                if (res.status === 'ok') {
-                    const d = res.data;
-                    $('#editId').val(d.id);
-                    $('#editJobType').val(d.type);
-                    $('#editNoJob').val(d.no_job);
-                    $('#editNoPibPo').val(d.no_pib_po);
-                    $('#editConsignee').val(d.consignee);
-                    $('#editParty').val(d.party);
-                    $('#editEta').val(d.eta);
-                    $('#editPol').val(d.pol);
-                    $('#editShippingLine').val(d.shipping_line);
-                    $('#editBl').val(d.bl);
-                    $('#editMasterBl').val(d.master_bl);
-                    $('#editFormErrors').addClass('d-none').html('');
-                    $('#modalEditBooking').modal('show');
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: res.message
-                    });
+
+                if (res.status !== 'ok') {
+                    showWarning(res.message);
+                    return;
                 }
+
+                const d = res.data;
+
+                // Reset form
+                $('#formEditBooking')[0].reset();
+
+                // Isi input biasa
+                $('#editId').val(d.id);
+                $('#editJobType').val(d.type);
+                $('#editNoJob').val(d.no_job);
+                $('#editNoPibPo').val(d.no_pib_po);
+                $('#editParty').val(d.party);
+                $('#editEta').val(d.eta);
+                $('#editBl').val(d.bl);
+                $('#editMasterBl').val(d.master_bl);
+
+                // Set value lama ke select (nanti dibaca universal Select2)
+                $('#editConsignee').html(`<option selected>${d.consignee}</option>`);
+                $('#editPol').html(`<option selected>${d.pol}</option>`);
+                $('#editShippingLine').html(`<option selected>${d.shipping_line}</option>`);
+
+                // Tampilkan modal
+                $('#modalEditBooking').modal('show');
             },
-            error: function(xhr) {
+
+            error: function (xhr) {
                 Swal.close();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: xhr.responseText || 'Terjadi kesalahan saat mengambil data.'
-                });
+                showError(xhr.responseText);
             }
         });
     });
 
+    // ====================== SELECT2 EDIT (UNIVERSAL) ======================
+    $('#modalEditBooking').on('shown.bs.modal', function () {
+        const oldConsignee = $('#editConsignee option:selected').text();
+        const oldPol       = $('#editPol option:selected').text();
+        const oldShip      = $('#editShippingLine option:selected').text();
+
+        initSelect2Universal(
+            '#editConsignee',
+            `${BASE_URL}/booking-job/search-consignee`,
+            'Cari Importir / Exportir...',
+            '#modalEditBooking',
+            oldConsignee
+        );
+        initSelect2Universal(
+            '#editPol',
+            `${BASE_URL}/booking-job/search-port`,
+            'Cari POL/POD...',
+            '#modalEditBooking',
+            oldPol
+        );
+        initSelect2Universal(
+            '#editShippingLine',
+            `${BASE_URL}/booking-job/search-pelayaran`,
+            'Cari Shipping Line...',
+            '#modalEditBooking',
+            oldShip
+        );
+    });
+
+    $('#modalEditBooking').on('hidden.bs.modal', function () {
+        destroySelect2List(['#editConsignee', '#editPol', '#editShippingLine']);
+    });
+
     // ====================== UPDATE BOOKING ======================
-    $('#formEditBooking').on('submit', function(e) {
+    $('#formEditBooking').on('submit', function (e) {
         e.preventDefault();
-        const id = $('#editId').val();
+
+        const id   = $('#editId').val();
         const data = $(this).serialize();
 
-        Swal.fire({
-            title: 'Menyimpan...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        });
+        showLoading('Menyimpan...');
 
         $.ajax({
-            url: BASE_URL + '/booking-job/update/' + id,
+            url: `${BASE_URL}/booking-job/update/${id}`,
             type: 'POST',
             data: data,
             dataType: 'json',
-            success: function(res) {
+
+            success: function (res) {
                 Swal.close();
+
                 if (res.status === 'ok') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: res.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                
-                    // ========== KOSONGKAN SELECT2 ==========
-                    $('#namaConsignee').val(null).trigger('change');
-                    $('#namaPort').val(null).trigger('change');
-                    $('#namaPelayaran').val(null).trigger('change');
-                
-                    // reset input lainnya
-                    $('#formBooking')[0].reset();
-                
-                    $('#modalBooking').modal('hide');
+                    showSuccess(res.message);
+                    $('#modalEditBooking').modal('hide');
                     tbl.ajax.reload();
                 } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Gagal!',
-                        text: res.message
-                    });
+                    showWarning(res.message);
                 }
             },
-            error: function(xhr) {
+
+            error: function (xhr) {
                 Swal.close();
                 let msg = 'Terjadi kesalahan saat update booking.';
                 try {
                     const json = JSON.parse(xhr.responseText);
                     if (json.message) msg = json.message;
-                } catch (e) {
+                } catch {
                     msg = xhr.responseText || msg;
                 }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: msg
-                });
+                showError(msg);
             }
         });
+
     });
 
-    // ====================== EXPORT EXCEL ======================
-    $('#btnExport').on('click', function(e) {
+    // =====================================================================
+    // ========================== EXPORT EXCEL ==============================
+    // =====================================================================
+    $('#btnExport').on('click', function (e) {
         e.preventDefault();
         $('#modalExportExcel').modal('show');
 
@@ -585,7 +513,7 @@
             .catch(() => console.error('Gagal memuat daftar tahun'));
     });
 
-    $('#exportYear').on('change', function() {
+    $('#exportYear').on('change', function () {
         const year = this.value;
         const selectMonth = document.getElementById('exportMonth');
         selectMonth.innerHTML = '<option value="">-- Semua Bulan --</option>';
@@ -602,13 +530,13 @@
             .catch(() => console.error('Gagal memuat daftar bulan'));
     });
 
-    $('#modalExportExcel').on('hidden.bs.modal', function() {
+    $('#modalExportExcel').on('hidden.bs.modal', function () {
         document.getElementById('jenisExport').value = '';
         document.getElementById('exportYear').value = '';
         document.getElementById('exportMonth').innerHTML = '<option value="">-- Semua Bulan --</option>';
     });
 
-    $('#btnConfirmExportExcel').on('click', function() {
+    $('#btnConfirmExportExcel').on('click', function () {
         const jenis = document.getElementById('jenisExport').value;
         const tahun = document.getElementById('exportYear').value;
         const bulan = document.getElementById('exportMonth').value;
@@ -640,8 +568,10 @@
         });
     });
 
-    // ====================== EXPORT PDF ======================
-    $('#btnExportPdf').on('click', function(e) {
+    // =====================================================================
+    // ========================== EXPORT PDF ================================
+    // =====================================================================
+    $('#btnExportPdf').on('click', function (e) {
         e.preventDefault();
         $('#modalExportPdf').modal('show');
 
@@ -657,7 +587,7 @@
             .catch(() => console.error('Gagal memuat daftar tahun'));
     });
 
-    $('#exportYearPdf').on('change', function() {
+    $('#exportYearPdf').on('change', function () {
         const year = this.value;
         const selectMonth = document.getElementById('exportMonthPdf');
         selectMonth.innerHTML = '<option value="">-- Semua Bulan --</option>';
@@ -674,13 +604,13 @@
             .catch(() => console.error('Gagal memuat daftar bulan'));
     });
 
-    $('#modalExportPdf').on('hidden.bs.modal', function() {
+    $('#modalExportPdf').on('hidden.bs.modal', function () {
         document.getElementById('jenisExportPdf').value = '';
         document.getElementById('exportYearPdf').value = '';
         document.getElementById('exportMonthPdf').innerHTML = '<option value="">-- Semua Bulan --</option>';
     });
 
-    $('#btnConfirmExportPdf').on('click', function() {
+    $('#btnConfirmExportPdf').on('click', function () {
         const jenis = document.getElementById('jenisExportPdf').value;
         const tahun = document.getElementById('exportYearPdf').value;
         const bulan = document.getElementById('exportMonthPdf').value;
@@ -713,7 +643,7 @@
     });
 
     // ====================== PRINT NOTE ======================
-    $(document).on('click', '.btn-note', function(e) {
+    $(document).on('click', '.btn-note', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
         const timestamp = Date.now();
@@ -722,12 +652,12 @@
     });
 
     // ====================== KIRIM KE WORKSHEET ======================
-    $('#tblBookings').on('click', '.btn-send', function() {
+    $('#tblBookings').on('click', '.btn-send', function () {
         const id = $(this).data('id');
 
         Swal.fire({
             title: 'Kirim ke Worksheet?',
-            text: "Data booking job ini akan dikirim ke Worksheet.",
+            text: 'Data booking job ini akan dikirim ke Worksheet.',
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#28a745',
@@ -735,73 +665,56 @@
             confirmButtonText: 'Ya, Kirim',
             cancelButtonText: 'Batal'
         }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Mengirim...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
+            if (!result.isConfirmed) return;
 
-                $.ajax({
-                    url: BASE_URL + '/booking-job/send-to-worksheet/' + id,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(res) {
-                        Swal.close();
-                        if (res.status === 'ok') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: res.message,
-                                timer: 1500,
-                                showConfirmButton: false
-                            }).then(() => {
-                                tbl.ajax.reload();
-                                Swal.fire({
-                                    title: 'Ingin pergi ke modul Worksheet?',
-                                    icon: 'question',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#28a745',
-                                    cancelButtonColor: '#d33',
-                                    confirmButtonText: 'Ya',
-                                    cancelButtonText: 'Tidak'
-                                }).then((choice) => {
-                                    if (choice.isConfirmed) {
-                                        window.location.href = BASE_URL + '/worksheet';
-                                    }
-                                });
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Gagal!',
-                                text: res.message
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.close();
+            showLoading('Mengirim...');
+
+            $.ajax({
+                url: BASE_URL + '/booking-job/send-to-worksheet/' + id,
+                type: 'POST',
+                dataType: 'json',
+                success: function (res) {
+                    Swal.close();
+                    if (res.status === 'ok') {
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: xhr.responseText || 'Terjadi kesalahan saat mengirim data ke worksheet.'
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: res.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            tbl.ajax.reload();
+                            Swal.fire({
+                                title: 'Ingin pergi ke modul Worksheet?',
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonColor: '#28a745',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Ya',
+                                cancelButtonText: 'Tidak'
+                            }).then((choice) => {
+                                if (choice.isConfirmed) {
+                                    window.location.href = BASE_URL + '/worksheet';
+                                }
+                            });
                         });
+                    } else {
+                        showWarning(res.message);
                     }
-                });
-            }
+                },
+                error: function (xhr) {
+                    Swal.close();
+                    showError(xhr.responseText || 'Terjadi kesalahan saat mengirim data ke worksheet.');
+                }
+            });
         });
     });
 
     // ====================== REFRESH DATA ======================
-    $('#btnRefresh').on('click', function() {
-        Swal.fire({
-            title: 'Memuat data...',
-            text: 'Mohon tunggu sebentar.',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        });
+    $('#btnRefresh').on('click', function () {
+        showLoading('Memuat data...', 'Mohon tunggu sebentar.');
 
-        tbl.ajax.reload(function() {
+        tbl.ajax.reload(function () {
             Swal.fire({
                 icon: 'success',
                 title: 'Data sudah terbaru!',
@@ -812,10 +725,10 @@
     });
 
     // ====================== SAMPAH DATA ======================
-    $('#btnTrash').on('click', function() {
+    $('#btnTrash').on('click', function () {
         Swal.fire({
             title: 'Apakah Ingin Pindah Ke Halaman Sampah Booking Job ?',
-            text: "Untuk melihat dan merestore data yang sudah kamu delete, silahkan pergi ke sampah booking job",
+            text: 'Untuk melihat dan merestore data yang sudah kamu delete, silahkan pergi ke sampah booking job',
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#435ebe',
@@ -823,14 +736,10 @@
             confirmButtonText: 'Ya, Pindah',
             cancelButtonText: 'Batal'
         }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Redirect...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-                window.location.href = '/booking-job-trash';
-            }
+            if (!result.isConfirmed) return;
+
+            showLoading('Redirect...');
+            window.location.href = '/booking-job-trash';
         });
     });
 

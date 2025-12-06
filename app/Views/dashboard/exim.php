@@ -131,43 +131,64 @@
 </div>
 
 <!-- Log Aktivitas -->
-<div class="row mt-4">
+<div class="row mt-4 g-3">
     <div class="col-md-12">
-        <div class="card shadow-sm log-card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card stat-card log-card">
+
+            <div class="card-header">
                 <h5 class="mb-0">
                     <i class="bi bi-clock-history me-2"></i>Log Aktivitas Terbaru
                 </h5>
-                <small class="text-muted">Role: <?= ucfirst(in_groups('admin') ? 'Admin' : (in_groups('exim') ? 'Exim' : 'Document')) ?></small>
             </div>
-            
-            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
-                <?php if (!empty($logs)): ?>
-                    <?php foreach ($logs as $log): ?>
-                        <div class="log-item border-bottom pb-2 mb-2">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <strong class="text-primary"><?= esc($log['role']) ?></strong>
-                                    <span class="text-dark">- <?= esc($log['activity']) ?></span>
-                                </div>
-                                <small class="text-muted">
-                                    <?= date('d M Y H:i', strtotime($log['created_at'])) ?>
-                                </small>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="text-center text-muted py-3">
-                        <i class="bi bi-info-circle"></i> Tidak ada aktivitas.
-                    </div>
-                <?php endif; ?>
+
+            <div class="card-body p-2">
+
+                <div class="table-log-wrapper"> <!-- scroll hanya disini -->
+                    <table id="tblLog" class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Aktivitas</th>
+                                <th>Waktu</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php foreach ($logs as $log): ?>
+                                <tr>
+                                    <td><strong class="text-primary"><?= esc($log['username']) ?></strong></td>
+
+                                    <td>
+                                        <?php if ($log['role'] === 'admin'): ?>
+                                            <span class="badge bg-danger badge-role">Admin</span>
+                                        <?php elseif ($log['role'] === 'exim'): ?>
+                                            <span class="badge bg-success badge-role">Exim</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-info badge-role">Document</span>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td>
+                                        <div class="timeline-item"><?= esc($log['activity']) ?></div>
+                                    </td>
+
+                                    <td><?= date('d M Y H:i', strtotime($log['created_at'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+
+                    </table>
+                </div>
+
             </div>
+
         </div>
     </div>
 </div>
+<?= $this->endSection() ?>
 
-
-
+<?= $this->section('pageScripts') ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="<?= base_url('assets/js/pages/dashboard/chart.js') ?>"></script>
 

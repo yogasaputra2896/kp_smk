@@ -158,28 +158,29 @@ class BookingJob extends BaseController
 
 
 
-    // SEARCH CONSIGNEE (SELECT2)
+    // GET ALL CONSIGNEE FOR SELECT2
     public function searchConsignee()
     {
         $q = $this->request->getGet('term');
 
-        // Validasi input
-        if (empty($q)) {
-            return $this->response->setJSON([]);
+        $model = new MasterConsigneeModel();
+
+        // Jika tidak mengetik -> tampilkan semua
+        if ($q == "" || $q == null) {
+            $data = $model
+                ->select('id, nama_consignee')
+                ->orderBy('nama_consignee', 'ASC')
+                ->findAll();
+        } else {
+            // Jika mengetik -> filter
+            $data = $model
+                ->select('id, nama_consignee')
+                ->like('nama_consignee', $q)
+                ->orderBy('nama_consignee', 'ASC')
+                ->findAll();
         }
 
-        $model = new MasterConsigneeModel();
-        $data = $model
-            ->select('id, kode, nama_consignee')
-            ->groupStart()
-            ->like('kode', $q)
-            ->orLike('nama_consignee', $q)
-            ->groupEnd()
-            ->limit(20)
-            ->findAll();
-
         $results = [];
-
         foreach ($data as $row) {
             $results[] = [
                 'id'   => $row['id'],
@@ -190,57 +191,70 @@ class BookingJob extends BaseController
         return $this->response->setJSON($results);
     }
 
+
+
     // SEARCH PORT (SELECT2)
     public function searchPort()
     {
         $q = $this->request->getGet('term');
 
-        // Validasi input
-        if (empty($q)) {
-            return $this->response->setJSON([]);
-        }
-
         $model = new MasterPortModel();
-        $data = $model
-            ->select('id, kode, nama_port')
-            ->groupStart()
-            ->like('kode', $q)
-            ->orLike('nama_port', $q)
-            ->groupEnd()
-            ->limit(20)
-            ->findAll();
+
+        // Jika tidak mengetik → tampilkan semua
+        if ($q == "" || $q == null) {
+            $data = $model
+                ->select('id, kode, nama_port')
+                ->orderBy('nama_port', 'ASC')
+                ->findAll();
+        } else {
+            // Jika mengetik → filter pencarian
+            $data = $model
+                ->select('id, kode, nama_port')
+                ->groupStart()
+                ->like('kode', $q)
+                ->orLike('nama_port', $q)
+                ->groupEnd()
+                ->orderBy('nama_port', 'ASC')
+                ->findAll();
+        }
 
         $results = [];
 
         foreach ($data as $row) {
             $results[] = [
                 'id'   => $row['id'],
-                'text' => $row['nama_port']
+                'text' => $row['nama_port'] // tampil nama saja
             ];
         }
 
         return $this->response->setJSON($results);
     }
 
+
     // SEARCH PELAYARAN (SELECT2)
     public function searchPelayaran()
     {
         $q = $this->request->getGet('term');
 
-        // Validasi input
-        if (empty($q)) {
-            return $this->response->setJSON([]);
-        }
-
         $model = new MasterPelayaranModel();
-        $data = $model
-            ->select('id, kode, nama_pelayaran')
-            ->groupStart()
-            ->like('kode', $q)
-            ->orLike('nama_pelayaran', $q)
-            ->groupEnd()
-            ->limit(20)
-            ->findAll();
+
+        // Jika user tidak mengetik → tampilkan semua
+        if ($q == "" || $q == null) {
+            $data = $model
+                ->select('id, kode, nama_pelayaran')
+                ->orderBy('nama_pelayaran', 'ASC')
+                ->findAll();
+        } else {
+            // Jika user mengetik → filter pencarian
+            $data = $model
+                ->select('id, kode, nama_pelayaran')
+                ->groupStart()
+                ->like('kode', $q)
+                ->orLike('nama_pelayaran', $q)
+                ->groupEnd()
+                ->orderBy('nama_pelayaran', 'ASC')
+                ->findAll();
+        }
 
         $results = [];
 
@@ -253,6 +267,7 @@ class BookingJob extends BaseController
 
         return $this->response->setJSON($results);
     }
+
 
 
     // ============================================================
@@ -331,7 +346,7 @@ class BookingJob extends BaseController
         try {
             // Simpan ke database
             $this->bookingModel->insert($data);
-
+            addLog('Menambahkan Booking Job Baru No:"' . $data['no_job'] . '"');
             return $this->response->setJSON([
                 'status'  => 'ok',
                 'message' => 'Booking berhasil disimpan'
@@ -432,6 +447,7 @@ class BookingJob extends BaseController
 
             // Hapus dari tabel utama
             $this->db->table('booking_job')->where('id', $id)->delete();
+            addLog("Menghapus Booking Job No: {$row['no_job']}");
 
             return $this->response->setJSON([
                 'status'  => 'ok',
@@ -499,7 +515,7 @@ class BookingJob extends BaseController
 
         // Hapus dari tabel trash
         $db->table('booking_job_trash')->where('id', $id)->delete();
-
+        addLog('Merestore Booking Job No:"' . $trash['no_job'] . '"');
         return $this->response->setJSON([
             'status'  => 'ok',
             'message' => 'Data berhasil direstore.'
@@ -583,6 +599,7 @@ class BookingJob extends BaseController
         try {
             // Lakukan update
             $this->bookingModel->update($id, $data);
+            addLog("Mengupdate Booking Job No: {$data['no_job']}");
 
             return $this->response->setJSON([
                 'status'  => 'ok',

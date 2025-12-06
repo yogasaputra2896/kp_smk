@@ -44,18 +44,18 @@
 
                 <!-- Export Excel -->
                 <?php if (in_groups('admin')): ?>
-                <button id="btnExport" class="btn btn-success">
-                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>
-                    <span class="d-none d-sm-inline">Export Excel</span>
-                    <span class="d-inline d-sm-none">Xls</span>
-                </button>
+                    <button id="btnExport" class="btn btn-success">
+                        <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+                        <span class="d-none d-sm-inline">Export Excel</span>
+                        <span class="d-inline d-sm-none">Xls</span>
+                    </button>
 
-                <!-- Export PDF -->
-                <button id="btnExportPdf" class="btn btn-danger">
-                    <i class="bi bi-file-earmark-pdf me-2"></i>
-                    <span class="d-none d-sm-inline">Export Pdf</span>
-                    <span class="d-inline d-sm-none">Pdf</span>
-                </button>
+                    <!-- Export PDF -->
+                    <button id="btnExportPdf" class="btn btn-danger">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>
+                        <span class="d-none d-sm-inline">Export Pdf</span>
+                        <span class="d-inline d-sm-none">Pdf</span>
+                    </button>
                 <?php endif; ?>
             </div>
 
@@ -200,7 +200,7 @@
 
                     <!-- Input Nomor -->
                     <div class="col-md-6">
-                        <label for="noPibPo" class="form-label">Nomor</label>
+                        <label for="jenisNomor" class="form-label">Jenis Nomor</label>
                         <select name="jenis_nomor" id="jenisNomor" class="form-select mb-1" required>
                             <option value="">-- Pilih Jenis Nomor --</option>
                             <option value="PIB">No PIB/PEB</option>
@@ -266,13 +266,14 @@
 </div>
 
 <!-- ====================== MODAL: EDIT BOOKING ====================== -->
-<div class="modal fade" id="modalEditBooking" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalEditBooking" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <form id="formEditBooking" class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Booking Job</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
             </div>
+
             <div class="modal-body">
                 <?= csrf_field() ?>
                 <div id="editFormErrors" class="alert alert-danger d-none"></div>
@@ -280,16 +281,17 @@
                 <input type="hidden" name="id" id="editId">
 
                 <div class="row g-3">
+
                     <!-- Jenis Job -->
                     <div class="col-md-6">
                         <label for="editJobType" class="form-label">Jenis Job</label>
                         <select name="type" id="editJobType" class="form-select" required>
                             <option value="">-- Pilih Jenis Job --</option>
-                            <option value="export">Export</option>
                             <option value="import_lcl">Import LCL</option>
                             <option value="import_fcl_jaminan">Import FCL Jaminan</option>
                             <option value="import_fcl_nonjaminan">Import FCL Non-Jaminan</option>
-                            <option value="lain">Lain-lain</option>
+                            <option value="lain">Import Lain-lain</option>
+                            <option value="export">Export</option>
                         </select>
                     </div>
 
@@ -299,27 +301,25 @@
                         <input type="text" name="no_job" id="editNoJob" class="form-control" required>
                     </div>
 
-                    <!-- No PIB/PO -->
+                    <!-- PILIH JENIS NOMOR (BARU DITAMBAHKAN) -->
+                    <!-- Input Nomor -->
                     <div class="col-md-6">
-                        <label class="form-label">No PIB/PEB/PO</label>
-
-                        <!-- Dropdown jenis nomor -->
-                        <select name="edit_jenis_nomor" id="editJenisNomor" class="form-select mb-1" required>
+                        <label for="editJenisNomor" class="form-label">Jenis Nomor</label>
+                        <select name="jenis_nomor" id="editJenisNomor" class="form-select mb-1" required>
                             <option value="">-- Pilih Jenis Nomor --</option>
                             <option value="PIB">No PIB/PEB</option>
                             <option value="PIB-SENDIRI">No PIB/PEB Sendiri</option>
                             <option value="PO-SENDIRI">No PO Sendiri</option>
                         </select>
-
-                        <!-- Input nomor -->
-                        <input type="text" name="no_pib_po" id="editNoPibPo" class="form-control" required>
+                        <input type="text" name="no_pib_po" id="editNoPibPo" class="form-control"
+                            placeholder="Masukkan Nomor" required>
                     </div>
-
 
                     <!-- Consignee -->
                     <div class="col-md-6">
-                        <label for="namaConsignee" class="form-label">Importir / Exportir</label>
-                        <select name="consignee" id="namaConsignee" class="form-select" style="width: 100%"></select>
+                        <label for="editConsignee" class="form-label">Importir / Exportir</label>
+                        <select name="consignee" id="editConsignee"
+                            class="form-select" style="width:100%"></select>
                     </div>
 
                     <!-- Party -->
@@ -334,16 +334,18 @@
                         <input type="date" name="eta" id="editEta" class="form-control" required>
                     </div>
 
-                    <!-- POL -->
+                    <!-- POL/POD -->
                     <div class="col-md-6">
                         <label for="editPol" class="form-label">POL/POD</label>
-                        <input type="text" name="pol" id="editPol" class="form-control" required>
+                        <select name="pol" id="editPol"
+                            class="form-select" style="width:100%"></select>
                     </div>
 
                     <!-- Shipping Line -->
                     <div class="col-md-6">
                         <label for="editShippingLine" class="form-label">Pelayaran / Shipping Line</label>
-                        <input type="text" name="shipping_line" id="editShippingLine" class="form-control" required>
+                        <select name="shipping_line" id="editShippingLine"
+                            class="form-select" style="width:100%"></select>
                     </div>
 
                     <!-- BL -->
@@ -357,15 +359,22 @@
                         <label for="editMasterBl" class="form-label">Master BL</label>
                         <input type="text" name="master_bl" id="editMasterBl" class="form-control" required>
                     </div>
+
                 </div>
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
-                <button type="submit" class="btn btn-warning text-dark"><i class="bi bi-floppy2-fill me-1"></i> Update Booking</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Batal
+                </button>
+                <button type="submit" class="btn btn-warning text-dark">
+                    <i class="bi bi-floppy2-fill me-1"></i> Update Booking
+                </button>
             </div>
         </form>
     </div>
 </div>
+
 
 <!-- ====================== MODAL: EXPORT EXCEL ====================== -->
 <div class="modal fade" id="modalExportExcel" tabindex="-1" aria-labelledby="modalExportExcelLabel" aria-hidden="true">
@@ -499,16 +508,18 @@
 <!-- CSS -->
 <link rel="stylesheet" href="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/vendors/jquery/fixedColumns.dataTables.min.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/vendors/sweetalert2/sweetalert2.min.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/vendors/select2/dist/css/select2.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/pages/bookingjob.css') ?>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
 <!-- JavaScript Libraries -->
 <script src="<?= base_url('assets/vendors/jquery/jquery-3.6.0.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendors/jquery/dataTables.fixedColumns.min.js') ?>"></script>
-<script src="<?= base_url('assets/vendors/sweetalert2/sweetalert2.all.min.js') ?>"></script>
-<script src="<?= base_url('assets/vendors/select2/dist/js/select2.full.min.js') ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
+
+
 
 <!-- Page Config -->
 <script>

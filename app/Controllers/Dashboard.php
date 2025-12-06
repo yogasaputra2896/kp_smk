@@ -83,21 +83,23 @@ class Dashboard extends BaseController
             ->findAll();
 
         $bookingPerDay = $this->bookingJobModel
-        ->select("DATE(created_at) as date, COUNT(id) as total")
-        ->where("DATE(created_at) >=", $startMonth)
-        ->where("DATE(created_at) <=", $endMonth)
-        ->groupBy("DATE(created_at)")
-        ->orderBy("date", "ASC")
-        ->findAll();
+            ->select("DATE(created_at) as date, COUNT(id) as total")
+            ->where("DATE(created_at) >=", $startMonth)
+            ->where("DATE(created_at) <=", $endMonth)
+            ->groupBy("DATE(created_at)")
+            ->orderBy("date", "ASC")
+            ->findAll();
 
         // User per role
         $db = \Config\Database::connect();
-        $userByRole = $db->table('auth_groups_users ug')
-            ->select('g.name as role, COUNT(ug.user_id) as total')
-            ->join('auth_groups g', 'g.id = ug.group_id')
+        $userByRole = $db->table('auth_groups_users AS ug')
+            ->select('g.name AS role, COUNT(ug.user_id) AS total')
+            ->join('auth_groups AS g', 'g.id = ug.group_id', 'left')
             ->groupBy('g.name')
+            ->orderBy('total', 'DESC')
             ->get()
             ->getResultArray();
+
 
         // Top 5 consignee
         $topConsignees = $this->bookingJobModel
@@ -134,7 +136,7 @@ class Dashboard extends BaseController
             'totalWorksheet'              => $totalWorksheet,
             'totalWorksheetImport'        => $totalWorksheetImport,
             'totalWorksheetExport'        => $totalWorksheetExport,
-            'totalDeletedWorksheet'       => $totalDeletedWorksheet, 
+            'totalDeletedWorksheet'       => $totalDeletedWorksheet,
             'totalUser'                   => $totalUser,
             'totalDeletedUser'            => $totalDeletedUser,
             'userByRole'                  => $userByRole,

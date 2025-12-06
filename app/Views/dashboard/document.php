@@ -69,6 +69,63 @@
         </div>
     </div>
 </div>
+
+<!-- Log Aktivitas -->
+<div class="row mt-4 g-3">
+    <div class="col-md-12">
+        <div class="card stat-card log-card">
+
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Log Aktivitas Terbaru
+                </h5>
+            </div>
+
+            <div class="card-body p-2">
+
+                <div class="table-log-wrapper"> <!-- scroll hanya disini -->
+                    <table id="tblLog" class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Aktivitas</th>
+                                <th>Waktu</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php foreach ($logs as $log): ?>
+                                <tr>
+                                    <td><strong class="text-primary"><?= esc($log['username']) ?></strong></td>
+
+                                    <td>
+                                        <?php if ($log['role'] === 'admin'): ?>
+                                            <span class="badge bg-danger badge-role">Admin</span>
+                                        <?php elseif ($log['role'] === 'exim'): ?>
+                                            <span class="badge bg-success badge-role">Exim</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-primary badge-role">Document</span>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td>
+                                        <div class="timeline-item"><?= esc($log['activity']) ?></div>
+                                    </td>
+
+                                    <td><?= date('d M Y H:i', strtotime($log['created_at'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
 <?= $this->endSection() ?>
 
 <?= $this->section('pageScripts') ?>

@@ -73,7 +73,7 @@
             <div class="icon mb-2">
                 <i class="bi bi-calendar-check fs-2 text-primary"></i>
             </div>
-            <div class="stat-title mb-1">Total Status Open Job</div>
+            <div class="stat-title mb-1">Status Open Job</div>
             <div class="stat-value fw-bold"><?= $totalOpenJob ?></div>
         </div>
     </div>
@@ -84,7 +84,7 @@
             <div class="icon mb-2">
                 <i class="bi bi-journal-text fs-2 text-success"></i>
             </div>
-            <div class="stat-title mb-1">Total Status Worksheet</div>
+            <div class="stat-title mb-1">Status Worksheet</div>
             <div class="stat-value fw-bold"><?= $totalWorksheetStatus ?></div>
         </div>
     </div>
@@ -236,6 +236,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Grafik Booking Job Per Hari (Line Chart) -->
+    <div class="col-md-6">
+        <div class="card stat-card">
+            <div class="card-header">
+                <h5><i class="bi bi-graph-up-arrow me-2"></i>Visualisasi Booking Job Per Hari</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="chartBookingPerDay"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Grafik -->
+<div class="row mt-4 g-3">
     <div class="col-md-6">
         <div class="card stat-card">
             <div class="card-header">
@@ -243,6 +260,62 @@
             </div>
             <div class="card-body d-flex justify-content-center">
                 <canvas id="chartWorksheet" style="max-width: 200px; max-height: 225px;"></canvas>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Log Aktivitas -->
+<div class="row mt-4 g-3">
+    <div class="col-md-12">
+        <div class="card stat-card log-card">
+
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Log Aktivitas Terbaru
+                </h5>
+            </div>
+
+            <div class="card-body p-2">
+
+                <div class="table-log-wrapper"> <!-- scroll hanya disini -->
+                    <table id="tblLog" class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Aktivitas</th>
+                                <th>Waktu</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php foreach ($logs as $log): ?>
+                                <tr>
+                                    <td><strong class="text-primary"><?= esc($log['username']) ?></strong></td>
+
+                                    <td>
+                                        <?php if ($log['role'] === 'admin'): ?>
+                                            <span class="badge bg-danger badge-role">Admin</span>
+                                        <?php elseif ($log['role'] === 'exim'): ?>
+                                            <span class="badge bg-success badge-role">Exim</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-info badge-role">Document</span>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td>
+                                        <div class="timeline-item"><?= esc($log['activity']) ?></div>
+                                    </td>
+
+                                    <td><?= date('d M Y H:i', strtotime($log['created_at'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+
+                    </table>
+                </div>
+
             </div>
 
         </div>
@@ -257,6 +330,8 @@
 <script>
     window.chartBookingLabels = <?= json_encode(array_column($chartBookingJob, 'type')) ?>;
     window.chartBookingData = <?= json_encode(array_column($chartBookingJob, 'total')) ?>;
+    window.bookingPerDayLabels = <?= json_encode(array_column($bookingPerDay, 'date')) ?>;
+    window.bookingPerDayTotals = <?= json_encode(array_column($bookingPerDay, 'total')) ?>;
     window.chartWorksheetData = [<?= $chartWorksheet['import'] ?>, <?= $chartWorksheet['export'] ?>];
 </script>
 <?= $this->endSection() ?>

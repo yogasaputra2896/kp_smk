@@ -114,3 +114,15 @@ chartAmerica.render();
 chartEurope.render();
 chartProfileVisit.render();
 chartVisitorsProfile.render()
+
+$(document).ready(function() {
+    $('#tblLog').DataTable({
+        scrollY: "300px",
+        scrollCollapse: true,
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        order: [[3, "desc"]]
+    });
+});
