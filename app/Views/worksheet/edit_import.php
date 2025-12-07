@@ -93,25 +93,25 @@
         <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Penjaluran</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
-                    <label>Penjaluran PIB</label>
-                    <select name="penjaluran" id="penjaluran" class="form-select">
-                        <option value="">-- Pilih Penjaluran PIB --</option>
-                        <option value="SPPB" <?= $worksheet['penjaluran'] === 'SPPB' ? 'selected' : '' ?>>SPPB</option>
-                        <option value="SPJM" <?= $worksheet['penjaluran'] === 'SPJM' ? 'selected' : '' ?>>SPJM</option>
-                    </select>
-                </div>
-            
+                <label>Penjaluran PIB</label>
+                <select name="penjaluran" id="penjaluran" class="form-select">
+                    <option value="">-- Pilih Penjaluran PIB --</option>
+                    <option value="SPPB" <?= $worksheet['penjaluran'] === 'SPPB' ? 'selected' : '' ?>>SPPB</option>
+                    <option value="SPJM" <?= $worksheet['penjaluran'] === 'SPJM' ? 'selected' : '' ?>>SPJM</option>
+                </select>
+            </div>
 
-                <div class="col-md-6 mb-3" id="tgl-spjm-section">
-                    <div class="col-md-6 mb-3">
-                        <label>Tanggal SPJM</label>
-                        <input type="date" name="tgl_spjm" class="form-control" value="<?= esc($worksheet['tgl_spjm']) ?>">
-                    </div>
-                </div>
+
+            <div class="col-md-6 mb-3" id="tgl-spjm-section">
                 <div class="col-md-6 mb-3">
-                    <label>Tanggal SPPB</label>
-                    <input type="date" name="tgl_sppb" class="form-control" value="<?= esc($worksheet['tgl_sppb']) ?>">
+                    <label>Tanggal SPJM</label>
+                    <input type="date" name="tgl_spjm" class="form-control" value="<?= esc($worksheet['tgl_spjm']) ?>">
                 </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label>Tanggal SPPB</label>
+                <input type="date" name="tgl_sppb" class="form-control" value="<?= esc($worksheet['tgl_sppb']) ?>">
+            </div>
         </div>
 
         <!-- ================= INFORMASI PENGANGKUTAN ================= -->
@@ -191,7 +191,7 @@
                     <option value="Belum Ada" <?= $worksheet['dok_ori'] === 'Belum Ada' ? 'selected' : '' ?>>Belum Ada</option>
                 </select>
             </div>
-            
+
 
             <div class="col-md-6 mb-3" id="tgl-ori-section">
                 <div class="col-md-6 mb-3">
@@ -269,9 +269,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php 
-                        $no = 1; 
-                        if (!empty($containers)) : 
+                        <?php
+                        $no = 1;
+                        if (!empty($containers)) :
                             foreach ($containers as $c) : ?>
                                 <tr>
                                     <td><?= $no++ ?></td>
@@ -409,7 +409,8 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($truckings)) : ?>
-                        <?php $no = 1; foreach ($truckings as $t) : ?>
+                        <?php $no = 1;
+                        foreach ($truckings as $t) : ?>
                             <tr>
                                 <td class="text-center nomor"><?= $no++; ?></td>
                                 <td><input type="text" name="no_mobil[]" value="<?= esc($t['no_mobil']) ?>" class="form-control"></td>
@@ -461,7 +462,8 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($lartass)) : ?>
-                        <?php $no = 1; foreach ($lartass as $l) : ?>
+                        <?php $no = 1;
+                        foreach ($lartass as $l) : ?>
                             <tr>
                                 <td class="text-center"><?= $no++; ?></td>
                                 <td><input type="text" name="nama_lartas[]" value="<?= esc($l['nama_lartas']) ?>" class="form-control"></td>
@@ -537,7 +539,8 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($fasilitass)) : ?>
-                        <?php $no = 1; foreach ($fasilitass as $f) : ?>
+                        <?php $no = 1;
+                        foreach ($fasilitass as $f) : ?>
                             <tr>
                                 <td class="text-center nomor"><?= $no++; ?></td>
                                 <td><input type="text" name="tipe_fasilitas[]" value="<?= esc($f['tipe_fasilitas']) ?>" class="form-control"></td>
@@ -555,7 +558,7 @@
                 </tbody>
             </table>
         </div>
-                    
+
 
 
         <!-- ================= INFORMASI TAMBAHAN ================= -->
@@ -586,7 +589,8 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($informasitambahans)) : ?>
-                        <?php $no = 1; foreach ($informasitambahans as $info) : ?>
+                        <?php $no = 1;
+                        foreach ($informasitambahans as $info) : ?>
                             <tr>
                                 <td class="text-center nomor"><?= $no++; ?></td>
                                 <td><input type="text" name="nama_pengurusan[]" value="<?= esc($info['nama_pengurusan']) ?>" class="form-control"></td>
@@ -607,7 +611,7 @@
         <!-- ================= CATATAN ================= -->
         <br>
         <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Catatan</h5>
-        <div class="row">                    
+        <div class="row">
             <div class="col-md-12 mb-3">
                 <label>Berita Acara</label>
                 <textarea name="berita_acara" class="form-control" rows="3"><?= esc($worksheet['berita_acara']) ?></textarea>
@@ -637,8 +641,6 @@
 
 <!-- ================= SCRIPT ================= -->
 <script>
-
-
     // =============== Penjaluran =======================
     const penjaluranSelect = document.getElementById('penjaluran');
     const tglSpjmSection = document.getElementById('tgl-spjm-section');
@@ -710,7 +712,7 @@
             if (tbody.rows.length > 0) {
                 newRow = tbody.rows[0].cloneNode(true);
                 newRow.querySelectorAll('input, select').forEach(el => el.value = '');
-            } 
+            }
             // Jika semua baris sudah dihapus, buat baris baru dari template manual
             else {
                 newRow = document.createElement('tr');
@@ -765,7 +767,7 @@
     }
 
     // Tambah Baris DO 
-    document.getElementById('addDoRow').addEventListener('click', function () {
+    document.getElementById('addDoRow').addEventListener('click', function() {
         const tbody = document.querySelector('#doTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -792,7 +794,7 @@
     });
 
     // Hapus Baris DO
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
         if (e.target.closest('.removeDoRow')) {
             e.target.closest('tr').remove();
             updateDoRowNumbers();
@@ -813,7 +815,7 @@
         updateDoRowNumbers();
     });
 
-   // ==================== Pengurusan Trucking ==========================
+    // ==================== Pengurusan Trucking ==========================
     // Fungsi: Update nomor urut otomatis
     function updateTruckingNumbers() {
         document.querySelectorAll('#truckingTable tbody tr').forEach((tr, index) => {
@@ -1031,9 +1033,9 @@
         updateTambahanNumbers();
     })
 
-    
-    
-   // =============== Tombol Cek Data (kode asli tetap + tambahan loading) ===================
+
+
+    // =============== Tombol Cek Data (kode asli tetap + tambahan loading) ===================
     document.getElementById('checkDataBtn').addEventListener('click', function(e) {
         e.preventDefault();
         const btn = this;
@@ -1092,8 +1094,13 @@
                                 if (el) {
                                     el.classList.add('is-empty');
                                     if (i === 0) {
-                                        el.focus({ preventScroll: false });
-                                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        el.focus({
+                                            preventScroll: false
+                                        });
+                                        el.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'center'
+                                        });
                                     }
                                 }
                             });
@@ -1123,7 +1130,6 @@
                 }).then(() => btn.blur());
             });
     });
-
 </script>
 
 

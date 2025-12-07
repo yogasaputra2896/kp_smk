@@ -55,6 +55,31 @@
     </div>
 </div>
 
+<div class="row g-3">
+    <!-- Worksheet Completed -->
+    <div class="col-md-6 col-6">
+        <div class="card text-center stat-card p-3">
+            <div class="icon mb-2">
+                <i class="bi bi-check2-circle fs-2 text-success"></i>
+            </div>
+            <div class="stat-title mb-1">Completed</div>
+            <div class="stat-value fw-bold"><?= $statusCompleted ?></div>
+        </div>
+    </div>
+
+    <!-- Worksheet Not Completed -->
+    <div class="col-md-6 col-6">
+        <div class="card text-center stat-card p-3">
+            <div class="icon mb-2">
+                <i class="bi bi-x-circle fs-2 text-danger"></i>
+            </div>
+            <div class="stat-title mb-1">Not Completed</div>
+            <div class="stat-value fw-bold"><?= $statusNotCompleted ?></div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Grafik -->
 <div class="row mt-4 g-3">
     <div class="col-md-6">
@@ -66,6 +91,18 @@
                 <canvas id="chartWorksheet" style="max-width: 200px; max-height: 225px;"></canvas>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Grafik Worksheet Per Hari -->
+    <div class="col-md-6">
+        <div class="card stat-card">
+            <div class="card-header">
+                <h5><i class="bi bi-graph-up-arrow me-2"></i>Visualisasi Worksheet Per Hari</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="chartWorksheetPerDay"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -134,5 +171,15 @@
 
 <script>
     window.chartWorksheetData = [<?= $chartWorksheet['import'] ?>, <?= $chartWorksheet['export'] ?>];
+    window.worksheetPerDayLabels = [
+        <?php foreach ($worksheetPerDay as $row): ?> "<?= $row['date'] ?>",
+        <?php endforeach; ?>
+    ];
+
+    window.worksheetPerDayTotals = [
+        <?php foreach ($worksheetPerDay as $row): ?>
+            <?= $row['total'] ?>,
+        <?php endforeach; ?>
+    ];
 </script>
 <?= $this->endSection() ?>

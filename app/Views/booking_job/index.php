@@ -166,231 +166,22 @@
     </div>
 </div>
 
-<!-- ====================== MODAL: TAMBAH BOOKING ====================== -->
-<div class="modal fade" id="modalBooking" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form id="formBooking" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tambah Booking Job</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-                <?= csrf_field() ?>
-                <div id="formErrors" class="alert alert-danger d-none"></div>
-
-                <div class="row g-3">
-                    <!-- Jenis Job -->
-                    <div class="col-md-6">
-                        <label for="jobType" class="form-label">Jenis Job</label>
-                        <select name="type" id="jobType" class="form-select" required>
-                            <option value="">-- Pilih Jenis Job --</option>
-                            <option value="import_lcl">Import LCL</option>
-                            <option value="import_fcl_jaminan">Import FCL Jaminan</option>
-                            <option value="import_fcl_nonjaminan">Import FCL Non-Jaminan</option>
-                            <option value="lain">Import Lain-lain</option>
-                            <option value="export">Export</option>
-                        </select>
-                    </div>
-
-                    <!-- Nomor Job (auto-generate) -->
-                    <div class="col-md-6">
-                        <label for="noJob" class="form-label">Nomor Job</label>
-                        <input type="text" name="no_job" id="noJob" class="form-control" required>
-                    </div>
-
-                    <!-- Input Nomor -->
-                    <div class="col-md-6">
-                        <label for="jenisNomor" class="form-label">Jenis Nomor</label>
-                        <select name="jenis_nomor" id="jenisNomor" class="form-select mb-1" required>
-                            <option value="">-- Pilih Jenis Nomor --</option>
-                            <option value="PIB">No PIB/PEB</option>
-                            <option value="PIB-SENDIRI">No PIB/PEB Sendiri</option>
-                            <option value="PO-SENDIRI">No PO Sendiri</option>
-                        </select>
-                        <input type="text" name="no_pib_po" id="noPibPo" class="form-control"
-                            placeholder="Masukkan Nomor" required>
-                    </div>
-
-                    <!-- Consignee -->
-                    <div class="col-md-6">
-                        <label for="namaConsignee" class="form-label">Importir / Exportir</label>
-                        <select name="consignee" id="namaConsignee" class="form-control"></select>
-                    </div>
-
-
-                    <!-- Party -->
-                    <div class="col-md-6">
-                        <label for="party" class="form-label">Party</label>
-                        <input type="text" name="party" id="party" class="form-control"
-                            placeholder="1 X 20 / LCL 1 PK" required>
-                    </div>
-
-                    <!-- ETA -->
-                    <div class="col-md-6">
-                        <label for="eta" class="form-label">ETA/ETD</label>
-                        <input type="date" name="eta" id="eta" class="form-control" required>
-                    </div>
-
-                    <!-- POL -->
-                    <div class="col-md-6">
-                        <label for="namaPort" class="form-label">POL/POD</label>
-                        <select name="pol" id="namaPort" class="form-control"></select>
-                    </div>
-
-                    <!-- Shipping Line -->
-                    <div class="col-md-6">
-                        <label for="namaPelayaran" class="form-label">Pelayaran / Shipping Line</label>
-                        <select name="shipping_line" id="namaPelayaran" class="form-control"></select>
-                    </div>
-
-                    <!-- BL -->
-                    <div class="col-md-6">
-                        <label for="bl" class="form-label">Bill of Lading (BL)</label>
-                        <input type="text" name="bl" id="bl" class="form-control" placeholder="Nomor BL" required>
-                    </div>
-
-                    <!-- Master BL -->
-                    <div class="col-md-6">
-                        <label for="masterBl" class="form-label">Master BL</label>
-                        <input type="text" name="master_bl" id="masterBl" class="form-control"
-                            placeholder="Nomor Master BL" required>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
-                <button type="submit" class="btn btn-primary"><i class="bi bi-floppy me-1"></i> Simpan Booking</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ====================== MODAL: EDIT BOOKING ====================== -->
-<div class="modal fade" id="modalEditBooking" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <form id="formEditBooking" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Booking Job</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-
-            <div class="modal-body">
-                <?= csrf_field() ?>
-                <div id="editFormErrors" class="alert alert-danger d-none"></div>
-
-                <input type="hidden" name="id" id="editId">
-
-                <div class="row g-3">
-
-                    <!-- Jenis Job -->
-                    <div class="col-md-6">
-                        <label for="editJobType" class="form-label">Jenis Job</label>
-                        <select name="type" id="editJobType" class="form-select" required>
-                            <option value="">-- Pilih Jenis Job --</option>
-                            <option value="import_lcl">Import LCL</option>
-                            <option value="import_fcl_jaminan">Import FCL Jaminan</option>
-                            <option value="import_fcl_nonjaminan">Import FCL Non-Jaminan</option>
-                            <option value="lain">Import Lain-lain</option>
-                            <option value="export">Export</option>
-                        </select>
-                    </div>
-
-                    <!-- Nomor Job -->
-                    <div class="col-md-6">
-                        <label for="editNoJob" class="form-label">Nomor Job</label>
-                        <input type="text" name="no_job" id="editNoJob" class="form-control" required>
-                    </div>
-
-                    <!-- PILIH JENIS NOMOR (BARU DITAMBAHKAN) -->
-                    <!-- Input Nomor -->
-                    <div class="col-md-6">
-                        <label for="editJenisNomor" class="form-label">Jenis Nomor</label>
-                        <select name="jenis_nomor" id="editJenisNomor" class="form-select mb-1" required>
-                            <option value="">-- Pilih Jenis Nomor --</option>
-                            <option value="PIB">No PIB/PEB</option>
-                            <option value="PIB-SENDIRI">No PIB/PEB Sendiri</option>
-                            <option value="PO-SENDIRI">No PO Sendiri</option>
-                        </select>
-                        <input type="text" name="no_pib_po" id="editNoPibPo" class="form-control"
-                            placeholder="Masukkan Nomor" required>
-                    </div>
-
-                    <!-- Consignee -->
-                    <div class="col-md-6">
-                        <label for="editConsignee" class="form-label">Importir / Exportir</label>
-                        <select name="consignee" id="editConsignee"
-                            class="form-select" style="width:100%"></select>
-                    </div>
-
-                    <!-- Party -->
-                    <div class="col-md-6">
-                        <label for="editParty" class="form-label">Party</label>
-                        <input type="text" name="party" id="editParty" class="form-control" required>
-                    </div>
-
-                    <!-- ETA -->
-                    <div class="col-md-6">
-                        <label for="editEta" class="form-label">ETA/ETD</label>
-                        <input type="date" name="eta" id="editEta" class="form-control" required>
-                    </div>
-
-                    <!-- POL/POD -->
-                    <div class="col-md-6">
-                        <label for="editPol" class="form-label">POL/POD</label>
-                        <select name="pol" id="editPol"
-                            class="form-select" style="width:100%"></select>
-                    </div>
-
-                    <!-- Shipping Line -->
-                    <div class="col-md-6">
-                        <label for="editShippingLine" class="form-label">Pelayaran / Shipping Line</label>
-                        <select name="shipping_line" id="editShippingLine"
-                            class="form-select" style="width:100%"></select>
-                    </div>
-
-                    <!-- BL -->
-                    <div class="col-md-6">
-                        <label for="editBl" class="form-label">Bill of Lading (BL)</label>
-                        <input type="text" name="bl" id="editBl" class="form-control" required>
-                    </div>
-
-                    <!-- Master BL -->
-                    <div class="col-md-6">
-                        <label for="editMasterBl" class="form-label">Master BL</label>
-                        <input type="text" name="master_bl" id="editMasterBl" class="form-control" required>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Batal
-                </button>
-                <button type="submit" class="btn btn-warning text-dark">
-                    <i class="bi bi-floppy2-fill me-1"></i> Update Booking
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-
-<!-- ====================== MODAL: EXPORT EXCEL ====================== -->
-<div class="modal fade" id="modalExportExcel" tabindex="-1" aria-labelledby="modalExportExcelLabel" aria-hidden="true">
+<!-- ====================== MODAL: EXPORT EXCEL RANGE ====================== -->
+<div class="modal fade" id="modalExportExcel" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="modalExportExcelLabel">Export Booking Job To Excel</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <h5 class="modal-title">Export Laporan Booking Job (Excel)</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
                 <form id="formExportExcel">
-                    <!-- Jenis export -->
+
+                    <!-- Jenis Booking -->
                     <div class="mb-3">
-                        <label for="jenisExport" class="form-label fw-semibold">Pilih Jenis Booking Job</label>
+                        <label class="form-label fw-semibold">Jenis Booking Job</label>
                         <select id="jenisExport" class="form-select" required>
                             <option value="">-- Pilih Jenis Job --</option>
                             <option value="export">Export</option>
@@ -398,31 +189,25 @@
                             <option value="import_fcl_jaminan">Import FCL Jaminan</option>
                             <option value="import_fcl_nonjaminan">Import FCL Non-Jaminan</option>
                             <option value="lain">Import Lain-lain</option>
-                            <option value="all">Semua Booking Job</option>
+                            <option value="all">Semua Job</option>
                         </select>
                     </div>
 
+                    <h6>Periode Tanggal</h6>
+                    <hr>
+
                     <div class="row">
-                        <h6>Periode</h6>
-                        <hr>
-                        <!-- Tahun -->
                         <div class="col-md-6 mb-3">
-                            <label for="exportYear" class="form-label fw-semibold">Tahun</label>
-                            <select id="exportYear" class="form-select" required>
-                                <option value="">-- Pilih Tahun --</option>
-                                <!-- akan diisi otomatis dari database -->
-                            </select>
+                            <label class="form-label fw-semibold">Tanggal Mulai</label>
+                            <input type="date" id="startExport" class="form-control" max="<?= date('Y-m-d') ?>" required>
                         </div>
 
-                        <!-- Bulan -->
                         <div class="col-md-6 mb-3">
-                            <label for="exportMonth" class="form-label fw-semibold">Bulan</label>
-                            <select id="exportMonth" class="form-select">
-                                <option value="">-- Semua Bulan --</option>
-                                <!-- akan diisi otomatis via JS -->
-                            </select>
+                            <label class="form-label fw-semibold">Tanggal Selesai</label>
+                            <input type="date" id="endExport" class="form-control" max="<?= date('Y-m-d') ?>" required>
                         </div>
                     </div>
+
                 </form>
             </div>
 
@@ -430,29 +215,34 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i> Batal
                 </button>
+
                 <button type="button" class="btn btn-success" id="btnConfirmExportExcel">
                     <i class="bi bi-download me-1"></i> Export
                 </button>
             </div>
+
         </div>
     </div>
 </div>
 
-<!-- ====================== MODAL: EXPORT PDF ====================== -->
-<div class="modal fade" id="modalExportPdf" tabindex="-1" aria-labelledby="modalExportPdfLabel" aria-hidden="true">
+
+
+<!-- ====================== MODAL: EXPORT PDF RANGE ====================== -->
+<div class="modal fade" id="modalExportPdf" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="modalExportPdfLabel">Export Booking Job To PDF</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <h5 class="modal-title">Export Laporan Booking Job (PDF)</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
                 <form id="formExportPdf">
-                    <!-- Jenis export -->
+
+                    <!-- Jenis Booking -->
                     <div class="mb-3">
-                        <label for="jenisExportPdf" class="form-label fw-semibold">Pilih Jenis Booking Job</label>
+                        <label class="form-label fw-semibold">Jenis Booking Job</label>
                         <select id="jenisExportPdf" class="form-select" required>
                             <option value="">-- Pilih Jenis Job --</option>
                             <option value="export">Export</option>
@@ -460,45 +250,43 @@
                             <option value="import_fcl_jaminan">Import FCL Jaminan</option>
                             <option value="import_fcl_nonjaminan">Import FCL Non-Jaminan</option>
                             <option value="lain">Import Lain-lain</option>
-                            <option value="all">Semua Booking Job</option>
+                            <option value="all">Semua Job</option>
                         </select>
                     </div>
 
+                    <h6>Periode Tanggal</h6>
+                    <hr>
+
                     <div class="row">
-                        <h6>Periode</h6>
-                        <hr>
-                        <!-- Tahun -->
                         <div class="col-md-6 mb-3">
-                            <label for="exportYearPdf" class="form-label fw-semibold">Tahun</label>
-                            <select id="exportYearPdf" class="form-select" required>
-                                <option value="">-- Pilih Tahun --</option>
-                                <!-- akan diisi otomatis dari database -->
-                            </select>
+                            <label class="form-label fw-semibold">Tanggal Mulai</label>
+                            <input type="date" id="startExportPdf" class="form-control" max="<?= date('Y-m-d') ?>" required>
                         </div>
 
-                        <!-- Bulan -->
                         <div class="col-md-6 mb-3">
-                            <label for="exportMonthPdf" class="form-label fw-semibold">Bulan</label>
-                            <select id="exportMonthPdf" class="form-select">
-                                <option value="">-- Semua Bulan --</option>
-                                <!-- akan diisi otomatis via JS -->
-                            </select>
+                            <label class="form-label fw-semibold">Tanggal Selesai</label>
+                            <input type="date" id="endExportPdf" class="form-control" max="<?= date('Y-m-d') ?>" required>
                         </div>
                     </div>
+
                 </form>
             </div>
 
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i> Batal
                 </button>
-                <button type="button" class="btn btn-danger" id="btnConfirmExportPdf">
+
+                <button class="btn btn-danger" id="btnConfirmExportPdf">
                     <i class="bi bi-download me-1"></i> Export
                 </button>
             </div>
+
         </div>
     </div>
 </div>
+
+
 
 <?= $this->endSection() ?>
 
@@ -506,15 +294,11 @@
 <?= $this->section('pageScripts') ?>
 
 <!-- CSS -->
-<link rel="stylesheet" href="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/vendors/jquery/fixedColumns.dataTables.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/pages/bookingjob.css') ?>">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
 
 <!-- JavaScript Libraries -->
-<script src="<?= base_url('assets/vendors/jquery/jquery-3.6.0.min.js') ?>"></script>
-<script src="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendors/jquery/dataTables.fixedColumns.min.js') ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 
@@ -531,6 +315,11 @@
         csrfName: "<?= csrf_token() ?>",
         csrfHash: "<?= csrf_hash() ?>",
         autoAdd: <?= session()->getFlashdata('autoAdd') ? 'true' : 'false' ?>
+    };
+
+    window.BookingJobFlash = {
+        success: "<?= session()->getFlashdata('success') ?>",
+        error: "<?= session()->getFlashdata('errors') ?>",
     };
 </script>
 

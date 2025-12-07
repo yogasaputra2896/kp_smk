@@ -104,8 +104,64 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    /* ======================================
+        NEW: Chart Worksheet Per Hari (Line)
+    =======================================*/
+    const ctxWorksheetPerDay = document.getElementById("chartWorksheetPerDay");
+    if (ctxWorksheetPerDay) {
 
+        const rawLabels = window.worksheetPerDayLabels || [];
+        const rawData   = window.worksheetPerDayTotals || [];
 
+        const today = new Date();
+        const year  = today.getFullYear();
+        const month = today.getMonth();
+
+        const monthNames = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        let completeLabels = [];
+        let completeData   = [];
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = 
+            year + "-" + 
+            String(month + 1).padStart(2, "0") + "-" + 
+            String(day).padStart(2, "0");
+
+            const dayLabel = String(day).padStart(2, "0");
+            completeLabels.push(dayLabel);
+
+            const index = rawLabels.indexOf(dateStr);
+            completeData.push(index !== -1 ? rawData[index] : 0);
+        }
+
+        new Chart(ctxWorksheetPerDay, {
+            type: "line",
+            data: {
+                labels: completeLabels,
+                datasets: [{
+                    label: `Worksheet Per Hari (${monthNames[month]})`,
+                    data: completeData,
+                    borderColor: "#28a745",
+                    backgroundColor: "rgba(40, 167, 69, 0.25)",
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 });
 
 $(document).ready(function() {

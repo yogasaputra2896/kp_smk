@@ -30,6 +30,20 @@ use App\Models\WorksheetExport\WorksheetLartasExportModel;
 use App\Models\WorksheetExport\WorksheetInformasiTambahanExportModel;
 use App\Models\WorksheetExport\WorksheetFasilitasExportModel;
 
+// ======================
+// MASTER MODELS
+// ======================
+use App\Models\Master\MasterConsigneeModel;
+use App\Models\Master\MasterPortModel;
+use App\Models\Master\MasterPelayaranModel;
+use App\Models\Master\MasterNotifyPartyModel;
+use App\Models\Master\MasterVesselModel;
+use App\Models\Master\MasterFasilitasModel;
+use App\Models\Master\MasterInformasiTambahanModel;
+use App\Models\Master\MasterLartasModel;
+use App\Models\Master\MasterKemasanModel;
+use App\Models\Master\MasterLokasiSandarModel;
+
 class Worksheet extends BaseController
 {
     // ======================
@@ -1224,14 +1238,24 @@ class Worksheet extends BaseController
         ", [$year])->getResultArray();
 
         $names = [
-            1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',
-            7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
         ];
 
         $out = [];
         foreach ($rows as $r) {
             $m = (int)$r['month'];
-            if ($m >=1 && $m <=12) {
+            if ($m >= 1 && $m <= 12) {
                 $out[] = ['month' => $m, 'name' => $names[$m]];
             }
         }
@@ -2159,7 +2183,6 @@ class Worksheet extends BaseController
                 'status' => 'ok',
                 'message' => 'Worksheet export berhasil dihapus.'
             ]);
-
         } catch (\Throwable $e) {
             $db->transComplete();
             log_message('error', 'Worksheet Export delete error: ' . $e->getMessage());
@@ -2285,8 +2308,18 @@ class Worksheet extends BaseController
         ", [$year])->getResultArray();
 
         $names = [
-            1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',
-            7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
         ];
 
         $out = [];
@@ -2298,8 +2331,337 @@ class Worksheet extends BaseController
         return $this->response->setJSON(['months' => $out]);
     }
 
+    /* ==========================================================
+    *  SEARCH CONSIGNEE
+    * ========================================================== */
+    public function searchConsignee()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterConsigneeModel();
 
+        if (!$q) {
+            $data = $model->select('id, nama_consignee')
+                ->orderBy('nama_consignee', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_consignee')
+                ->groupStart()
+                ->like('nama_consignee', $q)
+                ->orLike('kode', $q)
+                ->groupEnd()
+                ->orderBy('nama_consignee', 'ASC')
+                ->findAll();
+        }
 
-    
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_consignee']
+            ];
+        }
 
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH NOTIFY PARTY
+    * ========================================================== */
+    public function searchNotifyParty()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterNotifyPartyModel();
+
+        if (!$q) {
+            $data = $model->select('id, nama_notify')
+                ->orderBy('nama_notify', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_notify')
+                ->groupStart()
+                ->like('nama_notify', $q)
+                ->orLike('kode', $q)
+                ->groupEnd()
+                ->orderBy('nama_notify', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_notify']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH PORT (POL / POD)
+    * ========================================================== */
+    public function searchPort()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterPortModel();
+
+        if (!$q) {
+            $data = $model->select('id, nama_port')
+                ->orderBy('nama_port', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_port')
+                ->groupStart()
+                ->like('nama_port', $q)
+                ->orLike('kode', $q)
+                ->orLike('negara_port', $q)
+                ->groupEnd()
+                ->orderBy('nama_port', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_port']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH PELAYARAN (Shipping Line)
+    * ========================================================== */
+    public function searchPelayaran()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterPelayaranModel();
+
+        if (!$q) {
+            $data = $model->select('id, nama_pelayaran')
+                ->orderBy('nama_pelayaran', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_pelayaran')
+                ->groupStart()
+                ->like('nama_pelayaran', $q)
+                ->orLike('kode', $q)
+                ->groupEnd()
+                ->orderBy('nama_pelayaran', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_pelayaran']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH VESSEL
+    * ========================================================== */
+    public function searchVessel()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterVesselModel();
+
+        if (!$q) {
+            $data = $model->select('id, nama_vessel')
+                ->orderBy('nama_vessel', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_vessel')
+                ->groupStart()
+                ->like('nama_vessel', $q)
+                ->orLike('kode', $q)
+                ->orLike('negara_vessel', $q)
+                ->groupEnd()
+                ->orderBy('nama_vessel', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_vessel']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH FASILITAS (Tipe + Nama Fasilitas)
+    * ========================================================== */
+    public function searchFasilitas()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterFasilitasModel();
+
+        if (!$q) {
+            $data = $model->select('id, tipe_fasilitas, nama_fasilitas')
+                ->orderBy('nama_fasilitas', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, tipe_fasilitas, nama_fasilitas')
+                ->groupStart()
+                ->like('nama_fasilitas', $q)
+                ->orLike('tipe_fasilitas', $q)
+                ->orLike('kode', $q)
+                ->groupEnd()
+                ->orderBy('nama_fasilitas', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_fasilitas']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH INFORMASI TAMBAHAN
+    * ========================================================== */
+    public function searchInformasiTambahan()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterInformasiTambahanModel();
+
+        if (!$q) {
+            $data = $model->select('id, nama_pengurusan')
+                ->orderBy('nama_pengurusan', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_pengurusan')
+                ->groupStart()
+                ->like('nama_pengurusan', $q)
+                ->orLike('kode', $q)
+                ->groupEnd()
+                ->orderBy('nama_pengurusan', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_pengurusan']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH LARTAS
+    * ========================================================== */
+    public function searchLartas()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterLartasModel();
+
+        if (!$q) {
+            $data = $model->select('id, nama_lartas')
+                ->orderBy('nama_lartas', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_lartas')
+                ->groupStart()
+                ->like('nama_lartas', $q)
+                ->orLike('kode', $q)
+                ->groupEnd()
+                ->orderBy('nama_lartas', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_lartas']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH KEMASAN
+    * ========================================================== */
+    public function searchKemasan()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterKemasanModel();
+
+        if (!$q) {
+            $data = $model->select('id, jenis_kemasan')
+                ->orderBy('jenis_kemasan', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, jenis_kemasan')
+                ->groupStart()
+                ->like('jenis_kemasan', $q)
+                ->orLike('kode', $q)
+                ->groupEnd()
+                ->orderBy('jenis_kemasan', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['jenis_kemasan']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
+
+    /* ==========================================================
+    *  SEARCH LOKASI SANDAR / TERMINAL / DEPO
+    * ========================================================== */
+    public function searchLokasiSandar()
+    {
+        $q = $this->request->getGet('term');
+        $model = new MasterLokasiSandarModel();
+
+        if (!$q) {
+            $data = $model->select('id, nama_sandar')
+                ->orderBy('nama_sandar', 'ASC')
+                ->findAll();
+        } else {
+            $data = $model->select('id, nama_sandar')
+                ->groupStart()
+                ->like('nama_sandar', $q)
+                ->orLike('kode', $q)
+                ->orLike('alamat_sandar', $q)
+                ->groupEnd()
+                ->orderBy('nama_sandar', 'ASC')
+                ->findAll();
+        }
+
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = [
+                'id'   => $row['id'],
+                'text' => $row['nama_sandar']
+            ];
+        }
+
+        return $this->response->setJSON($results);
+    }
 }

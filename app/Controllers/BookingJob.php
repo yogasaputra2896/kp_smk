@@ -41,6 +41,15 @@ class BookingJob extends BaseController
     }
 
     // ============================================================
+    // TAMPILKAN HALAMAN TAMBAH BOOKING JOB
+    // ============================================================
+    public function addPage()
+    {
+        return view('booking_job/add');
+    }
+
+
+    // ============================================================
     // GENERATE NOMOR JOB BERIKUTNYA BERDASARKAN TYPE DAN TAHUN
     // ============================================================
     public function nextNo()
@@ -304,28 +313,13 @@ class BookingJob extends BaseController
 
         $validation->setRules($rules, $messages);
 
-        // Jika validasi gagal
+        // Jika validasi gagal → kembali ke add.php
         if (!$validation->withRequest($this->request)->run()) {
-            $errors = $validation->getErrors();
 
-            // Jika BL sudah ada, tampilkan info no_job terkait
-            if (isset($errors['bl']) && str_contains($errors['bl'], 'Nomor BL sudah ada')) {
-                $bl = $this->request->getPost('bl');
-
-                $existing = $this->bookingModel
-                    ->select('no_job')
-                    ->where('bl', $bl)
-                    ->first();
-
-                if ($existing) {
-                    $errors['bl'] .= " (sudah digunakan di No Job: {$existing['no_job']})";
-                }
-            }
-
-            return $this->response->setStatusCode(422)->setJSON([
-                'status'  => 'error',
-                'message' => implode("\n", $errors)
-            ]);
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('errors', $validation->getErrors());
         }
 
         // Data yang akan disimpan
@@ -344,21 +338,40 @@ class BookingJob extends BaseController
         ];
 
         try {
-            // Simpan ke database
+            // Simpan
             $this->bookingModel->insert($data);
             addLog('Menambahkan Booking Job Baru No:"' . $data['no_job'] . '"');
-            return $this->response->setJSON([
-                'status'  => 'ok',
-                'message' => 'Booking berhasil disimpan'
-            ]);
+
+            // Flashdata sukses → untuk SweetAlert di index
+            session()->setFlashdata('success', 'Booking Job berhasil disimpan!');
+
+            return redirect()->to('/booking-job');
         } catch (\Exception $e) {
-            // Jika gagal simpan
-            return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 'error',
-                'message' => 'Terjadi kesalahan saat menyimpan booking'
-            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('errors', ['db' => 'Gagal menyimpan data ke database.']);
         }
     }
+
+
+    // ============================================================
+    // TAMPILKAN HALAMAN EDIT BOOKING JOB
+    // ============================================================
+    public function editPage($id)
+    {
+        $row = $this->bookingModel->find($id);
+
+        if (!$row) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException("Booking Job tidak ditemukan!");
+        }
+
+        return view('booking_job/edit', [
+            'booking' => $row
+        ]);
+    }
+
 
     // ============================================================
     // TAMPILKAN DAFTAR BOOKING JOB
@@ -463,85 +476,6 @@ class BookingJob extends BaseController
     }
 
     // ============================================================
-    // RESTORE DATA DARI TABEL SAMPAH
-    // ============================================================
-    public function restore($id)
-    {
-        $db = \Config\Database::connect();
-
-        // Ambil data dari tabel sampah
-        $trash = $db->table('booking_job_trash')->where('id', $id)->get()->getRowArray();
-
-        if (!$trash) {
-            return $this->response->setStatusCode(404)->setJSON([
-                'status'  => 'error',
-                'message' => 'Data tidak ditemukan di sampah.'
-            ]);
-        }
-
-        // Cek apakah no_job atau bl sudah digunakan
-        $exists = $db->table('booking_job')
-            ->where('no_job', $trash['no_job'])
-            ->orWhere('bl', $trash['bl'])
-            ->countAllResults();
-
-        if ($exists > 0) {
-            return $this->response->setStatusCode(409)->setJSON([
-                'status'  => 'error',
-                'message' => "Tidak bisa restore. No Job ({$trash['no_job']}) atau BL ({$trash['bl']}) sudah dipakai."
-            ]);
-        }
-
-        // Siapkan data untuk insert ke booking_job
-        unset($trash['id'], $trash['deleted_at'], $trash['deleted_by']);
-
-        // Set ulang timestamp
-        $now = date('Y-m-d H:i:s');
-        $trash['created_at'] = $now;
-        $trash['updated_at'] = $now;
-
-        // Insert ke tabel utama
-        $this->bookingModel->protect(false);
-        $inserted = $this->bookingModel->insert($trash);
-
-        if ($inserted === false) {
-            $error = $this->db->error();
-            log_message('error', 'Gagal insert restore booking_job: ' . json_encode($error));
-            return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 'error',
-                'message' => 'Gagal merestore data (DB error).'
-            ]);
-        }
-
-        // Hapus dari tabel trash
-        $db->table('booking_job_trash')->where('id', $id)->delete();
-        addLog('Merestore Booking Job No:"' . $trash['no_job'] . '"');
-        return $this->response->setJSON([
-            'status'  => 'ok',
-            'message' => 'Data berhasil direstore.'
-        ]);
-    }
-
-    // ============================================================
-    // AMBIL DATA UNTUK EDIT
-    // ============================================================
-    public function edit($id)
-    {
-        $row = $this->bookingModel->find($id);
-        if (!$row) {
-            return $this->response->setStatusCode(404)->setJSON([
-                'status'  => 'error',
-                'message' => 'Data tidak ditemukan.'
-            ]);
-        }
-
-        return $this->response->setJSON([
-            'status' => 'ok',
-            'data'   => $row
-        ]);
-    }
-
-    // ============================================================
     // UPDATE DATA BOOKING JOB
     // ============================================================
     public function update($id)
@@ -550,6 +484,7 @@ class BookingJob extends BaseController
 
         // Aturan validasi
         $rules = [
+            'no_job'        => "required|is_unique[booking_job.no_job,id,{$id}]",
             'type'          => 'required',
             'consignee'     => 'required',
             'no_pib_po'     => 'required',
@@ -557,38 +492,48 @@ class BookingJob extends BaseController
             'eta'           => 'required',
             'pol'           => 'required',
             'shipping_line' => 'required',
+            'bl'            => "required|is_unique[booking_job.bl,id,{$id}]",
             'master_bl'     => 'required',
         ];
 
         $messages = [
-            'type'      => ['required' => 'Tipe wajib diisi.'],
-            'consignee' => ['required' => 'Consignee wajib diisi.'],
-            'bl'        => ['required'  => 'Nomor BL wajib diisi.']
+            'no_job' => [
+                'required'  => 'Nomor job wajib diisi.',
+                'is_unique' => 'Nomor job sudah digunakan oleh data lain.'
+            ],
+            'bl' => [
+                'required'  => 'Nomor BL wajib diisi.',
+                'is_unique' => 'Nomor BL sudah digunakan oleh data lain.'
+            ],
+            'type'          => ['required' => 'Jenis job wajib diisi.'],
+            'consignee'     => ['required' => 'Consignee wajib diisi.'],
+            'no_pib_po'     => ['required' => 'Nomor PIB/PO wajib diisi.'],
+            'party'         => ['required' => 'Party wajib diisi.'],
+            'eta'           => ['required' => 'ETA/ETD wajib diisi.'],
+            'pol'           => ['required' => 'POL/POD wajib diisi.'],
+            'shipping_line' => ['required' => 'Shipping line wajib diisi.'],
+            'master_bl'     => ['required' => 'Master BL wajib diisi.'],
         ];
-
-        // Validasi unique tapi abaikan ID sendiri
-        $rules['no_job'] = "required|is_unique[booking_job.no_job,id,{$id}]";
-        $rules['bl']     = "required|is_unique[booking_job.bl,id,{$id}]";
 
         $validation->setRules($rules, $messages);
 
-        // Jika gagal validasi
+        // Validasi gagal → redirect kembali ke halaman edit
         if (!$validation->withRequest($this->request)->run()) {
-            $errors = $validation->getErrors();
-            return $this->response->setStatusCode(422)->setJSON([
-                'status'  => 'error',
-                'message' => implode("\n", $errors)
-            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('errors', $validation->getErrors());
         }
 
-        // Data yang akan diupdate
+        // Data update
         $data = [
             'no_job'        => $this->request->getPost('no_job'),
             'type'          => $this->request->getPost('type'),
-            'consignee'     => $this->request->getPost('consignee'),
+            'consignee'     => $this->request->getPost('consignee'), // nama, bukan ID
             'party'         => $this->request->getPost('party'),
             'eta'           => $this->request->getPost('eta'),
-            'pol'           => $this->request->getPost('pol'),
+            'pol'           => $this->request->getPost('pol'),       // nama, bukan ID
             'no_pib_po'     => $this->request->getPost('no_pib_po'),
             'shipping_line' => $this->request->getPost('shipping_line'),
             'bl'            => $this->request->getPost('bl'),
@@ -597,49 +542,53 @@ class BookingJob extends BaseController
         ];
 
         try {
-            // Lakukan update
-            $this->bookingModel->update($id, $data);
-            addLog("Mengupdate Booking Job No: {$data['no_job']}");
 
-            return $this->response->setJSON([
-                'status'  => 'ok',
-                'message' => 'Data berhasil diperbarui.'
-            ]);
+            $this->bookingModel->update($id, $data);
+            addLog('Mengupdate Booking Job No:"' . $data['no_job'] . '"');
+
+            // Gunakan flashdata untuk SweetAlert
+            session()->setFlashdata('success', 'Booking Job berhasil diperbarui!');
+
+            return redirect()->to('/booking-job');
         } catch (\Exception $e) {
+
             log_message('error', 'BookingJob::update error: ' . $e->getMessage());
-            return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 'error',
-                'message' => 'Terjadi kesalahan saat update data.'
-            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('errors', ['db' => 'Terjadi kesalahan saat update data.']);
         }
     }
 
+
     /**
      * ==============================================================
-     * EXPORT DATA BOOKING JOB KE EXCEL
+     * EXPORT DATA BOOKING JOB KE EXCEL (PER TANGGAL)
      * ==============================================================
      * Fungsi ini mengekspor data booking job ke format Excel (.xlsx)
-     * dengan filter tahun dan bulan, serta pengelompokan jenis job.
+     * dengan filter tanggal mulai dan tanggal selesai, serta 
+     * pengelompokan jenis job. Struktur dan style sama persis versi
+     * tahun/bulan—hanya logika filter yang berubah.
      * ==============================================================
      */
-    public function exportExcel($type = 'all')
+    public function exportExcelRange($type = 'all')
     {
         $bookingModel = new BookingJobModel();
 
-        // Ambil filter tahun dan bulan dari parameter GET
-        $year  = $this->request->getGet('year');
-        $month = $this->request->getGet('month');
+        // Ambil filter tanggal dari parameter GET
+        $start = $this->request->getGet('start_date');
+        $end   = $this->request->getGet('end_date');
 
-        // Jika $month dikirim sebagai array (misalnya multiple select)
-        if (is_array($month)) {
-            $month = reset($month);
+        // Validasi
+        if (!$start || !$end) {
+            return $this->response->setJSON([
+                'status'  => 'error',
+                'message' => 'Tanggal mulai dan tanggal selesai wajib diisi.'
+            ]);
         }
 
-        // Validasi sederhana (pastikan angka)
-        $year  = is_numeric($year) ? (int)$year : null;
-        $month = is_numeric($month) ? (int)$month : null;
-
-        // Definisi label dan warna untuk tiap kategori
+        // Definisi label untuk tiap kategori
         $filters = [
             'export'                => 'Export',
             'import_lcl'            => 'Import LCL',
@@ -649,6 +598,7 @@ class BookingJob extends BaseController
             'all'                   => 'Semua Job'
         ];
 
+        // Definisi warna header
         $headerColors = [
             'export'                => '4F81BD',
             'import_lcl'            => '9BBB59',
@@ -663,61 +613,62 @@ class BookingJob extends BaseController
         $spreadsheet->removeSheetByIndex(0);
         $sheetIndex = 0;
 
-        // Tentukan jenis export: semua atau hanya satu
+        // Export semua atau salah satu
         $exportTypes = ($type == 'all') ? array_keys($filters) : [$type];
 
         foreach ($exportTypes as $t) {
+
             $query = $bookingModel->builder();
 
             if ($t != 'all') {
                 $query->where('type', $t);
             }
-            if ($year) {
-                $query->where('YEAR(created_at)', $year, false);
-            }
-            if ($month) {
-                $query->where('MONTH(created_at)', $month, false);
-            }
+
+            // Filter tanggal (periodik)
+            $query->where("DATE(created_at) >=", $start);
+            $query->where("DATE(created_at) <=", $end);
 
             $data = $query->get()->getResultArray();
 
-            // Informasi periode (bulan/tahun)
-            $periodInfo = '';
-            if ($year && $month) {
-                $periodInfo = " (" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-$year)";
-            } elseif ($year) {
-                $periodInfo = " (Tahun $year)";
-            }
+            $title = substr($filters[$t], 0, 31);
 
-            $title = substr($filters[$t] . $periodInfo, 0, 31);
-
-            // Gunakan fungsi bantu untuk membuat sheet
+            // Buat Sheet
             $this->createBookingSheet($spreadsheet, $sheetIndex, $t, $title, $data, $headerColors);
             $sheetIndex++;
         }
 
-        // Set active sheet pertama
+        // Set sheet pertama aktif
         $spreadsheet->setActiveSheetIndex(0);
 
-        // Penamaan file dinamis
-        $period = '';
-        if ($year && $month) {
-            $period = "_{$year}-" . str_pad($month, 2, '0', STR_PAD_LEFT);
-        } elseif ($year) {
-            $period = "_{$year}";
-        }
+        // Penamaan file
+        $filename = 'Laporan_Booking_' . $type . '_' . $start . '_sd_' . $end . '.xlsx';
 
-        $filename = 'Booking_' . $type . '_' . $period . '_' . date('Y-m-d_His') . '.xlsx';
-
-        // Header download Excel
+        // Header download
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment; filename=\"$filename\"");
         header('Cache-Control: max-age=0');
 
-        // Simpan output ke browser
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
+
+        addLog("Export Booking Job Excel (Periode {$start} s/d {$end}): {$filename}");
         exit;
+    }
+
+    private function sanitizeSheetTitle($title)
+    {
+        // Karakter ilegal: : \ / ? * [ ]
+        $illegal = ['\\', '/', '?', '*', ':', '[', ']'];
+
+        // Hapus karakter ilegal
+        $title = str_replace($illegal, '-', $title);
+
+        // Maksimal 31 karakter
+        if (strlen($title) > 31) {
+            $title = substr($title, 0, 31);
+        }
+
+        return $title;
     }
 
     /**
@@ -727,18 +678,21 @@ class BookingJob extends BaseController
      */
     private function createBookingSheet($spreadsheet, $sheetIndex, $type, $title, $data, $headerColors)
     {
+        // Ambil filter tanggal dari parameter GET
+        $start = $this->request->getGet('start_date');
+        $end   = $this->request->getGet('end_date');
+        $period = " {$start} s/d {$end}";
         $sheet = $spreadsheet->createSheet($sheetIndex);
-        $sheet->setTitle(substr($title, 0, 30));
 
-        // ========== TAMBAHKAN JUDUL DI ATAS TABEL ==========
+        $cleanTitle = $this->sanitizeSheetTitle($title);
+        $sheet->setTitle($cleanTitle);
 
-        // Merge cell untuk judul (A1 sampai J1)
+        // ==============================================================
+        // JUDUL UTAMA
+        // ==============================================================
         $sheet->mergeCells('A1:J1');
+        $sheet->setCellValue('A1', strtoupper('LAPORAN BOOKING JOB ' . $title));
 
-        // Set nilai judul
-        $sheet->setCellValue('A1', strtoupper('List Booking Job ' . $title));
-
-        // Style untuk judul
         $sheet->getStyle('A1')->applyFromArray([
             'font' => [
                 'bold' => true,
@@ -754,14 +708,38 @@ class BookingJob extends BaseController
                 'vertical' => Alignment::VERTICAL_CENTER
             ]
         ]);
-
-        // Set tinggi baris judul
         $sheet->getRowDimension(1)->setRowHeight(25);
 
-        // Tambahkan baris kosong atau info tambahan (opsional)
+        // ==============================================================
+        // PERIODE LAPORAN (Baris 2)
+        // ==============================================================
         $sheet->mergeCells('A2:J2');
-        $sheet->setCellValue('A2', 'Laporan Data Booking Job - Dicetak: ' . date('d/m/Y H:i:s'));
+        $sheet->setCellValue('A2', strtoupper('PERIODE DATA ' . $period));
+
         $sheet->getStyle('A2')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 14,
+                'color' => ['argb' => 'FFFFFFFF']
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FF' . ($headerColors[$type] ?? '4F81BD')]
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
+        ]);
+        $sheet->getRowDimension(1)->setRowHeight(25);
+
+        // ==============================================================
+        // TANGGAL CETAK (Baris 3)
+        // ==============================================================
+        $sheet->mergeCells('A3:J3');
+        $sheet->setCellValue('A3', 'Dicetak: ' . date('d/m/Y H:i:s'));
+
+        $sheet->getStyle('A3')->applyFromArray([
             'font' => [
                 'italic' => true,
                 'size' => 9,
@@ -771,10 +749,11 @@ class BookingJob extends BaseController
                 'horizontal' => Alignment::HORIZONTAL_CENTER
             ]
         ]);
-        $sheet->getRowDimension(2)->setRowHeight(18);
+        $sheet->getRowDimension(3)->setRowHeight(18);
 
-        // ========== HEADER KOLOM TABEL (MULAI DARI BARIS 3) ==========
-
+        // ==============================================================
+        // HEADER TABLE (Mulai baris 4)
+        // ==============================================================
         $headers = [
             'No',
             'No Job',
@@ -790,11 +769,12 @@ class BookingJob extends BaseController
 
         $color = $headerColors[$type] ?? '4F81BD';
 
-        // Buat header baris ke-3
-        $headerRow = 3;  // ← UBAH dari baris 1 ke baris 3
+        $headerRow = 4;
         $col = 'A';
+
         foreach ($headers as $h) {
             $sheet->setCellValue($col . $headerRow, $h);
+
             $sheet->getStyle($col . $headerRow)->applyFromArray([
                 'font' => [
                     'bold' => true,
@@ -815,13 +795,16 @@ class BookingJob extends BaseController
                     ]
                 ]
             ]);
+
             $col++;
         }
 
-        // ========== ISI DATA (MULAI DARI BARIS 4) ==========
-
-        $rowNumber = 4;  // ← UBAH dari 2 ke 4
+        // ==============================================================
+        // ISI DATA (Mulai baris 5)
+        // ==============================================================
+        $rowNumber = 5;
         $no = 1;
+
         foreach ($data as $row) {
             $sheet->setCellValue("A$rowNumber", $no++);
             $sheet->setCellValue("B$rowNumber", $row['no_job']);
@@ -850,15 +833,15 @@ class BookingJob extends BaseController
             $rowNumber++;
         }
 
-        // Jika data kosong
+        // ==============================================================
+        // Jika tidak ada data
+        // ==============================================================
         if (empty($data)) {
-            $sheet->mergeCells('A4:J4');  // ← UBAH dari A2:J2 ke A4:J4
-            $sheet->setCellValue('A4', 'Tidak ada data untuk jenis ini');
+            $sheet->mergeCells('A5:J5');
+            $sheet->setCellValue('A5', 'Tidak ada data untuk periode ini');
 
-            $sheet->getStyle('A4')->applyFromArray([
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER
-                ],
+            $sheet->getStyle('A5')->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 'font' => [
                     'italic' => true,
                     'color' => ['argb' => 'FF888888']
@@ -866,88 +849,41 @@ class BookingJob extends BaseController
             ]);
         }
 
-        // Auto width semua kolom
+        // Auto width
         foreach (range('A', 'J') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
     }
 
-    /**
-     * ==============================================================
-     * AMBIL DAFTAR TAHUN DARI DATA BOOKING JOB
-     * ==============================================================
-     */
-    public function getYears()
-    {
-        $db = \Config\Database::connect();
-        $query = $db->query("SELECT DISTINCT YEAR(created_at) AS year FROM booking_job ORDER BY year DESC");
-        $years = array_column($query->getResultArray(), 'year');
 
-        return $this->response->setJSON(['years' => $years]);
-    }
 
     /**
      * ==============================================================
-     * AMBIL DAFTAR BULAN BERDASARKAN TAHUN
+     * EXPORT DATA BOOKING JOB KE PDF (PER TANGGAL)
      * ==============================================================
      */
-    public function getMonths($year)
-    {
-        $db = \Config\Database::connect();
-        $query = $db->query("SELECT DISTINCT MONTH(created_at) AS month FROM booking_job WHERE YEAR(created_at) = ? ORDER BY month ASC", [$year]);
-        $months = $query->getResultArray();
-
-        $bulanNames = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember'
-        ];
-
-        $result = [];
-        foreach ($months as $m) {
-            $num = (int)$m['month'];
-            if ($num >= 1 && $num <= 12) {
-                $result[] = ['month' => $num, 'name' => $bulanNames[$num]];
-            }
-        }
-
-        return $this->response->setJSON(['months' => $result]);
-    }
-
-    /**
-     * ==============================================================
-     * EXPORT DATA BOOKING JOB KE PDF
-     * ==============================================================
-     */
-    public function exportPdf($type = 'all')
+    public function exportPdfRange($type = 'all')
     {
         $bookingModel = new BookingJobModel();
 
-        // Ambil filter tahun dan bulan dari GET
-        $year  = $this->request->getGet('year');
-        $month = $this->request->getGet('month');
+        // Ambil tanggal dari GET
+        $start = $this->request->getGet('start_date');
+        $end   = $this->request->getGet('end_date');
 
-        // Jika $month dikirim sebagai array (misal multiple select)
-        if (is_array($month)) $month = reset($month);
-
-        $year  = is_numeric($year) ? (int)$year : null;
-        $month = is_numeric($month) ? (int)$month : null;
+        if (!$start || !$end) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Tanggal mulai dan tanggal selesai diperlukan.'
+            ]);
+        }
 
         $filters = [
-            'export'                 => 'List Job Export',
-            'import_lcl'             => 'List Job Import LCL',
-            'import_fcl_jaminan'     => 'List Job Import FCL Jaminan',
-            'import_fcl_nonjaminan'  => 'List Job Import FCL Non-Jaminan',
-            'lain'                   => 'List Job Import Lain-lain',
+            'export'                 => 'EXPORT',
+            'import_lcl'             => 'IMPORT LCL',
+            'import_fcl_jaminan'     => 'IMPORT FCL JAMINAN',
+            'import_fcl_nonjaminan'  => 'IMPORT FCL NON-JAMINAN',
+            'lain'                   => 'IMPORT LAIN-LAIN',
+            'all'                    => 'SEMUA JOB'
         ];
 
         $headerColors = [
@@ -956,71 +892,71 @@ class BookingJob extends BaseController
             'import_fcl_jaminan'     => '#F79646',
             'import_fcl_nonjaminan'  => '#C0504D',
             'lain'                   => '#8064A2',
+            'all'                    => '#31859B'
         ];
 
         $exportTypes = ($type === 'all') ? array_keys($filters) : [$type];
 
         $html = "
-            <style>
-                table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-                th, td { border: 1px solid black; padding: 5px; text-align: center; font-size: 10pt; }
-                thead { display: table-header-group; }
-                thead th { padding: 10px; line-height: 1.6; font-size: 11pt; }
-                tr { page-break-inside: avoid; }
-            </style>
-        ";
+        <style>
+            table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+            th, td { border: 1px solid black; padding: 5px; text-align: center; font-size: 10pt; }
+            thead { display: table-header-group; }
+            tr { page-break-inside: avoid; }
+        </style>
+    ";
 
         foreach ($exportTypes as $t) {
+
             $query = $bookingModel->builder();
             if ($t !== 'all') $query->where('type', $t);
-            if ($year) $query->where('YEAR(created_at)', $year, false);
-            if ($month) $query->where('MONTH(created_at)', $month, false);
+
+            $query->where("DATE(created_at) >=", $start);
+            $query->where("DATE(created_at) <=", $end);
+
             $data = $query->get()->getResultArray();
 
-            // Tentukan info periode untuk judul
-            $periodInfo = '';
-            if ($year && $month) {
-                $periodInfo = " (" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-$year)";
-            } elseif ($year) {
-                $periodInfo = " (Tahun $year)";
-            }
-
-            $title = $filters[$t] . $periodInfo;
+            $title =  "LAPORAN BOOKING JOB";
+            $title2 = $filters[$t];
+            $title3 = "PERIODE ({$start} s/d {$end})";
             $color = $headerColors[$t] ?? '#4F81BD';
 
-            $html .= "<h2 style='text-align:center; margin-bottom:10px;'>{$title}</h2>";
-            $html .= "<table><thead><tr style='background-color:{$color}; color:white; font-weight:bold;'>";
+            // Judul (lebih rapat dan lebih kecil)
+            $html .= "<h2 style='text-align:center; margin:0; padding:0; font-size:25px;'>{$title}</h2>";
+            $html .= "<h3 style='text-align:center; margin:0; padding:0; font-size:20px;'>{$title2}</h3>";
+            $html .= "<h4 style='text-align:center; margin:0 0 20px 0; padding:0; font-size:16px;'>{$title3}</h4>";
 
+            // Header
+            $html .= "<table><thead><tr style='background-color:{$color}; color:white; font-weight:bold;'>";
             $headers = ['No', 'No Job', 'No PIB/PEB/PO', 'Importir/Exportir', 'Party', 'ETA/ETD', 'POL/POD', 'Pelayaran', 'BL', 'Master BL'];
-            foreach ($headers as $h) {
-                $html .= "<th>{$h}</th>";
-            }
+
+            foreach ($headers as $h) $html .= "<th>{$h}</th>";
             $html .= "</tr></thead><tbody>";
 
+            // Data
             if (empty($data)) {
                 $html .= "<tr><td colspan='10'>Tidak ada data</td></tr>";
             } else {
                 $no = 1;
                 foreach ($data as $row) {
                     $html .= "<tr>
-                        <td>{$no}</td>
-                        <td>" . htmlspecialchars($row['no_job']) . "</td>
-                        <td>" . htmlspecialchars($row['no_pib_po']) . "</td>
-                        <td>" . htmlspecialchars($row['consignee']) . "</td>
-                        <td>" . htmlspecialchars($row['party']) . "</td>
-                        <td>" . htmlspecialchars($row['eta']) . "</td>
-                        <td>" . htmlspecialchars($row['pol']) . "</td>
-                        <td>" . htmlspecialchars($row['shipping_line']) . "</td>
-                        <td>" . htmlspecialchars($row['bl']) . "</td>
-                        <td>" . htmlspecialchars($row['master_bl']) . "</td>
-                    </tr>";
+                    <td>{$no}</td>
+                    <td>{$row['no_job']}</td>
+                    <td>{$row['no_pib_po']}</td>
+                    <td>{$row['consignee']}</td>
+                    <td>{$row['party']}</td>
+                    <td>{$row['eta']}</td>
+                    <td>{$row['pol']}</td>
+                    <td>{$row['shipping_line']}</td>
+                    <td>{$row['bl']}</td>
+                    <td>{$row['master_bl']}</td>
+                </tr>";
                     $no++;
                 }
             }
 
             $html .= "</tbody></table>";
 
-            // Page break antar tipe
             if ($t !== end($exportTypes)) {
                 $html .= "<div style='page-break-after: always;'></div>";
             }
@@ -1035,79 +971,201 @@ class BookingJob extends BaseController
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
-        $period = ($year ? "_{$year}" : '') . ($month ? '-' . str_pad($month, 2, '0', STR_PAD_LEFT) : '');
-        $filename = 'Booking_' . $type . $period . '_' . date('Y-m-d_His') . '.pdf';
+        $filename = 'Laporan_Booking_' . $type . "_{$start}_sd_{$end}" . '.pdf';
         $dompdf->stream($filename, ['Attachment' => true]);
+
+        addLog("Export Booking Job PDF (Periode {$start} s/d {$end}): {$filename}");
         exit;
     }
 
 
-    /**
-     * ==============================================================
-     * CETAK STICKY NOTE BOOKING JOB
-     * ==============================================================
-     * Fungsi untuk mencetak booking job dalam format note kecil
-     * menggunakan Dompdf. Ukuran paper disesuaikan untuk sticky note.
-     */
+
     public function printNote($encoded_id)
     {
-        // Tambahkan padding = jika diperlukan untuk base64 decode
+        // --- Perbaikan padding base64 ---
         $padding = strlen($encoded_id) % 4;
         if ($padding) {
             $encoded_id .= str_repeat('=', 4 - $padding);
         }
 
-        // Decode dan ambil ID (bagian sebelum -)
+        // --- Decode ---
         $decoded = base64_decode($encoded_id);
-        $parts = explode('-', $decoded);
-        $id = $parts[0] ?? null;
+        $parts   = explode('-', $decoded);
+        $id      = $parts[0] ?? null;
 
-        // Validasi ID
         if (!$id || !is_numeric($id)) {
             return redirect()->back()->with('error', 'Invalid ID.');
         }
 
-        $bookingModel = new BookingJobModel();
-        $data = $bookingModel->find($id);
+        $booking = $this->bookingModel->find($id);
 
-        if (!$data) {
+        if (!$booking) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Data tidak ditemukan");
         }
 
-        // HTML sticky note
+        // --- User & Tanggal Cetak ---
+        $user      = user()->username ?? 'Unknown';
+        date_default_timezone_set('Asia/Jakarta');
+        $printDate = date('d-m-Y H:i');
+
+
+        // Format tanggal ETA
+        $eta    = date('d-m-Y', strtotime($booking['eta']));
+        $status = strtoupper($booking['status']);
+
+        // --- HTML Sticky Note ---
         $html = "
         <style>
             @page { margin: 0cm; }
-            body { margin: 0; padding: 6px; font-family: Arial, sans-serif; font-size: 11px; }
-            table { width: 100%; font-size: 11px; color: #000; line-height: 1.2; border: 1px solid #000; border-collapse: collapse; }
-            td { padding: 2px 4px; vertical-align: top; border: 1px solid #000; }
-            .title { text-align: center; font-size: 13px; font-weight: bold; background-color: #ffff; }
-            .label { font-weight: bold; width: 35%; }
+
+            body {
+                margin: 0;
+                padding: 8px;
+                font-family: Arial, sans-serif;
+                font-size: 11px;
+                color: #000;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            td {
+                padding: 2px 4px;
+                font-size: 11px;
+                vertical-align: top;
+            }
+
+            .title {
+                text-align: center;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 4px 0;
+                margin-bottom: 5px;
+            }
+
+            .sub-address {
+                text-align: center;
+                font-size: 9px;
+                border-bottom: 1px dashed #000;
+                margin-top: -4px;
+                margin-bottom: 6px;
+            }
+
+            .status-box {
+                text-align: center;
+                font-size: 12px;
+                font-weight: bold;
+                background: #f1f1f1;
+                padding: 3px 0;
+                border: 1px solid #000;
+                margin-bottom: 4px;
+            }
+
+            .label { width: 38%; font-weight: bold; }
+            .value { width: 62%; }
+
+            .line {
+                border-bottom: 1px solid #000;
+                margin: 3px 0;
+            }
+
+            .footer {
+                font-size: 9px;
+                text-align: left;
+                margin-top: 25px;
+                border-top: 1px dashed #000;
+                padding-top: 3px;
+            }
         </style>
-        <title>Print Note : {$data['no_job']}</title>
+
+        <title>Print Note : {$booking['no_job']}</title>
+
+        <div class='title'>PT TRUSTWAY TRANSINDO</div>
+        <div class='sub-address'>
+            The Central 88, Jl. Trembesi Blok F No. 808,<br>
+            Pademangan Timur, Kemayoran, Jakarta Utara 14410
+        </div>
+        <br>
+
+        <div class='title'>BOOKING JOB NOTE</div>
+        <div class='status-box'>STATUS: {$status}</div>
+
         <table>
-            <tr><td colspan='2' class='title'>Booking Job</td></tr>
-            <tr><td class='label'>No Job</td><td>: {$data['no_job']}</td></tr>
-            <tr><td class='label'>No PIB/PEB/PO</td><td>: {$data['no_pib_po']}</td></tr>
-            <tr><td class='label'>Importir/Exportir</td><td>: {$data['consignee']}</td></tr>
-            <tr><td class='label'>ETA/ETD</td><td>: {$data['eta']}</td></tr>
+            <tr>
+                <td class='label'>No Job</td>
+                <td class='value'>: {$booking['no_job']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Consignee</td>
+                <td class='value'>: {$booking['consignee']}</td>
+            </tr>
+
+            <tr><td colspan='2' class='line'></td></tr>
+
+            <tr>
+                <td class='label'>No PIB/PEB/PO</td>
+                <td class='value'>: {$booking['no_pib_po']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Party</td>
+                <td class='value'>: {$booking['party']}</td>
+            </tr>
+
+            <tr><td colspan='2' class='line'></td></tr>
+
+            <tr>
+                <td class='label'>ETA / ETD</td>
+                <td class='value'>: {$eta}</td>
+            </tr>
+            <tr>
+                <td class='label'>POL / POD</td>
+                <td class='value'>: {$booking['pol']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Shipping Line</td>
+                <td class='value'>: {$booking['shipping_line']}</td>
+            </tr>
+
+            <tr><td colspan='2' class='line'></td></tr>
+
+            <tr>
+                <td class='label'>BL</td>
+                <td class='value'>: {$booking['bl']}</td>
+            </tr>
+            <tr>
+                <td class='label'>Master BL</td>
+                <td class='value'>: {$booking['master_bl']}</td>
+            </tr>
         </table>
+
+        <div class='footer'>
+            Dicetak oleh: <b>{$user}</b><br>
+            Tgl Cetak: {$printDate}
+        </div>
         ";
 
-        // Setup Dompdf
+        // --- DOMPDF ---
         $options = new \Dompdf\Options();
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
 
         $dompdf = new \Dompdf\Dompdf($options);
         $dompdf->loadHtml($html);
-        $dompdf->setPaper([0, 0, 200, 85], 'portrait'); // ukuran sticky note
+
+        // Sticky note ukuran square (lebih presisi)
+        $dompdf->setPaper([0, 0, 250, 290], 'portrait');
+
         $dompdf->render();
 
-        $filename = 'Note_' . $data['no_job'] . '.pdf';
-        $dompdf->stream($filename, ['Attachment' => false]);
-        exit;
+        $filename = 'Note_' . $booking['no_job'] . '.pdf';
+        addLog("Mencetak Booking Job Note No: {$booking['no_job']}");
+        return $dompdf->stream($filename, ["Attachment" => false]);
     }
+
+
+
 
     /**
      * ==============================================================
@@ -1147,6 +1205,7 @@ class BookingJob extends BaseController
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
+            addLog("Mengirim Booking Job No: {$booking['no_job']} ke Worksheet");
             return $this->response->setJSON([
                 'status'  => 'ok',
                 'message' => 'Data berhasil dikirim ke Worksheet & status booking job diperbarui.'

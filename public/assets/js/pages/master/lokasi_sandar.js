@@ -98,7 +98,8 @@ $('#modalAdd').on('shown.bs.modal', function() {
     function initSelect2(selector, url, placeholder) {
         $(selector).select2({
             dropdownParent: $('#modalAdd'),
-            theme: "default",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             placeholder: placeholder,
             allowClear: true,
             tags: true,

@@ -54,13 +54,11 @@ $routes->group('booking-job', ['filter' => 'role:admin,exim'], function ($routes
     $routes->get('search-consignee', 'BookingJob::searchConsignee');
     $routes->get('search-port', 'BookingJob::searchPort');
     $routes->get('search-pelayaran', 'BookingJob::searchPelayaran');
-    $routes->get('edit/(:num)', 'BookingJob::edit/$1');
-    $routes->get('export-excel/(:any)', 'BookingJob::exportExcel/$1');
-    $routes->get('export-pdf/(:any)', 'BookingJob::exportPdf/$1');
-    $routes->get('get-years', 'BookingJob::getYears');
-    $routes->get('get-months/(:num)', 'BookingJob::getMonths/$1');
+    $routes->get('add', 'BookingJob::addPage');
+    $routes->get('edit/(:num)', 'BookingJob::editPage/$1');;
+    $routes->get('export-excel-range', 'BookingJob::exportExcelRange');
+    $routes->get('export-pdf-range', 'BookingJob::exportPdfRange');
     $routes->get('print-note/(:segment)', 'BookingJob::printNote/$1');
-
     $routes->post('store', 'BookingJob::store');
     $routes->post('update/(:num)', 'BookingJob::update/$1');
     $routes->post('delete/(:num)', 'BookingJob::delete/$1');
@@ -79,36 +77,57 @@ $routes->group('booking-job-trash', ['filter' => 'role:admin,exim'], function ($
     $routes->post('delete-permanent/(:num)', 'BookingJobTrash::deletePermanent/$1');
 });
 
-//
 // --------------------------------------------------------------
 // WORKSHEET
 // --------------------------------------------------------------
-//
 $routes->group('worksheet', ['filter' => 'role:admin,document'], function ($routes) {
 
-    // Main
+    // ==========================
+    // MAIN
+    // ==========================
     $routes->get('/', 'Worksheet::index');
     $routes->get('list', 'Worksheet::list');
     $routes->get('create', 'Worksheet::create');
     $routes->post('store', 'Worksheet::store');
 
-    // Import
+    // ==========================
+    // IMPORT
+    // ==========================
     $routes->get('import/edit/(:num)', 'Worksheet::editImport/$1');
     $routes->post('import/update/(:num)', 'Worksheet::updateImport/$1');
     $routes->get('checkImport/(:num)', 'Worksheet::checkImport/$1');
     $routes->get('print-import/(:segment)', 'Worksheet::printImport/$1');
     $routes->post('import/delete/(:num)', 'Worksheet::deleteImport/$1');
 
-    // Export
+    // ==========================
+    // EXPORT
+    // ==========================
     $routes->get('export/edit/(:num)', 'Worksheet::editExport/$1');
     $routes->post('export/update/(:num)', 'Worksheet::updateExport/$1');
     $routes->get('checkExport/(:num)', 'Worksheet::checkExport/$1');
     $routes->get('print-export/(:segment)', 'Worksheet::printExport/$1');
     $routes->post('export/delete/(:num)', 'Worksheet::deleteExport/$1');
 
-    // Redirect
+    // ==========================
+    // MASTER DATA (SELECT2 AJAX)
+    // ==========================
+    $routes->get('search/consignee', 'Worksheet::searchConsignee');
+    $routes->get('search/notify-party', 'Worksheet::searchNotifyParty');
+    $routes->get('search/port', 'Worksheet::searchPort');
+    $routes->get('search/pelayaran', 'Worksheet::searchPelayaran');
+    $routes->get('search/vessel', 'Worksheet::searchVessel');
+    $routes->get('search/fasilitas', 'Worksheet::searchFasilitas');
+    $routes->get('search/lartas', 'Worksheet::searchLartas');
+    $routes->get('search/kemasan', 'Worksheet::searchKemasan');
+    $routes->get('search/informasi-tambahan', 'Worksheet::searchInformasiTambahan');
+    $routes->get('search/lokasi-sandar', 'Worksheet::searchLokasiSandar');
+
+    // ==========================
+    // REDIRECT
+    // ==========================
     $routes->get('redirectToBooking', 'Worksheet::redirectToBooking');
 });
+
 
 //
 // WORKSHEET IMPORT/EXPORT HELPER ROUTES (no filter)

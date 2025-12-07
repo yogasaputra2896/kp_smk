@@ -62,7 +62,6 @@ class BookingJobTrash extends BaseController
             }
 
             return $this->response->setJSON(['data' => $data]);
-
         } catch (\Exception $e) {
             log_message('error', 'Exception list trash: ' . $e->getMessage());
             return $this->response->setStatusCode(500)->setJSON([
@@ -80,7 +79,7 @@ class BookingJobTrash extends BaseController
         try {
             $db = \Config\Database::connect();
 
-            // cek data di trash
+            // Cek data trash
             $trash = $this->trashModel->find($id);
             if (empty($trash)) {
                 return $this->response->setStatusCode(404)->setJSON([
@@ -89,13 +88,16 @@ class BookingJobTrash extends BaseController
                 ]);
             }
 
-            // cek apakah no_job atau bl sudah ada di tabel utama
+            // Simpan No Job untuk log
+            $restoredNoJob = $trash['no_job'];
+
+            // Cek duplikasi No Job atau BL
             $exists = $db->table('booking_job')
                 ->groupStart()
-                    ->where('no_job', $trash['no_job'])
-                    ->orWhere('bl', $trash['bl'])
+                ->where('no_job', $trash['no_job'])
+                ->orWhere('bl', $trash['bl'])
                 ->groupEnd()
-                ->limit(1) // optimasi
+                ->limit(1)
                 ->countAllResults();
 
             if ($exists > 0) {
@@ -105,17 +107,17 @@ class BookingJobTrash extends BaseController
                 ]);
             }
 
-            // siapkan data untuk insert ke booking_job
+            // Bersihkan kolom trash-only
             unset($trash['id'], $trash['deleted_at'], $trash['deleted_by']);
 
+            // Set timestamp baru
             $now = date('Y-m-d H:i:s');
             $trash['created_at'] = $now;
             $trash['updated_at'] = $now;
 
-            // insert ke booking_job
+            // Insert kembali ke tabel utama
             $this->bookingModel->protect(false);
             $inserted = $this->bookingModel->insert($trash);
-            $this->bookingModel->protect(true);
 
             if ($inserted === false) {
                 log_message('error', 'Restore gagal insert: ' . json_encode($this->bookingModel->errors()));
@@ -125,22 +127,30 @@ class BookingJobTrash extends BaseController
                 ]);
             }
 
-            // hapus data dari trash
+            // LOG RESTORE
+            addLog('Merestore Booking Job No:"' . $restoredNoJob . '"');
+
+            // Hapus dari trash setelah restore berhasil
             $this->trashModel->delete($id, true);
 
             return $this->response->setJSON([
                 'status'  => 'ok',
                 'message' => 'Data berhasil direstore.'
             ]);
-
         } catch (\Exception $e) {
+
             log_message('error', 'Exception restore: ' . $e->getMessage());
+
             return $this->response->setStatusCode(500)->setJSON([
                 'status'  => 'error',
                 'message' => 'Terjadi kesalahan server.'
             ]);
+        } finally {
+            // pastikan protect dikembalikan
+            $this->bookingModel->protect(true);
         }
     }
+
 
 
     /**
@@ -149,7 +159,7 @@ class BookingJobTrash extends BaseController
     public function deletePermanent($id)
     {
         try {
-            // cek dulu ada datanya atau tidak
+            // Ambil data dari trash
             $row = $this->trashModel->find($id);
             if (!$row) {
                 return $this->response->setStatusCode(404)->setJSON([
@@ -158,16 +168,24 @@ class BookingJobTrash extends BaseController
                 ]);
             }
 
-            // delete permanen (force)
+            // Simpan dulu data untuk log
+            $noJob = $row['no_job'];
+
+            // Hapus permanen (force delete)
             $deleted = $this->trashModel->delete($id, true);
 
             if ($deleted) {
+
+                // LOG: catat bahwa data dihapus permanen
+                addLog('Menghapus Permanen Booking Job No:"' . $noJob . '"');
+
                 return $this->response->setJSON([
                     'status'  => 'ok',
                     'message' => 'Data berhasil dihapus permanen.'
                 ]);
             } else {
                 log_message('error', 'Delete permanent gagal untuk id=' . $id);
+
                 return $this->response->setStatusCode(500)->setJSON([
                     'status'  => 'error',
                     'message' => 'Gagal menghapus data permanen (DB error).'
@@ -175,6 +193,7 @@ class BookingJobTrash extends BaseController
             }
         } catch (\Exception $e) {
             log_message('error', 'Exception deletePermanent: ' . $e->getMessage());
+
             return $this->response->setStatusCode(500)->setJSON([
                 'status'  => 'error',
                 'message' => 'Terjadi kesalahan server.'

@@ -4,10 +4,10 @@
 
 <?= $this->section('pageTitle') ?>
 <div class="page-heading">
-    <h3>Trash Booking Job</h3>
-    <p class="text-subtitle text-muted">
+  <h3>Trash Booking Job</h3>
+  <p class="text-subtitle text-muted">
     Anda bisa mengembalikan atau menghapus permanen data booking job yang sudah dihapus.
-    </p>
+  </p>
 </div>
 <?= $this->endSection() ?>
 
@@ -50,7 +50,6 @@
 <script src="<?= base_url('assets/vendors/jquery/dataTables.fixedColumns.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendors/sweetalert2/sweetalert2.all.min.js') ?>"></script>
 <style>
-
   #tblTrash th,
   #tblTrash td {
     font-size: 15px;
@@ -102,141 +101,187 @@
 
   #tblTrash th,
   #tblTrash td {
-    white-space: nowrap;  /* biar teks tidak turun ke bawah */
+    white-space: nowrap;
+    /* biar teks tidak turun ke bawah */
     font-size: 15px;
   }
 
   .dataTables_wrapper .dataTables_scroll {
     overflow: auto;
   }
-
 </style>
 <script>
-(function(){
-  const LIST_URL    = "<?= base_url('booking-job-trash/list') ?>";
-  const RESTORE_URL = "<?= base_url('booking-job-trash/restore') ?>";
-  const DELETE_URL  = "<?= base_url('booking-job-trash/delete-permanent') ?>"; // ✅ rapikan
-  const BASE_URL    = "<?= base_url() ?>";
+  (function() {
+    const LIST_URL = "<?= base_url('booking-job-trash/list') ?>";
+    const RESTORE_URL = "<?= base_url('booking-job-trash/restore') ?>";
+    const DELETE_URL = "<?= base_url('booking-job-trash/delete-permanent') ?>"; // ✅ rapikan
+    const BASE_URL = "<?= base_url() ?>";
 
-  const tbl = $('#tblTrash').DataTable({
-    processing: true,
-    scrollX: true,          // WAJIB untuk fixedColumns
-    scrollCollapse: true,
-    autoWidth: false,
-    fixedColumns: {
-      left: 2,              // fix 2 kolom paling kiri
-      right: 1              // fix 1 kolom paling kanan
-    },
-    ajax: {
-      url: LIST_URL,
-      dataSrc: 'data'
-    },
-    columns: [
-      { data: null, render: (d,t,r,m) => m.row+1 },
-      { data: 'no_job' },
-      { data: 'no_pib_po' },
-      { data: 'consignee' },
-      { data: 'party' },
-      { data: 'eta' },
-      { data: 'pol' },
-      { data: 'shipping_line' },
-      { data: 'bl' },
-      { data: 'master_bl' },
-      {
-        data: 'status',
-        render: function(data) {
-          if (data === 'open job') {
-            return '<span class="badge bg-primary">Open Job</span>';
-          } else if (data === 'worksheet') {
-            return '<span class="badge bg-success">Worksheet</span>';
-          } else {
-            return data;
-          }
-        }
+    const tbl = $('#tblTrash').DataTable({
+      processing: true,
+      scrollX: true, // WAJIB untuk fixedColumns
+      scrollCollapse: true,
+      autoWidth: false,
+      fixedColumns: {
+        left: 2, // fix 2 kolom paling kiri
+        right: 1 // fix 1 kolom paling kanan
       },
-      { data: 'deleted_at' },
-      { data: 'deleted_by' },
-      {
-        data: 'id',
-        render: (id) => `
+      ajax: {
+        url: LIST_URL,
+        dataSrc: 'data'
+      },
+      columns: [{
+          data: null,
+          render: (d, t, r, m) => m.row + 1
+        },
+        {
+          data: 'no_job'
+        },
+        {
+          data: 'no_pib_po'
+        },
+        {
+          data: 'consignee'
+        },
+        {
+          data: 'party'
+        },
+        {
+          data: 'eta'
+        },
+        {
+          data: 'pol'
+        },
+        {
+          data: 'shipping_line'
+        },
+        {
+          data: 'bl'
+        },
+        {
+          data: 'master_bl'
+        },
+        {
+          data: 'status',
+          render: function(data) {
+            if (data === 'open job') {
+              return '<span class="badge bg-primary">Open Job</span>';
+            } else if (data === 'worksheet') {
+              return '<span class="badge bg-success">Worksheet</span>';
+            } else {
+              return data;
+            }
+          }
+        },
+        {
+          data: 'deleted_at'
+        },
+        {
+          data: 'deleted_by'
+        },
+        {
+          data: 'id',
+          render: (id) => `
           <button class="btn btn-sm btn-success btn-restore" data-id="${id}" title="Restore Job">
             <i class="bi bi-arrow-counterclockwise"></i>
           </button>
-          <button class="btn btn-sm btn-danger btn-delete-permanent" data-id="${id}" title="Delete Permanent">
-            <i class="bi bi-trash"></i>
-          </button>
+          <?php if (in_groups('admin')): ?>
+            <button class="btn btn-sm btn-danger btn-delete-permanent" data-id="${id}" title="Delete Permanent">
+              <i class="bi bi-trash"></i>
+            </button>
+          <?php endif; ?>
         `
-      }
-    ],
-    order: [[10,'desc']]
-  });
-
-
-  // === Restore ===
-  $('#tblTrash').on('click', '.btn-restore', function(){
-    const id = $(this).data('id');
-    Swal.fire({
-      title: 'Apakah Anda Yakin?',
-      text: "Data akan direstore kembali.",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Ya, Restore!',
-      cancelButtonText: 'Batal'
-    }).then((res) => {
-      if(res.isConfirmed){
-        Swal.fire({ title:'Proses restore...', allowOutsideClick:false, didOpen:Swal.showLoading });
-        $.post(RESTORE_URL + '/' + id, {}, function(res){
-          Swal.close();
-          if(res.status === 'ok'){
-            Swal.fire({icon:'success',title:'Berhasil',text:res.message,timer:2000,showConfirmButton:false});
-            tbl.ajax.reload();
-          } else {
-            Swal.fire({icon:'error',title:'Gagal',text:res.message});
-          }
-        }, 'json').fail((xhr) => {
-          Swal.close();
-          Swal.fire('Error!', xhr.responseJSON?.message || 'Gagal restore data.', 'error');
-        });
-      }
+        }
+      ],
+      order: [
+        [10, 'desc']
+      ]
     });
-  });
 
-  // === Delete Permanen ===
-  $('#tblTrash').on('click', '.btn-delete-permanent', function(){
-    const id = $(this).data('id');
-    Swal.fire({
-      title: 'Apakah Anda Yakin ?',
-      text: "Data akan dihapus selamanya dan tidak bisa dikembalikan!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Ya, hapus!'
-    }).then((res) => {
-      if(res.isConfirmed){
-        Swal.fire({title:'Menghapus...',allowOutsideClick:false,didOpen:Swal.showLoading});
-        $.ajax({
-          url: DELETE_URL + '/' + id,
-          type: 'POST',
-          dataType: 'json',
-          success: function(res){
+
+    // === Restore ===
+    $('#tblTrash').on('click', '.btn-restore', function() {
+      const id = $(this).data('id');
+      Swal.fire({
+        title: 'Apakah Anda Yakin?',
+        text: "Data akan direstore kembali.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Restore!',
+        cancelButtonText: 'Batal'
+      }).then((res) => {
+        if (res.isConfirmed) {
+          Swal.fire({
+            title: 'Proses restore...',
+            allowOutsideClick: false,
+            didOpen: Swal.showLoading
+          });
+          $.post(RESTORE_URL + '/' + id, {}, function(res) {
             Swal.close();
-            if(res.status === 'ok'){
-              Swal.fire('Berhasil!', res.message, 'success');
+            if (res.status === 'ok') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: res.message,
+                timer: 2000,
+                showConfirmButton: false
+              });
               tbl.ajax.reload();
             } else {
-              Swal.fire('Gagal!', res.message || 'Data gagal dihapus.', 'error');
+              Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: res.message
+              });
             }
-          },
-          error: function(xhr){
+          }, 'json').fail((xhr) => {
             Swal.close();
-            Swal.fire('Error!', xhr.responseJSON?.message || 'Terjadi kesalahan server.', 'error');
-          }
-        });
-      }
+            Swal.fire('Error!', xhr.responseJSON?.message || 'Gagal restore data.', 'error');
+          });
+        }
+      });
     });
-  });
 
-})();
+    // === Delete Permanen ===
+    $('#tblTrash').on('click', '.btn-delete-permanent', function() {
+      const id = $(this).data('id');
+      Swal.fire({
+        title: 'Apakah Anda Yakin ?',
+        text: "Data akan dihapus selamanya dan tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!'
+      }).then((res) => {
+        if (res.isConfirmed) {
+          Swal.fire({
+            title: 'Menghapus...',
+            allowOutsideClick: false,
+            didOpen: Swal.showLoading
+          });
+          $.ajax({
+            url: DELETE_URL + '/' + id,
+            type: 'POST',
+            dataType: 'json',
+            success: function(res) {
+              Swal.close();
+              if (res.status === 'ok') {
+                Swal.fire('Berhasil!', res.message, 'success');
+                tbl.ajax.reload();
+              } else {
+                Swal.fire('Gagal!', res.message || 'Data gagal dihapus.', 'error');
+              }
+            },
+            error: function(xhr) {
+              Swal.close();
+              Swal.fire('Error!', xhr.responseJSON?.message || 'Terjadi kesalahan server.', 'error');
+            }
+          });
+        }
+      });
+    });
+
+  })();
 </script>
 <?= $this->endSection() ?>

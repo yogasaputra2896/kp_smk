@@ -90,6 +90,24 @@ class Dashboard extends BaseController
             ->orderBy("date", "ASC")
             ->findAll();
 
+        // Worksheet per hari (import + export)
+        $db = \Config\Database::connect();
+
+        $worksheetPerDay = $db->query("
+            SELECT DATE(created_at) AS date, COUNT(*) AS total
+            FROM (
+                SELECT created_at FROM worksheet_import
+                UNION ALL
+                SELECT created_at FROM worksheet_export
+            ) AS ws
+            WHERE DATE(created_at) >= ?
+            AND DATE(created_at) <= ?
+            GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at) ASC
+        ", [$startMonth, $endMonth])->getResultArray();
+
+
+
         // User per role
         $db = \Config\Database::connect();
         $userByRole = $db->table('auth_groups_users AS ug')
@@ -122,6 +140,31 @@ class Dashboard extends BaseController
             'export' => $totalWorksheetExport
         ];
 
+        // Completed Import
+        $completedImport = $this->worksheetImportModel
+            ->where('status', 'completed')
+            ->countAllResults();
+
+        // Completed Export
+        $completedExport = $this->worksheetExportModel
+            ->where('status', 'completed')
+            ->countAllResults();
+
+        $statusCompleted = $completedImport + $completedExport;
+
+
+        // Not Completed Import
+        $notCompletedImport = $this->worksheetImportModel
+            ->where('status !=', 'completed')
+            ->countAllResults();
+
+        // Not Completed Export
+        $notCompletedExport = $this->worksheetExportModel
+            ->where('status !=', 'completed')
+            ->countAllResults();
+
+        $statusNotCompleted = $notCompletedImport + $notCompletedExport;
+
 
 
         $data = [
@@ -143,7 +186,11 @@ class Dashboard extends BaseController
             'topConsignees'               => $topConsignees,
             'chartBookingJob'             => $chartBookingJob,
             'chartWorksheet'              => $chartWorksheet,
-            'logs'                        => $logs
+            'logs'                        => $logs,
+            'statusCompleted'             => $statusCompleted,
+            'statusNotCompleted'          => $statusNotCompleted,
+            'worksheetPerDay'             => $worksheetPerDay
+
         ];
 
         // Tampilkan view sesuai role

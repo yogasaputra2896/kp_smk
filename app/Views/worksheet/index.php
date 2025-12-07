@@ -38,29 +38,29 @@
             <!-- Tombol kiri -->
             <div class="d-flex gap-2 flex-wrap">
 
-                <?php if (in_groups('admin') || in_groups('document')): ?>
+                <?php if (in_groups('admin')): ?>
                     <!-- Tambah Worksheet -->
                     <button id="btnAdd" class="btn btn-primary">
                         <i class="bi bi-calendar-plus me-2"></i>
                         <span class="d-none d-sm-inline">Tambah Worksheet</span>
                         <span class="d-inline d-sm-none">Add</span>
                     </button>
+
+
+                    <!-- Export Excel -->
+                    <button class="btn btn-success" id="btnExportWorksheet">
+                        <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+                        <span class="d-none d-sm-inline">Export Excel</span>
+                        <span class="d-inline d-sm-none">Xls</span>
+                    </button>
+
+                    <!-- Export PDF -->
+                    <button id="btnExportWorksheePdf" class="btn btn-danger">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>
+                        <span class="d-none d-sm-inline">Export Pdf</span>
+                        <span class="d-inline d-sm-none">Pdf</span>
+                    </button>
                 <?php endif; ?>
-
-                <!-- Export Excel -->
-                <button class="btn btn-success" id="btnExportWorksheet">
-                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>
-                    <span class="d-none d-sm-inline">Export Excel</span>
-                    <span class="d-inline d-sm-none">Xls</span>
-                </button>
-
-                <!-- Export PDF -->
-                <button id="btnExportWorksheePdf" class="btn btn-danger">
-                    <i class="bi bi-file-earmark-pdf me-2"></i>
-                    <span class="d-none d-sm-inline">Export Pdf</span>
-                    <span class="d-inline d-sm-none">Pdf</span>
-                </button>
-
             </div>
 
             <!-- Tombol kanan -->
@@ -69,9 +69,11 @@
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
 
-                <button id="btnTrash" class="btn btn-danger" title="Sampah Worksheet">
-                    <i class="bi bi-trash"></i>
-                </button>
+                <?php if (in_groups('admin')): ?>
+                    <button id="btnTrash" class="btn btn-danger" title="Sampah Worksheet">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                <?php endif; ?>
             </div>
 
         </div>
