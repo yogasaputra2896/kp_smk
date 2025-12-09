@@ -4,263 +4,184 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\User\UserModel;
-use App\Models\User\UserTrashModel;
+use Myth\Auth\Models\GroupModel;
+use Myth\Auth\Entities\User;
+
 
 class UserManagement extends BaseController
 {
     protected $userModel;
-    protected $db;
+    protected $groupModel;
 
     public function __construct()
     {
-        helper(['form', 'url', 'auth']);
-        $this->userModel = new UserModel();
-        $this->db = \Config\Database::connect();
+        $this->userModel  = new UserModel();
+        $this->groupModel = new GroupModel();
     }
 
-    // ============================================================
-    // HALAMAN INDEX
-    // ============================================================
+    /**
+     * ============================
+     * HALAMAN UTAMA (VIEW)
+     * ============================
+     */
     public function index()
     {
-        if (is_file(APPPATH . 'Views/user_management/index.php')) {
-            return view('user_management/index');
-        }
-        return view('user/index');
+        return view('user_management/index'); // sesuai folder Yoga
     }
 
-    // ============================================================
-    // LIST USER (JSON)
-    // ============================================================
+    /**
+     * ============================
+     * LIST DATA USER (JSON)
+     * ============================
+     */
     public function list()
     {
-        $userModel = new \App\Models\User\UserManagementModel();
-        $rows = $userModel->getAllUsersWithRole();
+        $adminGroup = $this->groupModel->where('name', 'admin')->first();
 
-        // Siapkan data untuk tabel
-        $data = [];
-        foreach ($rows as $r) {
-            $data[] = [
-                'id'         => $r['id'],
-                'username'   => $r['username'],
-                'email'      => $r['email'],
-                'fullname'   => $r['fullname'] ?? '-',
-                'role'       => $r['role'] ?? 'N/A',
-                'status'     => $r['status'] ?? ($r['active'] ? 'active' : 'inactive'),
-                'active'     => $r['active'],
-                'created_at' => $r['created_at'],
-            ];
-        }
+        $users = $this->userModel
+            ->select('users.id, users.username, users.email, users.active, auth_groups.name as role')
+            ->join('auth_groups_users', 'auth_groups_users.user_id = users.id', 'left')
+            ->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id', 'left')
+            ->where('auth_groups_users.group_id !=', $adminGroup->id)
+            ->findAll();
 
-        // RETURN langsung array, bukan { data: [...] }
-        return $this->response->setJSON($data);
+        return $this->response->setJSON($users);
     }
 
-
-
-    // ============================================================
-    // TAMBAH USER BARU
-    // ============================================================
-    public function store()
-    {
-        $validation = \Config\Services::validation();
-
-        $rules = [
-            'username' => 'required|is_unique[users.username]',
-            'email'    => 'required|valid_email|is_unique[users.email]',
-            'fullname' => 'required',
-            'password' => 'required|min_length[6]',
-            'role'     => 'required|in_list[admin,staff,accounting,teknisi]',
-        ];
-
-        $messages = [
-            'username' => [
-                'required'  => 'Username wajib diisi.',
-                'is_unique' => 'Username sudah digunakan.'
-            ],
-            'email' => [
-                'required'  => 'Email wajib diisi.',
-                'valid_email' => 'Email tidak valid.',
-                'is_unique' => 'Email sudah digunakan.'
-            ],
-            'password' => [
-                'required' => 'Password wajib diisi.',
-                'min_length' => 'Password minimal 6 karakter.'
-            ],
-            'role' => ['required' => 'Role wajib diisi.']
-        ];
-
-        $validation->setRules($rules, $messages);
-
-        if (!$validation->withRequest($this->request)->run()) {
-            return $this->response->setStatusCode(422)->setJSON([
-                'status'  => 'error',
-                'message' => implode("\n", $validation->getErrors())
-            ]);
-        }
-
-        $data = [
-            'username' => $this->request->getPost('username'),
-            'email'    => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'role'     => $this->request->getPost('role'),
-            'status'   => 'active',
-        ];
-
-        try {
-            $this->userModel->insert($data);
-            return $this->response->setJSON([
-                'status'  => 'ok',
-                'message' => 'User berhasil ditambahkan.'
-            ]);
-        } catch (\Exception $e) {
-            return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 'error',
-                'message' => 'Gagal menyimpan data user.'
-            ]);
-        }
-    }
-
-    // ============================================================
-    // EDIT USER
-    // ============================================================
+    /**
+     * ============================
+     * GET USER BY ID (AJAX)
+     * ============================
+     */
     public function edit($id)
     {
-        $user = $this->userModel->find($id);
+        $user = $this->userModel
+            ->select('users.id, username, email, active, auth_groups.name as role')
+            ->join('auth_groups_users', 'auth_groups_users.user_id = users.id', 'left')
+            ->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id', 'left')
+            ->where('users.id', $id)
+            ->first();
 
-        if (!$user) {
-            return $this->response->setStatusCode(404)->setJSON([
-                'status'  => 'error',
-                'message' => 'Data user tidak ditemukan.'
-            ]);
-        }
-
-        return $this->response->setJSON(['status' => 'ok', 'data' => $user]);
-    }
-
-    // ============================================================
-    // UPDATE USER
-    // ============================================================
-    public function update($id)
-    {
-        $validation = \Config\Services::validation();
-
-        $rules = [
-            'username' => "required|is_unique[users.username,id,{$id}]",
-            'email'    => "required|valid_email|is_unique[users.email,id,{$id}]",
-            'fullname' => 'required',
-            'role'     => 'required|in_list[admin,staff,accounting,teknisi]',
-        ];
-
-        $validation->setRules($rules);
-
-        if (!$validation->withRequest($this->request)->run()) {
-            return $this->response->setStatusCode(422)->setJSON([
-                'status'  => 'error',
-                'message' => implode("\n", $validation->getErrors())
-            ]);
-        }
-
-        $data = [
-            'username' => $this->request->getPost('username'),
-            'email'    => $this->request->getPost('email'),
-            'fullname' => $this->request->getPost('fullname'),
-            'role'     => $this->request->getPost('role'),
-            'status'   => $this->request->getPost('status') ?? 'active',
-        ];
-
-        // Jika password diisi, update juga
-        if ($this->request->getPost('password')) {
-            $data['password'] = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
-        }
-
-        try {
-            $this->userModel->update($id, $data);
-            return $this->response->setJSON([
-                'status'  => 'ok',
-                'message' => 'Data user berhasil diperbarui.'
-            ]);
-        } catch (\Exception $e) {
-            return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 'error',
-                'message' => 'Gagal memperbarui data user.'
-            ]);
-        }
-    }
-
-    // ============================================================
-    // HAPUS USER (PINDAHKAN KE TRASH)
-    // ============================================================
-    public function delete($id)
-    {
-        try {
-            $trashModel = new UserTrashModel();
-            $row = $this->userModel->find($id);
-
-            if (!$row) {
-                return $this->response->setStatusCode(404)->setJSON([
-                    'status'  => 'error',
-                    'message' => 'User tidak ditemukan.'
-                ]);
-            }
-
-            $row['deleted_at'] = date('Y-m-d H:i:s');
-            $row['deleted_by'] = user() ? user()->username : 'system';
-
-            unset($row['id']);
-            $trashModel->insert($row);
-
-            $this->db->table('users')->where('id', $id)->delete();
-
-            return $this->response->setJSON([
-                'status'  => 'ok',
-                'message' => 'User berhasil dihapus dan dipindahkan ke trash.'
-            ]);
-        } catch (\Exception $e) {
-            return $this->response->setStatusCode(500)->setJSON([
-                'status'  => 'error',
-                'message' => 'Gagal menghapus user.'
-            ]);
-        }
-    }
-
-    // ============================================================
-    // RESTORE DARI TRASH
-    // ============================================================
-    public function restore($id)
-    {
-        $trashModel = new UserTrashModel();
-        $trash = $trashModel->find($id);
-
-        if (!$trash) {
-            return $this->response->setStatusCode(404)->setJSON([
-                'status'  => 'error',
-                'message' => 'Data user tidak ditemukan di trash.'
-            ]);
-        }
-
-        $exists = $this->userModel
-            ->where('username', $trash['username'])
-            ->orWhere('email', $trash['email'])
-            ->countAllResults();
-
-        if ($exists > 0) {
-            return $this->response->setStatusCode(409)->setJSON([
-                'status'  => 'error',
-                'message' => "Tidak bisa restore. Username/email sudah digunakan."
-            ]);
-        }
-
-        unset($trash['id'], $trash['deleted_at'], $trash['deleted_by']);
-        $trash['created_at'] = date('Y-m-d H:i:s');
-        $trash['updated_at'] = date('Y-m-d H:i:s');
-
-        $this->userModel->insert($trash);
-        $trashModel->delete($id);
+        $roles = $this->groupModel->findAll();
 
         return $this->response->setJSON([
-            'status'  => 'ok',
-            'message' => 'User berhasil direstore dari trash.'
+            'user'  => $user,
+            'roles' => $roles
         ]);
+    }
+
+    /**
+     * ============================
+     * CREATE USER
+     * ============================
+     */
+    public function store()
+    {
+        $data = $this->request->getPost();
+
+        // Validasi...
+        $rules = [
+            'email'    => 'required|valid_email|is_unique[users.email]',
+            'username' => 'required|min_length[3]|is_unique[users.username]',
+            'password' => 'required|min_length[5]',
+            'role'     => 'required',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'status' => false,
+                'errors' => $this->validator->getErrors(),
+            ]);
+        }
+
+        // Ambil role
+        $group = $this->groupModel->where('name', $data['role'])->first();
+
+        // =============== INSERT USER ===============
+        $user = new User([
+            'email'    => $data['email'],
+            'username' => $data['username'],
+            'password' => $data['password'], // entity otomatis HASH
+            'active'   => 1
+        ]);
+
+        $this->userModel->save($user);
+
+        // Ambil ID
+        $userId = $this->userModel->getInsertID();
+
+        // =============== ASSIGN ROLE ===============
+        $this->groupModel->addUserToGroup($userId, $group->id);
+
+        return $this->response->setJSON(['status' => true]);
+    }
+
+
+    /**
+     * ============================
+     * UPDATE USER
+     * ============================
+     */
+    public function update($id)
+    {
+        $data = $this->request->getPost();
+
+        $rules = [
+            'email'    => "required|valid_email|is_unique[users.email,id,{$id}]",
+            'username' => "required|min_length[3]|is_unique[users.username,id,{$id}]",
+            'role'     => 'required',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'status' => false,
+                'errors' => $this->validator->getErrors(),
+            ]);
+        }
+
+        // Data update
+        $updateData = [
+            'id'       => $id,
+            'email'    => $data['email'],
+            'username' => $data['username'],
+            'active'   => $data['active'],
+        ];
+
+        // Jika password diisi → update
+        if (!empty($data['password'])) {
+            $updateData['password'] = $data['password'];
+        }
+
+        $this->userModel->save($updateData);
+
+        // Update role
+        $this->groupModel->removeUserFromAllGroups($id);
+        $this->groupModel->addUserToGroup($id, $data['role']);
+
+        return $this->response->setJSON(['status' => true]);
+    }
+
+    /**
+     * ============================
+     * DELETE (SOFT DELETE)
+     * ============================
+     */
+    public function delete($id)
+    {
+        $this->userModel->delete($id);
+
+        return $this->response->setJSON(['status' => true]);
+    }
+
+    /**
+     * ============================
+     * RESTORE
+     * ============================
+     */
+    public function restore($id)
+    {
+        $this->userModel->update($id, ['deleted_at' => null]);
+
+        return $this->response->setJSON(['status' => true]);
     }
 }

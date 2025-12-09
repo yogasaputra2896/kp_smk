@@ -6,85 +6,36 @@ use CodeIgniter\Model;
 
 class UserTrashModel extends Model
 {
-    protected $table            = 'user_trash'; 
+    protected $table            = 'users';
     protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
-
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;      
+    protected $returnType       = 'App\Entities\User';
+    protected $useSoftDeletes   = true;
 
     protected $allowedFields    = [
-        'user_id',
-        'username',
-        'email',
-        'role',
-        'deleted_at',
-        'deleted_by'
+        'email', 'username', 'password_hash', 'reset_hash', 'reset_at', 'reset_expires',
+        'activate_hash', 'status', 'status_message', 'active', 'force_pass_reset',
+        'permissions', 'deleted_at'
     ];
 
-    // ==============================
-    // VALIDATION RULES
-    // ==============================
-    protected $validationRules = [
-        'user_id'   => 'required|integer',
-        'username'  => 'required|min_length[3]|max_length[50]',
-        'email'     => 'required|valid_email',
-        'role'      => 'required',
-    ];
-
-    protected $validationMessages = [
-        'user_id' => [
-            'required' => 'ID user wajib diisi.'
-        ],
-        'username' => [
-            'required' => 'Username wajib diisi.'
-        ],
-        'email' => [
-            'required' => 'Email wajib diisi.',
-            'valid_email' => 'Format email tidak valid.'
-        ],
-        'role' => [
-            'required' => 'Role user wajib diisi.'
-        ]
-    ];
-
-    // ==============================
-    // CALLBACKS
-    // ==============================
-    protected $beforeInsert = ['setDeletedAt'];
-
-    protected function setDeletedAt(array $data)
-    {
-        $data['data']['deleted_at'] = date('Y-m-d H:i:s');
-        return $data;
-    }
-
-    // ==============================
-    // CUSTOM METHODS
-    // ==============================
+    protected $useTimestamps    = true;
 
     /**
-     * Ambil semua user yang terhapus
+     * Ambil hanya user yang terhapus (soft delete)
      */
-    public function getAllTrash()
+    public function onlyDeleted()
     {
-        return $this->orderBy('deleted_at', 'DESC')->findAll();
+        return $this->where('deleted_at IS NOT NULL')->findAll();
     }
 
     /**
-     * Restore user ke tabel utama
+     * Ambil user trash + role (auth_groups)
      */
-    public function restoreUser($userData)
+    public function getDeletedWithRole()
     {
-        $userModel = new \App\Models\User\UserModel();
-        return $userModel->insert($userData);
-    }
-
-    /**
-     * Hapus permanen dari trash
-     */
-    public function deletePermanent($id)
-    {
-        return $this->delete($id);
+        return $this->select('users.id, username, email, deleted_at, auth_groups.name as role')
+            ->join('auth_groups_users', 'auth_groups_users.user_id = users.id', 'left')
+            ->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id', 'left')
+            ->where('users.deleted_at IS NOT NULL')
+            ->findAll();
     }
 }

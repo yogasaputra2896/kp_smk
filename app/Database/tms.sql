@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Dec 07, 2025 at 05:13 PM
+-- Host: 127.0.0.1
+-- Generation Time: Dec 09, 2025 at 01:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -85,7 +85,9 @@ CREATE TABLE `auth_groups_users` (
 INSERT INTO `auth_groups_users` (`group_id`, `user_id`) VALUES
 (1, 1),
 (2, 2),
-(3, 4);
+(2, 5),
+(3, 4),
+(3, 6);
 
 -- --------------------------------------------------------
 
@@ -382,7 +384,12 @@ INSERT INTO `auth_logins` (`id`, `ip_address`, `email`, `user_id`, `date`, `succ
 (273, '::1', 'exim3@trustwaytransindo.com', 2, '2025-12-07 11:33:11', 1),
 (274, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-12-07 11:34:26', 1),
 (275, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-12-07 14:18:27', 1),
-(276, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-12-07 15:04:48', 1);
+(276, '::1', 'dokumen1@trustwaytransindo.com', 4, '2025-12-07 15:04:48', 1),
+(277, '::1', 'yogasaputra2896@gmail.com', 1, '2025-12-09 02:57:33', 1),
+(278, '::1', 'yogasaputra2896@gmail.com', 1, '2025-12-09 03:47:38', 1),
+(279, '::1', 'yogasaputra2896@gmail.com', 1, '2025-12-09 08:07:02', 1),
+(280, '::1', 'yogasaputra2896@gmail.com', 1, '2025-12-09 12:02:25', 1),
+(281, '::1', 'yogasaputra2896@gmail.com', 1, '2025-12-09 12:32:21', 1);
 
 -- --------------------------------------------------------
 
@@ -626,7 +633,12 @@ INSERT INTO `log_activity` (`id`, `user_id`, `role`, `username`, `activity`, `cr
 (100, 2, 'exim', 'Exim3', 'Logout dari sistem', '2025-12-07 11:34:21'),
 (101, 4, 'document', 'Dokumen1', 'Login ke sistem', '2025-12-07 11:34:26'),
 (102, 4, 'document', 'Dokumen1', 'Login ke sistem', '2025-12-07 14:18:27'),
-(103, 4, 'document', 'Dokumen1', 'Login ke sistem', '2025-12-07 15:04:48');
+(103, 4, 'document', 'Dokumen1', 'Login ke sistem', '2025-12-07 15:04:48'),
+(104, 1, 'admin', 'Admin', 'Login ke sistem', '2025-12-09 02:57:33'),
+(105, 1, 'admin', 'Admin', 'Login ke sistem', '2025-12-09 03:47:39'),
+(106, 1, 'admin', 'Admin', 'Login ke sistem', '2025-12-09 08:07:02'),
+(107, 1, 'admin', 'Admin', 'Login ke sistem', '2025-12-09 12:02:26'),
+(108, 1, 'admin', 'Admin', 'Login ke sistem', '2025-12-09 12:32:22');
 
 -- --------------------------------------------------------
 
@@ -940,7 +952,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `email`, `username`, `password_hash`, `reset_hash`, `reset_at`, `reset_expires`, `activate_hash`, `status`, `status_message`, `active`, `force_pass_reset`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'yogasaputra2896@gmail.com', 'Admin', '$2y$10$Qxxbcq/MJ1lDOWB6P179qOzk5GZgL9nAUQSFUUsG3.n8S6uH3A5.G', NULL, NULL, NULL, 'f39d1e936f604c944bcc80301836ab1c', NULL, NULL, 1, 0, '2025-09-15 08:58:13', '2025-09-15 08:58:13', NULL),
 (2, 'exim3@trustwaytransindo.com', 'Exim3', '$2y$10$bw2vbtf1QGMNspj9gtOpd.UPjtDxEgY04K67eFGxbUKwafJ5s/A6G', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-09-22 04:05:53', '2025-09-22 04:05:53', NULL),
-(4, 'dokumen1@trustwaytransindo.com', 'Dokumen1', '$2y$10$E/6lJ7cKMuC6lw30NR1NiuEYAfPOBvF2b6rbYu7HnhsnQjT5adFvW', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-11-30 14:35:39', '2025-11-30 14:35:39', NULL);
+(4, 'dokumen1@trustwaytransindo.com', 'Dokumen1', '$2y$10$E/6lJ7cKMuC6lw30NR1NiuEYAfPOBvF2b6rbYu7HnhsnQjT5adFvW', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-11-30 14:35:39', '2025-11-30 14:35:39', NULL),
+(5, 'exim2@trustwaytransindo.com', 'Exim2', '$2y$10$3vkHBXgR8xtX4G/wTKGB9.kQ5pCO3SxyY/P70PXmJQQMzaFRSwKyO', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-12-09 12:29:38', '2025-12-09 12:29:38', NULL),
+(6, 'dokumen2@trustwaytransindo.com', 'Document2', '$2y$10$mblr4DOlPBjr4aEXRB6XXeq86FS8te7P7.bqGmx0yN9UOQL6ptoYW', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2025-12-09 12:39:11', '2025-12-09 12:39:11', NULL);
 
 -- --------------------------------------------------------
 
@@ -2007,7 +2021,7 @@ ALTER TABLE `auth_groups`
 -- AUTO_INCREMENT for table `auth_logins`
 --
 ALTER TABLE `auth_logins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=277;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=282;
 
 --
 -- AUTO_INCREMENT for table `auth_permissions`
@@ -2043,7 +2057,7 @@ ALTER TABLE `booking_job_trash`
 -- AUTO_INCREMENT for table `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT for table `master_consignee`
@@ -2115,7 +2129,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `user_trash`

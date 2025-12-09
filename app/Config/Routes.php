@@ -296,12 +296,11 @@ $routes->group('master-data', ['filter' => 'role:admin,exim,document'], function
     });
 });
 
-//
 // --------------------------------------------------------------
-// USER MANAGEMENT
+// USER MANAGEMENT (khusus admin)
 // --------------------------------------------------------------
-//
 $routes->group('user-management', ['filter' => 'role:admin'], function ($routes) {
+
     $routes->get('/', 'UserManagement::index');
     $routes->get('list', 'UserManagement::list');
     $routes->post('store', 'UserManagement::store');
