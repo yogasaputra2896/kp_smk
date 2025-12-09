@@ -123,6 +123,11 @@ $routes->group('worksheet', ['filter' => 'role:admin,document'], function ($rout
     $routes->get('search/lokasi-sandar', 'Worksheet::searchLokasiSandar');
 
     // ==========================
+    // MASTER SEARCH (GLOBAL SEARCH)
+    // ==========================
+    $routes->get('master-search/(:segment)', 'Worksheet::masterSearch/$1');
+
+    // ==========================
     // REDIRECT
     // ==========================
     $routes->get('redirectToBooking', 'Worksheet::redirectToBooking');
@@ -301,11 +306,22 @@ $routes->group('master-data', ['filter' => 'role:admin,exim,document'], function
 // --------------------------------------------------------------
 $routes->group('user-management', ['filter' => 'role:admin'], function ($routes) {
 
+
     $routes->get('/', 'UserManagement::index');
     $routes->get('list', 'UserManagement::list');
     $routes->post('store', 'UserManagement::store');
     $routes->get('edit/(:num)', 'UserManagement::edit/$1');
     $routes->post('update/(:num)', 'UserManagement::update/$1');
     $routes->post('delete/(:num)', 'UserManagement::delete/$1');
+});
+
+// ============================
+//      USER TRASH MODULE
+// ============================
+
+$routes->group('user-management-trash', ['filter' => 'role:admin'], function ($routes) {
+    $routes->get('/', 'UserManagement::trashView');
+    $routes->get('trash-list', 'UserManagement::trashList');
     $routes->post('restore/(:num)', 'UserManagement::restore/$1');
+    $routes->post('delete-permanent/(:num)', 'UserManagement::deletePermanent/$1');
 });

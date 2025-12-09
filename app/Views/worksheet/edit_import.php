@@ -11,7 +11,6 @@
 
 <!-- ====================== CONTENT ====================== -->
 <?= $this->section('content') ?>
-
 <div class="card shadow-sm p-4">
     <form action="<?= base_url('worksheet/import/update/' . $worksheet['id']) ?>" method="post">
         <input type="hidden" name="type" value="import">
@@ -30,12 +29,16 @@
 
             <div class="col-md-6 mb-3">
                 <label>Nama Consignee / Importir</label>
-                <input type="text" name="consignee" class="form-control" value="<?= esc($worksheet['consignee']) ?>">
+                <select name="consignee" id="editConsignee" class="form-control">
+                    <option selected><?= $worksheet['consignee'] ?></option>
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>Notify Party (Opsional)</label>
-                <input type="text" name="notify_party" class="form-control" value="<?= esc($worksheet['notify_party']) ?>">
+                <select name="notify_party" id="editNotifyParty" class="form-control">
+                    <option selected><?= $worksheet['notify_party'] ?></option>
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -119,18 +122,24 @@
         <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Pengangkutan</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label>Shipping Line</label>
-                <input type="text" name="shipping_line" class="form-control" value="<?= esc($worksheet['shipping_line']) ?>">
+                <label>Notify Party (Opsional)</label>
+                <select name="notify_party" id="editNotifyParty" class="form-control">
+                    <option selected><?= $worksheet['notify_party'] ?></option>
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>Port Of Loading (POL)</label>
-                <input type="text" name="pol" class="form-control" value="<?= esc($worksheet['pol']) ?>">
+                <select name="pol" id="editPol" class="form-control">
+                    <option selected><?= $worksheet['pol'] ?></option>
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>Nama Vessel</label>
-                <input type="text" name="vessel" class="form-control" value="<?= esc($worksheet['vessel']) ?>">
+                <select name="vessel" id="editVessel" class="form-control">
+                    <option selected><?= $worksheet['vessel'] ?></option>
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -145,7 +154,9 @@
 
             <div class="col-md-6 mb-3">
                 <label>Lokasi Sandar</label>
-                <input type="text" name="terminal" class="form-control" value="<?= esc($worksheet['terminal']) ?>">
+                <select name="terminal" id="editLokasiSandar" class="form-control">
+                    <option selected><?= $worksheet['terminal'] ?></option>
+                </select>
             </div>
         </div>
 
@@ -224,7 +235,9 @@
 
             <div class="col-md-6 mb-3">
                 <label>Kemasan</label>
-                <input type="text" name="kemasan" class="form-control" value="<?= esc($worksheet['kemasan']) ?>">
+                <select name="kemasan" id="editKemasan" class="form-control">
+                    <option selected><?= $worksheet['kemasan'] ?></option>
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -466,7 +479,11 @@
                         foreach ($lartass as $l) : ?>
                             <tr>
                                 <td class="text-center"><?= $no++; ?></td>
-                                <td><input type="text" name="nama_lartas[]" value="<?= esc($l['nama_lartas']) ?>" class="form-control"></td>
+                                <td>
+                                    <select name="nama_lartas[]" class="form-select select2-lartas">
+                                        <option selected><?= esc($l['nama_lartas']) ?></option>
+                                    </select>
+                                </td>
                                 <td><input type="text" name="no_lartas[]" value="<?= esc($l['no_lartas']) ?>" class="form-control"></td>
                                 <td><input type="date" name="tgl_lartas[]" value="<?= esc($l['tgl_lartas']) ?>" class="form-control"></td>
                                 <td class="text-center">
@@ -544,7 +561,16 @@
                             <tr>
                                 <td class="text-center nomor"><?= $no++; ?></td>
                                 <td><input type="text" name="tipe_fasilitas[]" value="<?= esc($f['tipe_fasilitas']) ?>" class="form-control"></td>
-                                <td><input type="text" name="nama_fasilitas[]" value="<?= esc($f['nama_fasilitas']) ?>" class="form-control"></td>
+                                <td><select name="nama_fasilitas[]" class="form-select select2">
+                                        <option value="">-- Pilih Fasilitas --</option>
+                                        <?php foreach ($fasilitasList as $f): ?>
+                                            <option value="<?= $f['nama_fasilitas'] ?>"
+                                                <?= $row['nama_fasilitas'] == $f['nama_fasilitas'] ? 'selected' : '' ?>>
+                                                <?= $f['nama_fasilitas'] ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
                                 <td><input type="text" name="no_fasilitas[]" value="<?= esc($f['no_fasilitas']) ?>" class="form-control"></td>
                                 <td><input type="date" name="tgl_fasilitas[]" value="<?= esc($f['tgl_fasilitas']) ?>" class="form-control"></td>
                                 <td class="text-center">
@@ -593,7 +619,16 @@
                         foreach ($informasitambahans as $info) : ?>
                             <tr>
                                 <td class="text-center nomor"><?= $no++; ?></td>
-                                <td><input type="text" name="nama_pengurusan[]" value="<?= esc($info['nama_pengurusan']) ?>" class="form-control"></td>
+                                <td><select name="nama_pengurusan[]" class="form-select select2">
+                                        <option value="">-- Pilih Pengurusan --</option>
+                                        <?php foreach ($informasiTambahanList as $it): ?>
+                                            <option value="<?= $it['nama_pengurusan'] ?>"
+                                                <?= $info['nama_pengurusan'] == $it['nama_pengurusan'] ? 'selected' : '' ?>>
+                                                <?= $it['nama_pengurusan'] ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
                                 <td><input type="date" name="tgl_pengurusan[]" value="<?= esc($info['tgl_pengurusan']) ?>" class="form-control"></td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-danger btn-sm removeTambahanRow">
@@ -638,9 +673,129 @@
 
     </form>
 </div>
+<style>
+    .is-empty {
+        border: 2px solid red !important;
+        background-color: #ffe6e6 !important;
+        animation: shake 0.2s ease-in-out 0s 2;
+    }
 
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+</style>
+<?= $this->endSection() ?>
+
+<?= $this->Section('pageScripts') ?>
 <!-- ================= SCRIPT ================= -->
 <script>
+    const BASE_URL = "<?= base_url() ?>";
+
+    // UNIVERSAL SELECT2 AJAX (SAMA PERSIS SEPERTI BOOKING JOB)
+    function initSelect2Edit(selector, url, placeholder, oldValue) {
+
+        if ($(selector).hasClass("select2-hidden-accessible")) {
+            $(selector).select2("destroy");
+        }
+
+        if (oldValue && oldValue !== "") {
+            $(selector).html(`<option selected>${oldValue}</option>`);
+        } else {
+            $(selector).html("");
+        }
+
+        $(selector).select2({
+            theme: "bootstrap-5",
+            placeholder: placeholder,
+            allowClear: true,
+            width: "100%",
+            minimumInputLength: 0,
+            ajax: {
+                url: url,
+                dataType: "json",
+                delay: 150,
+                data: params => ({
+                    term: params.term || ""
+                }),
+                processResults: data => ({
+                    results: data
+                })
+            }
+        });
+
+        // Simpan nama bukan ID
+        $(selector).off("select2:select").on("select2:select", function(e) {
+            const nama = e.params.data.text;
+            $(this).html(`<option selected>${nama}</option>`).trigger("change");
+        });
+    }
+
+
+    // ===================== INIT SEMUA MASTER DATA =========================
+
+    initSelect2Edit("#editConsignee",
+        BASE_URL + "/worksheet/master-search/consignee",
+        "Cari Consignee...",
+        "<?= $worksheet['consignee'] ?>"
+    );
+
+    initSelect2Edit("#editNotifyParty",
+        BASE_URL + "/worksheet/master-search/notify-party",
+        "Cari Notify Party...",
+        "<?= $worksheet['notify_party'] ?>"
+    );
+
+    initSelect2Edit("#editShippingLine",
+        BASE_URL + "/worksheet/master-search/pelayaran",
+        "Cari Shipping Line...",
+        "<?= $worksheet['shipping_line'] ?>"
+    );
+
+    initSelect2Edit("#editPol",
+        BASE_URL + "/worksheet/master-search/port",
+        "Cari POL...",
+        "<?= $worksheet['pol'] ?>"
+    );
+
+    initSelect2Edit("#editVessel",
+        BASE_URL + "/worksheet/master-search/vessel",
+        "Cari Vessel...",
+        "<?= $worksheet['vessel'] ?>"
+    );
+
+    initSelect2Edit("#editLokasiSandar",
+        BASE_URL + "/worksheet/master-search/lokasi-sandar",
+        "Cari Lokasi Sandar...",
+        "<?= $worksheet['terminal'] ?>"
+    );
+
+    initSelect2Edit("#editKemasan",
+        BASE_URL + "/worksheet/master-search/kemasan",
+        "Cari Kemasan...",
+        "<?= $worksheet['kemasan'] ?>"
+    );
+
+    initSelect2Edit("#editLartas",
+        BASE_URL + "/worksheet/master-search/lartas",
+        "Cari Lartas...",
+        "<?= $worksheet['nama_lartas[]'] ?>"
+    );
+
+
+
+
     // =============== Penjaluran =======================
     const penjaluranSelect = document.getElementById('penjaluran');
     const tglSpjmSection = document.getElementById('tgl-spjm-section');
@@ -688,7 +843,7 @@
             });
         }
 
-        // Fungsi logika 
+        // Fungsi logika
         function toggleContainerSection() {
             const jenis = jenisSelect.value;
             if (jenis === 'FCL') {
@@ -717,26 +872,26 @@
             else {
                 newRow = document.createElement('tr');
                 newRow.innerHTML = `
-                    <td></td>
-                    <td><input type="text" name="no_container[]" class="form-control"></td>
-                    <td>
-                        <select name="ukuran[]" class="form-control">
-                            <option value="">-- Pilih Ukuran --</option>
-                            <option value="20">20</option>
-                            <option value="40">40</option>
-                            <option value="45">45</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="tipe[]" class="form-control">
-                            <option value="">-- Pilih Tipe --</option>
-                            <option value="DRY">DRY</option>
-                            <option value="REEFER">REEFER</option>
-                            <option value="ISO TANK">ISO TANK</option>
-                        </select>
-                    </td>
-                    <td><button type="button" class="btn btn-danger btn-sm removeRow"><i class="bi bi-trash"></i></button></td>
-                `;
+<td></td>
+<td><input type="text" name="no_container[]" class="form-control"></td>
+<td>
+    <select name="ukuran[]" class="form-control">
+        <option value="">-- Pilih Ukuran --</option>
+        <option value="20">20</option>
+        <option value="40">40</option>
+        <option value="45">45</option>
+    </select>
+</td>
+<td>
+    <select name="tipe[]" class="form-control">
+        <option value="">-- Pilih Tipe --</option>
+        <option value="DRY">DRY</option>
+        <option value="REEFER">REEFER</option>
+        <option value="ISO TANK">ISO TANK</option>
+    </select>
+</td>
+<td><button type="button" class="btn btn-danger btn-sm removeRow"><i class="bi bi-trash"></i></button></td>
+`;
             }
 
             tbody.appendChild(newRow);
@@ -766,28 +921,28 @@
         });
     }
 
-    // Tambah Baris DO 
+    // Tambah Baris DO
     document.getElementById('addDoRow').addEventListener('click', function() {
         const tbody = document.querySelector('#doTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="text-center nomor"></td>
-            <td>
-                <select name="tipe_do[]" class="form-select">
-                    <option value="">-- Pilih Tipe Delivery Order --</option>
-                    <option value="Delivery Order">Delivery Order</option>
-                    <option value="Pengantar Delivery Order">Pengantar Delivery Order</option>
-                    <option value="Perpanjangan Delivery Order">Perpanjangan Delivery Order</option>
-                </select>
-            </td>
-            <td><input type="text" name="pengambil_do[]" class="form-control" placeholder="Nama Pengambil Delivery Order"></td>
-            <td><input type="date" name="tgl_mati_do[]" class="form-control"></td>
-            <td class="text-center">
-                <button type="button" class="btn btn-danger btn-sm removeDoRow">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        `;
+<td class="text-center nomor"></td>
+<td>
+    <select name="tipe_do[]" class="form-select">
+        <option value="">-- Pilih Tipe Delivery Order --</option>
+        <option value="Delivery Order">Delivery Order</option>
+        <option value="Pengantar Delivery Order">Pengantar Delivery Order</option>
+        <option value="Perpanjangan Delivery Order">Perpanjangan Delivery Order</option>
+    </select>
+</td>
+<td><input type="text" name="pengambil_do[]" class="form-control" placeholder="Nama Pengambil Delivery Order"></td>
+<td><input type="date" name="tgl_mati_do[]" class="form-control"></td>
+<td class="text-center">
+    <button type="button" class="btn btn-danger btn-sm removeDoRow">
+        <i class="bi bi-trash"></i>
+    </button>
+</td>
+`;
         tbody.appendChild(row);
         updateDoRowNumbers();
         enableTooltips();
@@ -828,18 +983,18 @@
         const tbody = document.querySelector('#truckingTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="text-center nomor"></td>
-            <td><input type="text" name="no_mobil[]" class="form-control"></td>
-            <td><input type="text" name="tipe_mobil[]" class="form-control"></td>
-            <td><input type="text" name="nama_supir[]" class="form-control"></td>
-            <td><textarea name="alamat[]" rows="2" class="form-control" placeholder="Masukkan alamat lengkap..."></textarea></td>
-            <td><input type="text" name="telp_supir[]" class="form-control"></td>
-            <td class="text-center">
-                <button type="button" class="btn btn-danger btn-sm removeTruckingRow">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        `;
+<td class="text-center nomor"></td>
+<td><input type="text" name="no_mobil[]" class="form-control"></td>
+<td><input type="text" name="tipe_mobil[]" class="form-control"></td>
+<td><input type="text" name="nama_supir[]" class="form-control"></td>
+<td><textarea name="alamat[]" rows="2" class="form-control" placeholder="Masukkan alamat lengkap..."></textarea></td>
+<td><input type="text" name="telp_supir[]" class="form-control"></td>
+<td class="text-center">
+    <button type="button" class="btn btn-danger btn-sm removeTruckingRow">
+        <i class="bi bi-trash"></i>
+    </button>
+</td>
+`;
         tbody.appendChild(row);
         updateTruckingNumbers();
     });
@@ -880,16 +1035,16 @@
         const tbody = document.querySelector('#lartasTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="text-center nomor"></td>
-            <td><input type="text" name="nama_lartas[]" class="form-control" placeholder="Masukkan nama lartas"></td>
-            <td><input type="text" name="no_lartas[]" class="form-control" placeholder="Masukkan nomor lartas"></td>
-            <td><input type="date" name="tgl_lartas[]" class="form-control"></td>
-            <td class="text-center">
-                <button type="button" class="btn btn-danger btn-sm removeLartasRow" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus baris ini">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        `;
+<td class="text-center nomor"></td>
+<td><input type="text" name="nama_lartas[]" class="form-control" placeholder="Masukkan nama lartas"></td>
+<td><input type="text" name="no_lartas[]" class="form-control" placeholder="Masukkan nomor lartas"></td>
+<td><input type="date" name="tgl_lartas[]" class="form-control"></td>
+<td class="text-center">
+    <button type="button" class="btn btn-danger btn-sm removeLartasRow" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus baris ini">
+        <i class="bi bi-trash"></i>
+    </button>
+</td>
+`;
         tbody.appendChild(row);
         updateLartasNumbers();
     });
@@ -934,17 +1089,17 @@
         const tbody = document.querySelector('#fasilitasTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="text-center nomor"></td>
-            <td><input type="text" name="tipe_fasilitas[]" class="form-control" placeholder="COO / ECOO"></td>
-            <td><input type="text" name="nama_fasilitas[]" class="form-control" placeholder="Nama Fasilitas"></td>
-            <td><input type="text" name="no_fasilitas[]" class="form-control" placeholder="Nomor Fasilitas"></td>
-            <td><input type="date" name="tgl_fasilitas[]" class="form-control"></td>
-            <td class="text-center">
-                <button type="button" class="btn btn-danger btn-sm removeFasilitasRow">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        `;
+<td class="text-center nomor"></td>
+<td><input type="text" name="tipe_fasilitas[]" class="form-control" placeholder="COO / ECOO"></td>
+<td><input type="text" name="nama_fasilitas[]" class="form-control" placeholder="Nama Fasilitas"></td>
+<td><input type="text" name="no_fasilitas[]" class="form-control" placeholder="Nomor Fasilitas"></td>
+<td><input type="date" name="tgl_fasilitas[]" class="form-control"></td>
+<td class="text-center">
+    <button type="button" class="btn btn-danger btn-sm removeFasilitasRow">
+        <i class="bi bi-trash"></i>
+    </button>
+</td>
+`;
         tbody.appendChild(row);
         updateFasilitasNumbers();
     });
@@ -994,15 +1149,15 @@
         const tbody = document.querySelector('#tambahanTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="text-center nomor"></td>
-            <td><input type="text" name="nama_pengurusan[]" class="form-control"></td>
-            <td><input type="date" name="tgl_pengurusan[]" class="form-control"></td>
-            <td class="text-center">
-                <button type="button" class="btn btn-danger btn-sm removeTambahanRow">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        `;
+<td class="text-center nomor"></td>
+<td><input type="text" name="nama_pengurusan[]" class="form-control"></td>
+<td><input type="date" name="tgl_pengurusan[]" class="form-control"></td>
+<td class="text-center">
+    <button type="button" class="btn btn-danger btn-sm removeTambahanRow">
+        <i class="bi bi-trash"></i>
+    </button>
+</td>
+`;
         tbody.appendChild(row);
         updateTambahanNumbers();
     });
@@ -1131,31 +1286,5 @@
             });
     });
 </script>
-
-
-<style>
-    .is-empty {
-        border: 2px solid red !important;
-        background-color: #ffe6e6 !important;
-        animation: shake 0.2s ease-in-out 0s 2;
-    }
-
-    @keyframes shake {
-
-        0%,
-        100% {
-            transform: translateX(0);
-        }
-
-        25% {
-            transform: translateX(-5px);
-        }
-
-        75% {
-            transform: translateX(5px);
-        }
-    }
-</style>
-
 
 <?= $this->endSection() ?>

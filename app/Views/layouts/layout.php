@@ -50,12 +50,15 @@
     <script src="<?= base_url('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') ?>"></script>
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/vendors/sweetalert2/sweetalert2.all.min.js') ?>"></script>
+
+    <!-- Select2 WAJIB disini -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
     <script src="<?= base_url('assets/js/main.js') ?>"></script>
 
-
-    <!-- Script tambahan tiap halaman -->
+    <!-- Script halaman -->
     <?= $this->renderSection('pageScripts') ?>
+
 </body>
 
 </html>

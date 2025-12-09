@@ -117,20 +117,21 @@ class UserManagement extends BaseController
     }
 
 
-    /**
-     * ============================
-     * UPDATE USER
-     * ============================
-     */
     public function update($id)
     {
         $data = $this->request->getPost();
 
+        // RULES (format is_unique versi stabil)
         $rules = [
-            'email'    => "required|valid_email|is_unique[users.email,id,{$id}]",
-            'username' => "required|min_length[3]|is_unique[users.username,id,{$id}]",
+            'email'    => 'required|valid_email|is_unique[users.email,id,' . $id . ']',
+            'username' => 'required|min_length[3]|is_unique[users.username,id,' . $id . ']',
             'role'     => 'required',
+            'active'   => 'required'
         ];
+
+        if (!empty($data['password'])) {
+            $rules['password'] = 'min_length[5]';
+        }
 
         if (!$this->validate($rules)) {
             return $this->response->setJSON([
@@ -139,7 +140,16 @@ class UserManagement extends BaseController
             ]);
         }
 
-        // Data update
+        // Ambil role
+        $group = $this->groupModel->where('name', $data['role'])->first();
+        if (!$group) {
+            return $this->response->setJSON([
+                'status' => false,
+                'errors' => ['role' => 'Role tidak ditemukan di database']
+            ]);
+        }
+
+        // Siapkan data update
         $updateData = [
             'id'       => $id,
             'email'    => $data['email'],
@@ -147,19 +157,40 @@ class UserManagement extends BaseController
             'active'   => $data['active'],
         ];
 
-        // Jika password diisi → update
         if (!empty($data['password'])) {
-            $updateData['password'] = $data['password'];
+            $updateData['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
 
+        // TRX BIAR AMAN
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // Update user
         $this->userModel->save($updateData);
 
-        // Update role
-        $this->groupModel->removeUserFromAllGroups($id);
-        $this->groupModel->addUserToGroup($id, $data['role']);
+        // Reset group
+        $db->table('auth_groups_users')->where('user_id', $id)->delete();
+
+        // Tambah group baru
+        $db->table('auth_groups_users')->insert([
+            'user_id'  => $id,
+            'group_id' => $group->id
+        ]);
+
+        $db->transComplete();
+
+        if (!$db->transStatus()) {
+            return $this->response->setJSON([
+                'status' => false,
+                'errors' => ['server' => 'Gagal update data ke database']
+            ]);
+        }
 
         return $this->response->setJSON(['status' => true]);
     }
+
+
+
 
     /**
      * ============================
@@ -168,19 +199,56 @@ class UserManagement extends BaseController
      */
     public function delete($id)
     {
+        $user = $this->userModel->find($id);
+
+        if (!$user) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'User tidak ditemukan.'
+            ]);
+        }
+
+        // Nonaktifkan user
+        $this->userModel->update($id, ['active' => 0]);
+
+        // Soft delete
         $this->userModel->delete($id);
 
         return $this->response->setJSON(['status' => true]);
     }
 
+
     /**
      * ============================
-     * RESTORE
+     * TRASH MANAGEMENT
      * ============================
      */
+
+    public function trashView()
+    {
+        return view('user_management/trash/index.php');
+    }
+
+    public function trashList()
+    {
+        $users = $this->userModel
+            ->onlyDeleted()
+            ->select('id, username, email, active, deleted_at')
+            ->findAll();
+
+        return $this->response->setJSON($users);
+    }
+
     public function restore($id)
     {
         $this->userModel->update($id, ['deleted_at' => null]);
+
+        return $this->response->setJSON(['status' => true]);
+    }
+
+    public function deletePermanent($id)
+    {
+        $this->userModel->delete($id, true); // TRUE = force delete
 
         return $this->response->setJSON(['status' => true]);
     }

@@ -29,7 +29,7 @@
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
 
-                <a href="<?= site_url('user-management/trash') ?>" class="btn btn-danger" title="User Terhapus">
+                <a href="<?= site_url('user-management-trash') ?>" class="btn btn-danger" title="User Terhapus">
                     <i class="bi bi-trash"></i>
                 </a>
             </div>
@@ -129,6 +129,13 @@
                     </div>
 
                     <div class="col-md-6">
+                        <label class="form-label">Password Baru (Opsional)</label>
+                        <input type="password" name="password" id="editPassword" class="form-control" placeholder="Biarkan kosong jika tidak diganti">
+                    </div>
+
+
+
+                    <div class="col-md-6">
                         <label class="form-label">Role</label>
                         <select name="role" id="editRole" class="form-select" required></select>
                     </div>
@@ -158,246 +165,288 @@
 <?= $this->section('pageScripts') ?>
 
 <script>
-$(document).ready(function() {
+    $(document).ready(function() {
 
-    // ========== LOAD TABLE ==========
-    let table = $('#tblUsers').DataTable({
-        ajax: {
-            url: "<?= site_url('user-management/list') ?>",
-            dataSrc: json => json
-        },
-        columns: [
-            { data: null, render: (_, __, ___, meta) => meta.row + 1 },
-            { data: 'username' },
-            { data: 'email' },
-            {
-                data: 'role',
-                render: role => {
-                    let color = 'secondary'; 
-                    if (role === 'exim') color = 'success';
-                    else if (role === 'document') color = 'primary';
-                    else if (role === 'admin') color = 'danger';
-                    return `<span class="badge bg-${color}">${role ?? 'No Role'}</span>`;
-                }
+        // ========== LOAD TABLE ==========
+        window.table = $('#tblUsers').DataTable({
+            ajax: {
+                url: "<?= site_url('user-management/list') ?>",
+                dataSrc: json => json
             },
-            { 
-                data: 'active',
-                render: a => a == 1 
-                    ? '<span class="badge bg-success">Aktif</span>' 
-                    : '<span class="badge bg-danger">Nonaktif</span>'
-            },
-            {
-                data: 'id',
-                render: id => `
+            columns: [{
+                    data: null,
+                    render: (_, __, ___, meta) => meta.row + 1
+                },
+                {
+                    data: 'username'
+                },
+                {
+                    data: 'email'
+                },
+                {
+                    data: 'role',
+                    render: role => {
+                        let color = 'secondary';
+                        if (role === 'exim') color = 'success';
+                        else if (role === 'document') color = 'primary';
+                        else if (role === 'admin') color = 'danger';
+                        return `<span class="badge bg-${color}">${role ?? 'No Role'}</span>`;
+                    }
+                },
+                {
+                    data: 'active',
+                    render: a => a == 1 ?
+                        '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Nonaktif</span>'
+                },
+                {
+                    data: 'id',
+                    render: id => `
                     <button class="btn btn-warning btn-sm btnEdit" data-id="${id}">
                         <i class="bi bi-pencil-square"></i>
                     </button>
                     <button class="btn btn-danger btn-sm btnDelete" data-id="${id}">
                         <i class="bi bi-trash"></i>
                     </button>`
-            }
-        ]
-    });
-
-    // Refresh table
-    $('#btnRefresh').click(() => table.ajax.reload());
+                }
+            ]
+        });
 
 
-    // =====================================================================
-    // =============== TAMBAH USER (SUDAH ADA) =============================
-    // =====================================================================
 
-    $('#btnAddUser').click(() => $('#modalAddUser').modal('show'));
+        // =====================================================================
+        // =============== TAMBAH USER (SUDAH ADA) =============================
+        // =====================================================================
 
-    $('#formAddUser').on('submit', function(e) {
-        e.preventDefault();
+        $('#btnAddUser').click(() => $('#modalAddUser').modal('show'));
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(res) {
+        $('#formAddUser').on('submit', function(e) {
+            e.preventDefault();
 
-                if (res.status === true) {
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(res) {
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'User berhasil ditambahkan.',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                    if (res.status === true) {
 
-                    $('#modalAddUser').modal('hide');
-                    $('#formAddUser')[0].reset();
-                    table.ajax.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'User berhasil ditambahkan.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
 
-                } else {
+                        $('#modalAddUser').modal('hide');
+                        $('#formAddUser')[0].reset();
+                        table.ajax.reload();
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Periksa kembali inputan.',
+                        });
+                    }
+                },
+                error: function() {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Gagal',
-                        text: 'Periksa kembali inputan.',
+                        title: 'Server Error',
+                        text: 'Terjadi kesalahan pada server.',
                     });
                 }
-            },
-            error: function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Server Error',
-                    text: 'Terjadi kesalahan pada server.',
-                });
-            }
+            });
         });
-    });
 
 
 
-    // =====================================================================
-    // =============== EDIT USER (LOAD DATA) ===============================
-    // =====================================================================
+        // =====================================================================
+        // =============== EDIT USER (LOAD DATA) ===============================
+        // =====================================================================
 
         $(document).on('click', '.btnEdit', function() {
-        let id = $(this).data('id');
+            let id = $(this).data('id');
 
-        $.ajax({
-            url: "<?= site_url('user-management/edit') ?>/" + id,
-            type: 'GET',
-            dataType: 'json',
-            success: function(res) {
+            $.ajax({
+                url: "<?= site_url('user-management/edit') ?>/" + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
 
-                // ====== Isi data utama ======
-                $('#editUserId').val(res.user.id);
-                $('#editUsername').val(res.user.username);
-                $('#editEmail').val(res.user.email);
+                    // ====== Isi data dasar ======
+                    $('#editUserId').val(res.user.id);
+                    $('#editUsername').val(res.user.username);
+                    $('#editEmail').val(res.user.email);
 
-                // ====== FIX 100% STATUS TIDAK TERISI ======
-                $('#editStatus').val(String(res.user.active)).change();
-
-                // ====== Isi role dropdown ======
-                $('#editRole').empty();
-
-                $.each(res.roles, function(i, role) {
-
-                    let selected = (role.name === res.user.role) ? 'selected' : '';
-
-                    $('#editRole').append(`
-                        <option value="${role.name}" ${selected}>
-                            ${role.name}
-                        </option>
-                    `);
-                });
-
-                // ====== Tampilkan modal SETELAH option terisi ======
-                $('#modalEditUser').modal('show');
-            }
-        });
-    });
-
-
-
-
-
-    // =====================================================================
-    // =============== UPDATE USER (AJAX + NOTIFIKASI) =====================
-    // =====================================================================
-
-    $('#formEditUser').on('submit', function(e) {
-        e.preventDefault();
-
-        let id = $('#editUserId').val();
-
-        $.ajax({
-            url: "<?= site_url('user-management/update') ?>/" + id,
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-
-            success: function(res) {
-                if (res.status === true) {
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'User berhasil diperbarui.',
-                        timer: 1500,
-                        showConfirmButton: false
+                    // ====== Isi Role ======
+                    $('#editRole').empty();
+                    $.each(res.roles, function(i, role) {
+                        let selected = (role.name === res.user.role) ? 'selected' : '';
+                        $('#editRole').append(`
+                            <option value="${role.name}" ${selected}>
+                                ${role.name}
+                            </option>
+                        `);
                     });
 
-                    $('#modalEditUser').modal('hide');
-                    table.ajax.reload();
+                    $('#editStatus').empty();
 
-                } else {
+                    let statusList = [{
+                            value: 1,
+                            label: "Aktif"
+                        },
+                        {
+                            value: 0,
+                            label: "Nonaktif"
+                        }
+                    ];
 
+                    $.each(statusList, function(i, st) {
+                        let selected = (res.user.active == st.value) ? 'selected' : '';
+                        $('#editStatus').append(`
+                            <option value="${st.value}" ${selected}>
+                                ${st.label}
+                            </option>
+                        `);
+                    });
+
+
+                    // ====== Tampilkan Modal ======
+                    $('#modalEditUser').modal('show');
+                }
+            });
+        });
+
+
+        // =====================================================================
+        // =============== UPDATE USER (AJAX + SWEETALERT) =====================
+        // =====================================================================
+
+        $('#formEditUser').on('submit', function(e) {
+            e.preventDefault();
+
+            let id = $('#editUserId').val();
+
+            $.ajax({
+                url: "<?= site_url('user-management/update') ?>/" + id,
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+
+                success: function(res) {
+                    if (res.status === true) {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'User berhasil diperbarui.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+
+                        $('#modalEditUser').modal('hide');
+                        table.ajax.reload();
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal Update',
+                            html: Object.values(res.errors).join('<br>'),
+                        });
+                    }
+                },
+
+                error: function(xhr) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Gagal Update',
-                        html: Object.values(res.errors).join('<br>'),
+                        title: 'Server Error',
+                        text: 'Kesalahan server saat update.',
                     });
                 }
-            },
 
-            error: function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Server Error',
-                    text: 'Kesalahan server saat update.',
-                });
-            }
+            });
         });
 
-    });
 
 
 
-    // =====================================================================
-    // =============== DELETE USER (WITH SWEETALERT2) ======================
-    // =====================================================================
+        // =====================================================================
+        // =============== DELETE USER (WITH SWEETALERT2) ======================
+        // =====================================================================
 
-    $(document).on('click', '.btnDelete', function() {
-        let id = $(this).data('id');
+        $(document).on('click', '.btnDelete', function() {
+            let id = $(this).data('id');
 
-        Swal.fire({
-            title: 'Hapus User?',
-            text: "User akan dipindahkan ke trash!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Ya, hapus!'
-        }).then((result) => {
+            Swal.fire({
+                title: 'Hapus User?',
+                text: "User akan dipindahkan ke trash!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
 
-            if (result.isConfirmed) {
+                if (result.isConfirmed) {
 
-                $.ajax({
-                    url: "<?= site_url('user-management/delete') ?>/" + id,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(res) {
+                    $.ajax({
+                        url: "<?= site_url('user-management/delete') ?>/" + id,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function(res) {
 
-                        if (res.status === true) {
+                            if (res.status === true) {
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Terhapus!',
-                                text: 'User berhasil dihapus.',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Terhapus!',
+                                    text: 'User berhasil dihapus.',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
 
-                            table.ajax.reload();
+                                table.ajax.reload();
+                            }
                         }
-                    }
-                });
+                    });
 
-            }
+                }
+
+            });
 
         });
 
+        // ====================== REFRESH ======================
+        $('#btnRefresh').on('click', function() {
+
+            Swal.fire({
+                title: 'Memuat...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            table.ajax.reload(function() {
+
+                Swal.close(); // wajib tutup loading swal
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Data telah diperbarui',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+            }, false);
+        });
+
+
+
     });
-
-
-});
 </script>
 
 <?= $this->endSection() ?>
