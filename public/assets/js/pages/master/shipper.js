@@ -1,13 +1,15 @@
-$(function() {
+$(function () {
+
     // ===================================
     // INIT DATATABLE
     // ===================================
-    let tbl = $('#tblLartas').DataTable({
+    let tbl = $('#tblShipper').DataTable({
         ajax: {
-            url: BASE_URL + "master-data/lartas/list",
+            url: BASE_URL + "master-data/shipper/list",
             dataSrc: 'data'
         },
-        columns: [{
+        columns: [
+            {
                 data: null,
                 render: (d, t, r, m) => m.row + 1
             },
@@ -15,28 +17,36 @@ $(function() {
                 data: 'kode'
             },
             {
-                data: 'nama_lartas'
+                data: 'nama_shipper'
+            },
+            {
+                data: 'alamat_shipper',
+                render: function (data) {
+                    if (!data) return "-";
+                    return data.length > 25 ? data.substring(0, 25) + "..." : data;
+                }
             },
             {
                 data: 'id',
-                render: function(id) {
+                render: function (id) {
                     return `
-                <button class="btn btn-sm btn-warning btn-edit mb-2" data-id="${id}" title="Edit Lartas">
-                    <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-sm btn-danger btn-delete mb-2" data-id="${id}" title="Delete Lartas">
-                    <i class="bi bi-trash"></i>
-                </button>
-            `;
+                    <button class="btn btn-sm btn-warning btn-edit mb-2" data-id="${id}" title="Edit Shipper">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-delete mb-2" data-id="${id}" title="Delete Shipper">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
                 }
             }
         ]
     });
 
+
     // ===================================
     // RELOAD DATA
     // ===================================
-    $('#btnRefresh').on('click', function() {
+    $('#btnRefresh').on('click', function () {
         Swal.fire({
             title: 'Memuat data...',
             allowOutsideClick: false,
@@ -53,6 +63,7 @@ $(function() {
         }, false);
     });
 
+
     // ===================================
     // SHOW ADD MODAL
     // ===================================
@@ -62,16 +73,14 @@ $(function() {
         $('#modalAdd').modal('show');
     });
 
-    /// ================================
-    //  INIT SELECT2 DALAM MODAL ADD
-    // ================================
-    $('#modalAdd').on('shown.bs.modal', function() {
 
-        // ==========================
-        // FUNGSI CEK DATA EXISTS
-        // ==========================
+    // ================================
+    // INIT SELECT2 DALAM MODAL ADD
+    // ================================
+    $('#modalAdd').on('shown.bs.modal', function () {
+
         function checkExisting(element, title) {
-            $(element).off("select2:select").on("select2:select", function(e) {
+            $(element).off("select2:select").on("select2:select", function (e) {
                 if (e.params.data.exists) {
                     Swal.fire({
                         icon: 'warning',
@@ -84,9 +93,6 @@ $(function() {
             });
         }
 
-        // ==========================
-        // FUNGSI SELECT2
-        // ==========================
         function initSelect2(selector, url, placeholder) {
             $(selector).select2({
                 dropdownParent: $('#modalAdd'),
@@ -100,103 +106,49 @@ $(function() {
                     url: BASE_URL + url,
                     dataType: 'json',
                     delay: 0,
-                    data: params => ({
-                        term: params.term
-                    }),
+                    data: params => ({ term: params.term }),
                     processResults: data => ({
                         results: data.map(item => ({
                             id: item.id,
-                            text: item.text.toUpperCase(), // <=== dropdown uppercase
+                            text: item.text.toUpperCase(),
                             exists: item.exists
                         }))
                     })
                 }
             });
 
-            // =============================
-            // BUAT SEMUA DROPDOWN UPPERCASE
-            // =============================
-            $(selector).on('select2:open', function() {
+            $(selector).on('select2:open', function () {
                 setTimeout(() => {
-                    $('.select2-results__option').each(function() {
+                    $('.select2-results__option').each(function () {
                         $(this).text($(this).text().toUpperCase());
                     });
                 }, 10);
             });
         }
 
-        // ============================================
-        // 1. SELECT2 KODE Lartas (AUTO UPPERCASE)
-        // ============================================
+        // === SELECT2 KODE SHIPPER ===
         initSelect2(
-            '#kodeLartas',
-            "master-data/lartas/search/kode",
-            "Masukan Kode Lartas"
+            '#kodeShipper',
+            "master-data/shipper/search/kode",
+            "Masukan Kode Shipper"
         );
-        checkExisting('#kodeLartas', "Kode Lartas");
+        checkExisting('#kodeShipper', "Kode Shipper");
 
-        // Auto uppercase + minimal 2 huruf
-        $('#kodeLartas').on('select2:select', function(e) {
+        $('#kodeShipper').on('select2:select', function (e) {
             let val = $(this).val();
             if (!val) return;
 
             val = val.toString().toUpperCase();
             $(this).val(val).trigger('change.select2');
-
-            if (val.length < 2) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Minimal 2 Karakter!',
-                    text: 'Kode Lartas harus terdiri dari minimal 2 karakter.'
-                }).then(() => {
-                    $(this).val(null).trigger('change');
-                });
-            } else if (val.length > 6) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Maximal 6 Karakter!',
-                    text: 'Kode Lartas harus terdiri dari maksimal 6 karakter.'
-                }).then(() => {
-                    $(this).val(null).trigger('change');
-                });
-            }
         });
 
-
-
-        // ==========================================
-        // REALTIME UPPERCASE UNTUK DROPDOWN SELECT2
-        // ==========================================
-        $(document).on('keyup', ".select2-search__field", function() {
-            // Uppercase untuk input search
-            $(this).val($(this).val().toUpperCase());
-
-            // Realtime ubah semua opsi dropdown
-            $('.select2-results__option').each(function() {
-                $(this).text($(this).text().toUpperCase());
-            });
-        });
-
-        // Saat dropdown muncul, apply juga langsung
-        $(document).on('select2:open', function() {
-            setTimeout(() => {
-                $('.select2-results__option').each(function() {
-                    $(this).text($(this).text().toUpperCase());
-                });
-            }, 10);
-        });
-
-
-
-        // ============================
-        // 2. SELECT2 Nama Lartas
-        // ============================
+        // === SELECT2 NAMA SHIPPER ===
         initSelect2(
-            '#namaLartas',
-            "master-data/lartas/search/nama",
-            "Masukan Nama Lartas"
+            '#namaShipper',
+            "master-data/shipper/search/nama",
+            "Masukan Nama Shipper"
         );
-        checkExisting('#namaLartas', "Nama Lartas");
+        checkExisting('#namaShipper', "Nama Shipper");
 
     });
 
@@ -204,47 +156,37 @@ $(function() {
     // ======================
     // SELECT2 EDIT MODAL
     // ======================
-    $('#modalEdit').on('shown.bs.modal', function() {
+    $('#modalEdit').on('shown.bs.modal', function () {
 
-        // === KODE ===
-        $('#editKodeLartas').select2({
+        $('#editKodeShipper').select2({
             dropdownParent: $('#modalEdit'),
             theme: "bootstrap-5",
             minimumInputLength: 1,
-            placeholder: "Masukan Kode Lartas",
+            placeholder: "Masukan Kode Shipper",
             tags: true,
             width: "100%",
             ajax: {
-                url: BASE_URL + "master-data/lartas/search/kode",
+                url: BASE_URL + "master-data/shipper/search/kode",
                 dataType: 'json',
                 delay: 0,
-                data: params => ({
-                    term: params.term
-                }),
-                processResults: data => ({
-                    results: data
-                })
+                data: params => ({ term: params.term }),
+                processResults: data => ({ results: data })
             }
         });
 
-        // === Nama ===
-        $('#editNamaLartas').select2({
+        $('#editNamaShipper').select2({
             dropdownParent: $('#modalEdit'),
-            placeholder: "Masukan Nama Lartas",
             theme: "bootstrap-5",
             minimumInputLength: 1,
+            placeholder: "Masukan Nama Shipper",
             tags: true,
             width: "100%",
             ajax: {
-                url: BASE_URL + "master-data/lartas/search/nama",
+                url: BASE_URL + "master-data/shipper/search/nama",
                 dataType: 'json',
                 delay: 0,
-                data: params => ({
-                    term: params.term
-                }),
-                processResults: data => ({
-                    results: data
-                })
+                data: params => ({ term: params.term }),
+                processResults: data => ({ results: data })
             }
         });
 
@@ -255,10 +197,10 @@ $(function() {
     // ===================================
     // ADD DATA
     // ===================================
-    $('#formAdd').submit(function(e) {
+    $('#formAdd').submit(function (e) {
         e.preventDefault();
 
-        $.post(BASE_URL + "master-data/lartas/store", $(this).serialize(), function(res) {
+        $.post(BASE_URL + "master-data/shipper/store", $(this).serialize(), function (res) {
 
             if (res.status === 'success') {
                 Swal.fire({
@@ -284,29 +226,28 @@ $(function() {
                 });
             }
 
-
         }, 'json');
     });
+
+
 
     // ===================================
     // EDIT SHOW DATA
     // ===================================
-    $('#tblLartas').on('click', '.btn-edit', function() {
+    $('#tblShipper').on('click', '.btn-edit', function () {
         const id = $(this).data('id');
 
-        $.get(BASE_URL + "master-data/lartas/edit/" + id, function(res) {
+        $.get(BASE_URL + "master-data/shipper/edit/" + id, function (res) {
 
             if (res.status === 'success') {
                 const d = res.data;
 
                 $('#editId').val(d.id);
 
-                // SET VALUE SELECT2 (harus append data dulu)
-                let kodeOption = new Option(d.kode, d.kode, true, true);
-                $('#editKodeLartas').append(kodeOption).trigger('change');
+                $('#editKodeShipper').append(new Option(d.kode, d.kode, true, true)).trigger('change');
+                $('#editNamaShipper').append(new Option(d.nama_shipper, d.nama_shipper, true, true)).trigger('change');
 
-                let namaOption = new Option(d.nama_lartas, d.nama_lartas, true, true);
-                $('#editNamaLartas').append(namaOption).trigger('change');
+                $('#editAlamatShipper').val(d.alamat_shipper);
 
                 $('#modalEdit').modal('show');
             } else {
@@ -317,15 +258,16 @@ $(function() {
     });
 
 
+
     // ===================================
     // UPDATE DATA
     // ===================================
-    $('#formEdit').submit(function(e) {
+    $('#formEdit').submit(function (e) {
         e.preventDefault();
 
         const id = $('#editId').val();
 
-        $.post(BASE_URL + "master-data/lartas/update/" + id, $(this).serialize(), function(res) {
+        $.post(BASE_URL + "master-data/shipper/update/" + id, $(this).serialize(), function (res) {
 
             if (res.status === 'success') {
                 Swal.fire('Berhasil!', res.message, 'success');
@@ -333,7 +275,7 @@ $(function() {
                 tbl.ajax.reload();
             } else {
                 let err = "";
-                $.each(res.errors, function(k, v) {
+                $.each(res.errors, function (k, v) {
                     err += `<li>${v}</li>`;
                 });
 
@@ -345,10 +287,12 @@ $(function() {
         }, 'json');
     });
 
+
+
     // ===================================
     // DELETE DATA
     // ===================================
-    $('#tblLartas').on('click', '.btn-delete', function() {
+    $('#tblShipper').on('click', '.btn-delete', function () {
         const id = $(this).data('id');
 
         Swal.fire({
@@ -360,7 +304,7 @@ $(function() {
         }).then(result => {
             if (result.isConfirmed) {
 
-                $.post(BASE_URL + "master-data/lartas/delete/" + id, function(res) {
+                $.post(BASE_URL + "master-data/shipper/delete/" + id, function (res) {
 
                     if (res.status === 'success') {
                         Swal.fire('Terhapus!', res.message, 'success');
@@ -375,29 +319,26 @@ $(function() {
         });
     });
 
-    // =====================================================
-    // RESET MODAL ADD SAAT DITUTUP
-    // =====================================================
-    $('#modalAdd').on('hidden.bs.modal', function() {
+
+
+    // ===================================
+    // RESET MODAL ADD
+    // ===================================
+    $('#modalAdd').on('hidden.bs.modal', function () {
 
         $('#formAdd')[0].reset();
-
-        // Reset error
         $('#addErrors').html('').addClass('d-none');
 
-        // Reset Select2
-        $('#kodeLartas').val(null).trigger('change');
-        $('#kodeLartas').empty();
-
-        $('#namaLartas').val(null).trigger('change');
-        $('#namaLartas').empty();
+        $('#kodeShipper').val(null).trigger('change').empty();
+        $('#namaShipper').val(null).trigger('change').empty();
 
     });
 
 });
 
+
 // INIT TOOLTIP
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 });

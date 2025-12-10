@@ -72,6 +72,10 @@ $segment2 = $uri->getSegment(2);
                                 <a href="<?= base_url('master-data/consignee') ?>"><i class="bi bi-person-vcard me-1"></i> Consignee</a>
                             </li>
 
+                            <li class="submenu-item <?= ($segment2 == 'shipper') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/shipper') ?>"><i class="bi bi-truck me-1"></i> Shipper</a>
+                            </li>
+
                             <li class="submenu-item <?= ($segment2 == 'pelayaran') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/pelayaran') ?>"><i class="bi bi-building me-1"></i> Pelayaran</a>
                             </li>
@@ -208,6 +212,10 @@ $segment2 = $uri->getSegment(2);
                                 <a href="<?= base_url('master-data/consignee') ?>"><i class="bi bi-person-vcard me-1"></i> Consignee</a>
                             </li>
 
+                            <li class="submenu-item <?= ($segment2 == 'shipper') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/shipper') ?>"><i class="bi bi-truck me-1"></i> Shipper</a>
+                            </li>
+
                             <li class="submenu-item <?= ($segment2 == 'pelayaran') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/pelayaran') ?>"><i class="bi bi-building me-1"></i> Pelayaran</a>
                             </li>
@@ -306,6 +314,10 @@ $segment2 = $uri->getSegment(2);
 
                             <li class="submenu-item <?= ($segment2 == 'consignee') ? 'active' : '' ?>">
                                 <a href="<?= base_url('master-data/consignee') ?>"><i class="bi bi-person-vcard me-1"></i> Consignee</a>
+                            </li>
+
+                            <li class="submenu-item <?= ($segment2 == 'shipper') ? 'active' : '' ?>">
+                                <a href="<?= base_url('master-data/shipper') ?>"><i class="bi bi-truck me-1"></i> Shipper</a>
                             </li>
 
                             <li class="submenu-item <?= ($segment2 == 'pelayaran') ? 'active' : '' ?>">

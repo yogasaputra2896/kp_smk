@@ -1,19 +1,20 @@
 <?= $this->extend('layouts/layout') ?>
 
-<?= $this->section('title') ?>Master Fasilitas<?= $this->endSection() ?>
+<?= $this->section('title') ?>Master Shipper<?= $this->endSection() ?>
 
 <!-- ====================== HEADER ====================== -->
 <?= $this->section('pageTitle') ?>
 <div class="page-heading">
-    <h3 class="heading-title">Master Data Fasilitas</h3>
+    <h3 class="heading-title">Master Data Shipper</h3>
 
     <p class="text-subtitle text-muted">
-        Master Data Fasilitas digunakan untuk menyimpan informasi Fasilitas.
+        Master Data Shipper digunakan untuk menyimpan informasi eksportir/Pengirim barang.
         Data pada modul ini akan digunakan otomatis di modul Booking Job dan Worksheet
         agar proses input lebih cepat, konsisten dan tidak terjadi kesalahan penulisan data.
     </p>
 </div>
 <?= $this->endSection() ?>
+
 
 <!-- ====================== CONTENT ====================== -->
 <?= $this->section('content') ?>
@@ -25,7 +26,7 @@
             <div class="d-flex gap-2 flex-wrap">
                 <button id="btnAdd" class="btn btn-primary">
                     <i class="bi bi-plus-circle me-2"></i>
-                    Tambah Fasilitas
+                    Tambah Shipper
                 </button>
             </div>
 
@@ -40,13 +41,13 @@
 
         <!-- TABLE -->
         <div class="table-responsive">
-            <table id="tblFasilitas" class="table table-striped table-bordered w-100">
+            <table id="tblShipper" class="table table-striped table-bordered w-100">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Kode</th>
-                        <th>Tipe</th>
-                        <th>Nama Fasilitas</th>
+                        <th>Nama Shipper</th>
+                        <th>Alamat</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -57,13 +58,14 @@
     </div>
 </div>
 
+
 <!-- ====================== MODAL TAMBAH ====================== -->
 <div class="modal fade" id="modalAdd" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form id="formAdd" class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Tambah Fasilitas</h5>
+                <h5 class="modal-title">Tambah Shipper</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -75,32 +77,37 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Kode</label>
-                        <select name="kode" id="kodeFasilitas" class="form-control select2" required></select>
+                        <select name="kode" id="kodeShipper" class="form-control select2" required></select>
                         <span id="kodeWarning" class="text-danger mt-1" style="display:none;">Kode sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Tipe Fasilitas</label>
-                        <select name="tipe_fasilitas" id="tipeFasilitas" class="form-control select2" required></select>
+                        <label class="form-label">Nama Shipper</label>
+                        <select name="nama_shipper" id="namaShipper" class="form-control select2" required></select>
+                        <span id="namaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Nama Fasilitas</label>
-                        <select name="nama_fasilitas" id="namaFasilitas" class="form-control select2" required></select>
-                        <span id="namaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
+                    <div class="col-md-12">
+                        <label class="form-label">Alamat</label>
+                        <textarea name="alamat_shipper" class="form-control" rows="3" placeholder="Masukan Alamat Shipper" required></textarea>
                     </div>
 
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
-                <button class="btn btn-primary"><i class="bi bi-floppy me-1"></i> Simpan</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Batal
+                </button>
+                <button class="btn btn-primary">
+                    <i class="bi bi-floppy me-1"></i> Simpan
+                </button>
             </div>
 
         </form>
     </div>
 </div>
+
 
 <!-- ====================== MODAL EDIT ====================== -->
 <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
@@ -108,55 +115,60 @@
         <form id="formEdit" class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Edit Fasilitas</h5>
+                <h5 class="modal-title">Edit Shipper</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
                 <?= csrf_field() ?>
                 <div id="editErrors" class="alert alert-danger d-none"></div>
+
                 <input type="hidden" name="id" id="editId">
 
                 <div class="row g-3">
 
                     <div class="col-md-6">
                         <label class="form-label">Kode</label>
-                        <select name="kode" id="editKodeFasilitas" class="form-control select2" required></select>
+                        <select name="kode" id="editKodeShipper" class="form-control select2" required></select>
                         <span id="editKodeWarning" class="text-danger mt-1" style="display:none;">Kode sudah terdaftar!</span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Tipe Fasilitas</label>
-                        <select name="tipe_fasilitas" id="editTipeFasilitas" class="form-control select2" required></select>
-                        <span id="editTipeWarning" class="text-danger mt-1" style="display:none;">Tipe sudah terdaftar!</span>
+                        <label class="form-label">Nama Shipper</label>
+                        <select name="nama_shipper" id="editNamaShipper" class="form-control select2" required></select>
+                        <span id="editNamaWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Nama Fasilitas</label>
-                        <select name="nama_fasilitas" id="editNamaFasilitas" class="form-control select2" required></select>
-                        <span id="editTipeWarning" class="text-danger mt-1" style="display:none;">Nama sudah terdaftar!</span>
+                    <div class="col-md-12">
+                        <label class="form-label">Alamat</label>
+                        <textarea id="editAlamatShipper" name="alamat_shipper" class="form-control" rows="3" required></textarea>
                     </div>
 
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Batal</button>
-                <button class="btn btn-warning"><i class="bi bi-pencil-square me-1"></i> Update</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Batal
+                </button>
+                <button class="btn btn-warning">
+                    <i class="bi bi-pencil-square me-1"></i> Update
+                </button>
             </div>
 
         </form>
     </div>
 </div>
 
+
 <script>
     const BASE_URL = "<?= base_url() ?>/";
 </script>
 
-
 <?= $this->endSection() ?>
+
 
 <!-- ====================== PAGE SCRIPTS ====================== -->
 <?= $this->section('pageScripts') ?>
-<script src="<?= base_url('assets/js/pages/master/fasilitas.js') ?>"></script>
+<script src="<?= base_url('assets/js/pages/master/shipper.js') ?>"></script>
 <?= $this->endSection() ?>

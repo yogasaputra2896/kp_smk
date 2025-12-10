@@ -43,7 +43,9 @@
 
             <div class="col-md-6 mb-3">
                 <label>Nama Shipper</label>
-                <input type="text" name="shipper" class="form-control" value="<?= esc($worksheet['shipper']) ?>">
+                <select id="shipper" name="shipper" class="form-select select2-shipper">
+                    <option value="<?= $worksheet['shipper'] ?>"><?= $worksheet['shipper'] ?></option>
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">
@@ -122,9 +124,9 @@
         <h5 class="mt-4 mb-3 text-primary fw-bold border-bottom border-primary pb-2">Informasi Pengangkutan</h5>
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label>Notify Party (Opsional)</label>
-                <select name="notify_party" id="editNotifyParty" class="form-control">
-                    <option selected><?= $worksheet['notify_party'] ?></option>
+                <label>Shipping Line</label>
+                <select name="shipping_line" id="editShippingLine" class="form-control">
+                    <option selected><?= $worksheet['shipping_line'] ?></option>
                 </select>
             </div>
 
@@ -540,7 +542,6 @@
         </div>
 
         <!-- ================= Tabel Fasilitas ================= -->
-        <!-- ================= Tabel Fasilitas ================= -->
         <div id="fasilitas-info-section" class="mt-3">
             <button type="button" id="addFasilitasRow" class="btn btn-sm btn-success mb-2">+ Tambah Fasilitas</button>
 
@@ -564,9 +565,9 @@
 
                                 <td>
                                     <select name="nama_fasilitas[]"
-                                            class="form-control select2-fasilitas"
-                                            data-selected="<?= $f['nama_fasilitas'] ?>"
-                                            data-tipe="<?= $f['tipe_fasilitas'] ?>">
+                                        class="form-control select2-fasilitas"
+                                        data-selected="<?= $f['nama_fasilitas'] ?>"
+                                        data-tipe="<?= $f['tipe_fasilitas'] ?>">
                                         <option selected><?= $f['nama_fasilitas'] ?></option>
                                     </select>
                                 </td>
@@ -622,7 +623,8 @@
 
         <!-- ================= Tabel Informasi Tambahan ================= -->
         <div id="tambahan-info-section" class="mt-3">
-            <button type="button" id="addTambahanRow" class="btn btn-sm btn-success mb-2">+ Tambah Pengurusan</button>
+            <button type="button" id="addTambahanRow" class="btn btn-sm btn-success mb-2">+ Tambah Informasi</button>
+
             <table class="table table-bordered" id="tambahanTable">
                 <thead>
                     <tr class="table-secondary">
@@ -635,28 +637,30 @@
                 <tbody>
                     <?php if (!empty($informasitambahans)) : ?>
                         <?php $no = 1;
-                        foreach ($informasitambahans as $info) : ?>
+                        foreach ($informasitambahans as $t) : ?>
                             <tr>
-                                <td class="text-center nomor"><?= $no++; ?></td>
-                                <td><select name="nama_pengurusan[]" class="form-select select2">
-                                        <option value="">-- Pilih Pengurusan --</option>
-                                        <?php foreach ($informasiTambahanList as $it): ?>
-                                            <option value="<?= $it['nama_pengurusan'] ?>"
-                                                <?= $info['nama_pengurusan'] == $it['nama_pengurusan'] ? 'selected' : '' ?>>
-                                                <?= $it['nama_pengurusan'] ?>
-                                            </option>
-                                        <?php endforeach; ?>
+                                <td class="text-center nomor"><?= $no++ ?></td>
+
+                                <td>
+                                    <select name="nama_pengurusan[]" class="form-control select2-tambahan"
+                                        data-selected="<?= $t['nama_pengurusan'] ?>">
+                                        <option selected><?= $t['nama_pengurusan'] ?></option>
                                     </select>
                                 </td>
-                                <td><input type="date" name="tgl_pengurusan[]" value="<?= esc($info['tgl_pengurusan']) ?>" class="form-control"></td>
+
+                                <td>
+                                    <input type="date" name="tgl_pengurusan[]" value="<?= esc($t['tgl_pengurusan']) ?>"
+                                        class="form-control">
+                                </td>
+
                                 <td class="text-center">
                                     <button type="button" class="btn btn-danger btn-sm removeTambahanRow">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                        <?php endforeach ?>
+                    <?php endif ?>
                 </tbody>
             </table>
         </div>
@@ -806,7 +810,7 @@
         "<?= $worksheet['kemasan'] ?>"
     );
 
-    $(".select2-lartas").each(function () {
+    $(".select2-lartas").each(function() {
         const oldText = $(this).find("option:selected").text().trim();
 
         initSelect2Edit(
@@ -817,7 +821,7 @@
         );
     });
 
-    $(".select2-fasilitas").each(function () {
+    $(".select2-fasilitas").each(function() {
         const oldText = $(this).find("option:selected").text().trim();
 
         initSelect2Edit(
@@ -832,13 +836,38 @@
         $(this).closest("tr").find(".tipe-fasilitas-input").val(tipe);
     });
 
-    $(document).on("select2:select", ".select2-fasilitas", function (e) {
+    $(document).on("select2:select", ".select2-fasilitas", function(e) {
         const data = e.params.data;
         const tr = $(this).closest("tr");
 
         // Auto isi tipe fasilitas dari JSON endpoint
         tr.find(".tipe-fasilitas-input").val(data.tipe_fasilitas);
     });
+
+    $(".select2-tambahan").each(function() {
+        const oldText = $(this).find("option:selected").text().trim();
+
+        initSelect2Edit(
+            this,
+            BASE_URL + "/worksheet/master-search/informasi-tambahan",
+            "Cari Pengurusan...",
+            oldText
+        );
+    });
+
+    // ==================== SHIPPER ===========================
+    $(".select2-shipper").each(function() {
+        const oldText = $(this).find("option:selected").text().trim();
+
+        initSelect2Edit(
+            this,
+            BASE_URL + "/worksheet/master-search/shipper",
+            "Cari Shipper...",
+            oldText
+        );
+    });
+
+
 
 
 
@@ -1078,7 +1107,7 @@
     }
 
     // Tambah baris Lartas
-    document.getElementById('addLartasRow').addEventListener('click', function () {
+    document.getElementById('addLartasRow').addEventListener('click', function() {
         const tbody = document.querySelector('#lartasTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -1143,7 +1172,7 @@
         });
     }
 
-        document.getElementById('addFasilitasRow').addEventListener('click', function () {
+    document.getElementById('addFasilitasRow').addEventListener('click', function() {
         const tbody = document.querySelector('#fasilitasTable tbody');
         const row = document.createElement('tr');
 
@@ -1230,23 +1259,45 @@
         });
     }
 
+
     // Tambah baris baru
     document.getElementById('addTambahanRow').addEventListener('click', function() {
         const tbody = document.querySelector('#tambahanTable tbody');
         const row = document.createElement('tr');
+
         row.innerHTML = `
-<td class="text-center nomor"></td>
-<td><input type="text" name="nama_pengurusan[]" class="form-control"></td>
-<td><input type="date" name="tgl_pengurusan[]" class="form-control"></td>
-<td class="text-center">
-    <button type="button" class="btn btn-danger btn-sm removeTambahanRow">
-        <i class="bi bi-trash"></i>
-    </button>
-</td>
-`;
+        <td class="text-center nomor"></td>
+
+        <td>
+            <select name="nama_pengurusan[]" class="form-control select2-tambahan">
+                <option></option>
+            </select>
+        </td>
+
+        <td>
+            <input type="date" name="tgl_pengurusan[]" class="form-control">
+        </td>
+
+        <td class="text-center">
+            <button type="button" class="btn btn-danger btn-sm removeTambahanRow">
+                <i class="bi bi-trash"></i>
+            </button>
+        </td>
+    `;
+
         tbody.appendChild(row);
         updateTambahanNumbers();
+
+        // init select2 baru
+        const selectBaru = $(tbody).find('.select2-tambahan').last();
+
+        initSelect2Edit(
+            selectBaru,
+            BASE_URL + "/worksheet/master-search/informasi-tambahan",
+            "Cari Pengurusan..."
+        );
     });
+
 
     // Hapus baris tambahan
     document.addEventListener('click', function(e) {

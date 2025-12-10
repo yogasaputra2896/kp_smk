@@ -206,45 +206,53 @@ $(function() {
     // ======================
     $('#modalEdit').on('shown.bs.modal', function() {
 
-        // === KODE ===
-        $('#editKodeKemasan').select2({
-            dropdownParent: $('#modalEdit'),
-            placeholder: "Masukan Kode Kemasan",
-            tags: true,
-            width: "100%",
-            ajax: {
-                url: BASE_URL + "master-data/kemasan/search/kode",
-                dataType: 'json',
-                delay: 0,
-                data: params => ({
-                    term: params.term
-                }),
-                processResults: data => ({
-                    results: data
-                })
-            }
-        });
-
-        // === JENIS ===
-        $('#editNamaKemasan').select2({
-            dropdownParent: $('#modalEdit'),
-            placeholder: "Masukan Jenis Kemasan",
-            tags: true,
-            width: "100%",
-            ajax: {
-                url: BASE_URL + "master-data/kemasan/search/nama",
-                dataType: 'json',
-                delay: 0,
-                data: params => ({
-                    term: params.term
-                }),
-                processResults: data => ({
-                    results: data
-                })
-            }
-        });
-
+    // SELECT2 KODE
+    $('#editKodeKemasan').select2({
+        dropdownParent: $('#modalEdit'),
+        theme: "bootstrap-5",
+        placeholder: "Masukan Kode Kemasan",
+        tags: true,
+        width: "100%",
+        ajax: {
+            url: BASE_URL + "master-data/kemasan/search/kode",
+            dataType: 'json',
+            delay: 0,
+            data: params => ({ term: params.term }),
+            processResults: data => ({
+                results: data.map(item => ({
+                    id: item.id,
+                    text: item.text.toUpperCase(),
+                    exists: item.exists
+                }))
+            })
+        }
     });
+
+    // SELECT2 JENIS (ID DIBENERIN)
+    $('#editJenisKemasan').select2({
+        dropdownParent: $('#modalEdit'),
+        theme: "bootstrap-5",
+        minimumInputLength: 1,
+        placeholder: "Masukan Jenis Kemasan",
+        tags: true,
+        width: "100%",
+        ajax: {
+            url: BASE_URL + "master-data/kemasan/search/nama",
+            dataType: 'json',
+            delay: 0,
+            data: params => ({ term: params.term }),
+            processResults: data => ({
+                results: data.map(item => ({
+                    id: item.id,
+                    text: item.text.toUpperCase(),
+                    exists: item.exists
+                }))
+            })
+        }
+    });
+
+});
+
 
 
 
@@ -302,7 +310,7 @@ $(function() {
                 $('#editKodeKemasan').append(kodeOption).trigger('change');
 
                 let namaOption = new Option(d.jenis_kemasan, d.jenis_kemasan, true, true);
-                $('#editNamaKemasan').append(namaOption).trigger('change');
+                $('#editJenisKemasan').append(namaOption).trigger('change');
 
                 $('#modalEdit').modal('show');
             } else {

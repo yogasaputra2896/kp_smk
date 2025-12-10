@@ -223,6 +223,8 @@ $(function() {
         $('#editKodePort').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Kode Pelabuhan",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -242,6 +244,8 @@ $(function() {
         $('#editNamaPort').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Nama Pelabuhan",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -261,6 +265,8 @@ $(function() {
         $('#editNegaraPort').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Negara Pelabuhan",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {

@@ -208,6 +208,8 @@ $(function() {
         $('#editKodeFasilitas').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Kode Informasi Tambahan",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -227,6 +229,8 @@ $(function() {
         $('#editNamaPengurusan').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Nama Pengurusan'",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {

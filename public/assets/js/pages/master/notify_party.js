@@ -229,6 +229,8 @@ $(function() {
         $('#editkodeNotify').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Kode Notify Party",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -248,6 +250,8 @@ $(function() {
         $('#editNamaNotify').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Nama Notify Party",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -267,6 +271,8 @@ $(function() {
         $('#editNpwpNotify').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan NPWP Notify Party",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {

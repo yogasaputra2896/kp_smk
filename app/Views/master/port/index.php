@@ -156,15 +156,5 @@
 
 <!-- ====================== PAGE SCRIPTS ====================== -->
 <?= $this->section('pageScripts') ?>
-<link rel="stylesheet" href="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/vendors/jquery/fixedColumns.dataTables.min.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/vendors/sweetalert2/sweetalert2.min.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/vendors/select2/dist/css/select2.min.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/css/pages/master.css') ?>">
-<script src="<?= base_url('assets/vendors/jquery/jquery-3.6.0.min.js') ?>"></script>
-<script src="<?= base_url('assets/vendors/jquery/jquery.dataTables.min.js') ?>"></script>
-<script src="<?= base_url('assets/vendors/jquery/dataTables.fixedColumns.min.js') ?>"></script>
-<script src="<?= base_url('assets/vendors/sweetalert2/sweetalert2.all.min.js') ?>"></script>
-<script src="<?= base_url('assets/vendors/select2/dist/js/select2.full.min.js') ?>"></script>
 <script src="<?= base_url('assets/js/pages/master/port.js') ?>"></script>
 <?= $this->endSection() ?>

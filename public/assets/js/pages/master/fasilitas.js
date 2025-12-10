@@ -220,6 +220,8 @@ $(function() {
         $('#editKodeFasilitas').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Kode Fasilitas",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -239,6 +241,8 @@ $(function() {
         $('#editTipeFasilitas').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Tipe Fasilitas",
+            theme: "bootstrap-5",
+             minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -258,6 +262,8 @@ $(function() {
         $('#editNamaFasilitas').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Nama Fasilitas",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -333,7 +339,7 @@ $(function() {
                 let tipeOption = new Option(d.tipe_fasilitas, d.tipe_fasilitas, true, true);
                 $('#editTipeFasilitas').append(tipeOption).trigger('change');
 
-                let namaOption = new Option(d.tipe_fasilitas, d.tipe_fasilitas, true, true);
+                let namaOption = new Option(d.nama_fasilitas, d.nama_fasilitas, true, true);
                 $('#editNamaFasilitas').append(namaOption).trigger('change');
 
                 $('#modalEdit').modal('show');

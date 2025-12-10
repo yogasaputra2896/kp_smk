@@ -112,6 +112,7 @@ $routes->group('worksheet', ['filter' => 'role:admin,document'], function ($rout
     // MASTER DATA (SELECT2 AJAX)
     // ==========================
     $routes->get('search/consignee', 'Worksheet::searchConsignee');
+    $routes->get('search/shipper', 'Worksheet::searchShipper');
     $routes->get('search/notify-party', 'Worksheet::searchNotifyParty');
     $routes->get('search/port', 'Worksheet::searchPort');
     $routes->get('search/pelayaran', 'Worksheet::searchPelayaran');
@@ -186,6 +187,21 @@ $routes->group('master-data', ['filter' => 'role:admin,exim,document'], function
         $routes->post('update/(:num)', 'MasterConsignee::update/$1');
         $routes->post('delete/(:num)', 'MasterConsignee::delete/$1');
     });
+
+    // ==========================
+    // MASTER DATA SHIPPER
+    // ==========================
+    $routes->group('shipper', function ($routes) {
+        $routes->get('/', 'MasterShipper::index');
+        $routes->get('list', 'MasterShipper::list');
+        $routes->get('search/kode', 'MasterShipper::searchKode');
+        $routes->get('search/nama', 'MasterShipper::searchNama');
+        $routes->post('store', 'MasterShipper::store');
+        $routes->get('edit/(:num)', 'MasterShipper::edit/$1');
+        $routes->post('update/(:num)', 'MasterShipper::update/$1');
+        $routes->post('delete/(:num)', 'MasterShipper::delete/$1');
+    });
+
 
     // PELAYARAN
     $routes->group('pelayaran', function ($routes) {

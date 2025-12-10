@@ -223,6 +223,8 @@ $(function() {
         $('#editKodeVessel').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Kode Vessel",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -242,6 +244,8 @@ $(function() {
         $('#editNamaVessel').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Nama Vessel",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {
@@ -261,6 +265,8 @@ $(function() {
         $('#editNegaraVessel').select2({
             dropdownParent: $('#modalEdit'),
             placeholder: "Masukan Negara Vessel",
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             tags: true,
             width: "100%",
             ajax: {

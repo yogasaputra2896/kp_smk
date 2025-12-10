@@ -231,6 +231,8 @@ $(function() {
         // === KODE ===
         $('#editKodePelayaran').select2({
             dropdownParent: $('#modalEdit'),
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             placeholder: "Masukan Kode Pelayaran",
             tags: true,
             width: "100%",
@@ -250,6 +252,8 @@ $(function() {
         // === NAMA ===
         $('#editNamaPelayaran').select2({
             dropdownParent: $('#modalEdit'),
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             placeholder: "Masukan Nama Pelayaran",
             tags: true,
             width: "100%",
@@ -269,6 +273,8 @@ $(function() {
         // === NPWP ===
         $('#editNpwpPelayaran').select2({
             dropdownParent: $('#modalEdit'),
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             placeholder: "Masukan NPWP Pelayaran",
             tags: true,
             width: "100%",

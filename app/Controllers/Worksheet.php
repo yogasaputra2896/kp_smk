@@ -34,6 +34,7 @@ use App\Models\WorksheetExport\WorksheetFasilitasExportModel;
 // MASTER MODELS
 // ======================
 use App\Models\Master\MasterConsigneeModel;
+use App\Models\Master\MasterShipperModel;
 use App\Models\Master\MasterPortModel;
 use App\Models\Master\MasterPelayaranModel;
 use App\Models\Master\MasterNotifyPartyModel;
@@ -72,6 +73,7 @@ class Worksheet extends BaseController
     // MASTER PROPERTIES
     // ======================
     protected $masterConsigneeModel;
+    protected $masterShipperModel;
     protected $masterPortModel;
     protected $masterPelayaranModel;
     protected $masterNotifyPartyModel;
@@ -112,6 +114,7 @@ class Worksheet extends BaseController
         // MASTER MODELS
         // ======================
         $this->masterConsigneeModel          = new MasterConsigneeModel();
+        $this->masterShipperModel            = new MasterShipperModel();
         $this->masterPortModel               = new MasterPortModel();
         $this->masterPelayaranModel          = new MasterPelayaranModel();
         $this->masterNotifyPartyModel        = new MasterNotifyPartyModel();
@@ -226,6 +229,7 @@ class Worksheet extends BaseController
         // MASTER DATA (10 MODEL)
         // ==========================
         $masterConsignee          = $this->masterConsigneeModel->orderBy('nama_consignee', 'ASC')->findAll();
+        $masterShipper            = $this->masterShipperModel->orderBy('nama_shipper', 'ASC')->findAll();
         $masterPort               = $this->masterPortModel->orderBy('nama_port', 'ASC')->findAll();
         $masterPelayaran          = $this->masterPelayaranModel->orderBy('nama_pelayaran', 'ASC')->findAll();
         $masterNotifyParty        = $this->masterNotifyPartyModel->orderBy('nama_notify', 'ASC')->findAll();
@@ -247,6 +251,7 @@ class Worksheet extends BaseController
 
             // === MASTER LIST (10 DATA) ===
             'consigneeList'          => $masterConsignee,
+            'shipperList'            => $masterShipper,
             'portList'               => $masterPort,
             'pelayaranList'          => $masterPelayaran,
             'notifyPartyList'        => $masterNotifyParty,
@@ -2436,6 +2441,11 @@ class Worksheet extends BaseController
                 'fields' => ['nama_consignee', 'kode'],
                 'text' => 'nama_consignee'
             ],
+            'shipper' => [
+                'model' => $this->masterShipperModel,
+                'fields' => ['nama_shipper', 'kode'],
+                'text' => 'nama_shipper'
+            ],
             'notify-party' => [
                 'model' => $this->masterNotifyPartyModel,
                 'fields' => ['nama_notify', 'kode'],
@@ -2519,22 +2529,21 @@ class Worksheet extends BaseController
         // ============================
         // FORMAT SELECT2
         // ============================
-        $results = array_map(function($row) use ($type, $textField) {
+        $results = array_map(function ($row) use ($type, $textField) {
 
             $item = [
                 'id'   => $row['id'],
                 'text' => $row[$textField]
             ];
-        
+
             if ($type === 'fasilitas') {
                 $item['tipe_fasilitas'] = $row['tipe_fasilitas']; // SUDAH ADA
             }
-        
+
             return $item;
-        
         }, $data);
-        
-        
+
+
         return $this->response->setJSON($results);
     }
 }

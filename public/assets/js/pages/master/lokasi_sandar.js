@@ -218,6 +218,8 @@ $('#modalEdit').on('shown.bs.modal', function() {
     $('#editKodeSandar').select2({
         dropdownParent: $('#modalEdit'),
         placeholder: "Masukan Kode Lokasi Sandar",
+        theme: "bootstrap-5",
+        minimumInputLength: 1,
         tags: true,
         width: "100%",
         ajax: {
@@ -237,6 +239,8 @@ $('#modalEdit').on('shown.bs.modal', function() {
     $('#editNamaSandar').select2({
         dropdownParent: $('#modalEdit'),
         placeholder: "Masukan Nama Lokasi Sandar",
+        theme: "bootstrap-5",
+        minimumInputLength: 1,
         tags: true,
         width: "100%",
         ajax: {

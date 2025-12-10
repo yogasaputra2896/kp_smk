@@ -231,6 +231,8 @@
         // === KODE ===
         $('#editKodeConsignee').select2({
             dropdownParent: $('#modalEdit'),
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             placeholder: "Masukan Kode Consignee",
             tags: true,
             width: "100%",
@@ -250,6 +252,8 @@
         // === NAMA ===
         $('#editNamaConsignee').select2({
             dropdownParent: $('#modalEdit'),
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             placeholder: "Masukan Nama Consignee",
             tags: true,
             width: "100%",
@@ -269,6 +273,8 @@
         // === NPWP ===
         $('#editNpwpConsignee').select2({
             dropdownParent: $('#modalEdit'),
+            theme: "bootstrap-5",
+            minimumInputLength: 1,
             placeholder: "Masukan NPWP Consignee",
             tags: true,
             width: "100%",
