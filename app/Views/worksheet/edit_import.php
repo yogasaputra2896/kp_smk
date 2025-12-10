@@ -540,6 +540,7 @@
         </div>
 
         <!-- ================= Tabel Fasilitas ================= -->
+        <!-- ================= Tabel Fasilitas ================= -->
         <div id="fasilitas-info-section" class="mt-3">
             <button type="button" id="addFasilitasRow" class="btn btn-sm btn-success mb-2">+ Tambah Fasilitas</button>
 
@@ -547,8 +548,8 @@
                 <thead>
                     <tr class="table-secondary">
                         <th style="width: 50px;">No</th>
-                        <th>Tipe Fasilitas</th>
                         <th>Nama Fasilitas</th>
+                        <th>Tipe Fasilitas</th>
                         <th>No. Fasilitas</th>
                         <th>Tanggal Fasilitas</th>
                         <th style="width: 80px;">Aksi</th>
@@ -559,20 +560,37 @@
                         <?php $no = 1;
                         foreach ($fasilitass as $f) : ?>
                             <tr>
-                                <td class="text-center nomor"><?= $no++; ?></td>
-                                <td><input type="text" name="tipe_fasilitas[]" value="<?= esc($f['tipe_fasilitas']) ?>" class="form-control"></td>
-                                <td><select name="nama_fasilitas[]" class="form-select select2">
-                                        <option value="">-- Pilih Fasilitas --</option>
-                                        <?php foreach ($fasilitasList as $f): ?>
-                                            <option value="<?= $f['nama_fasilitas'] ?>"
-                                                <?= $row['nama_fasilitas'] == $f['nama_fasilitas'] ? 'selected' : '' ?>>
-                                                <?= $f['nama_fasilitas'] ?>
-                                            </option>
-                                        <?php endforeach; ?>
+                                <td class="text-center nomor"><?= $no++ ?></td>
+
+                                <td>
+                                    <select name="nama_fasilitas[]"
+                                            class="form-control select2-fasilitas"
+                                            data-selected="<?= $f['nama_fasilitas'] ?>"
+                                            data-tipe="<?= $f['tipe_fasilitas'] ?>">
+                                        <option selected><?= $f['nama_fasilitas'] ?></option>
                                     </select>
                                 </td>
-                                <td><input type="text" name="no_fasilitas[]" value="<?= esc($f['no_fasilitas']) ?>" class="form-control"></td>
-                                <td><input type="date" name="tgl_fasilitas[]" value="<?= esc($f['tgl_fasilitas']) ?>" class="form-control"></td>
+
+                                <td>
+                                    <input type="text" name="tipe_fasilitas[]"
+                                        class="form-control tipe-fasilitas-input"
+                                        value="<?= esc($f['tipe_fasilitas']) ?>"
+                                        placeholder="Tipe">
+                                </td>
+
+                                <td>
+                                    <input type="text" name="no_fasilitas[]"
+                                        value="<?= esc($f['no_fasilitas']) ?>"
+                                        class="form-control"
+                                        placeholder="Nomor Fasilitas">
+                                </td>
+
+                                <td>
+                                    <input type="date" name="tgl_fasilitas[]"
+                                        value="<?= esc($f['tgl_fasilitas']) ?>"
+                                        class="form-control">
+                                </td>
+
                                 <td class="text-center">
                                     <button type="button" class="btn btn-danger btn-sm removeFasilitasRow">
                                         <i class="bi bi-trash"></i>
@@ -584,6 +602,7 @@
                 </tbody>
             </table>
         </div>
+
 
 
 
@@ -787,11 +806,39 @@
         "<?= $worksheet['kemasan'] ?>"
     );
 
-    initSelect2Edit("#editLartas",
-        BASE_URL + "/worksheet/master-search/lartas",
-        "Cari Lartas...",
-        "<?= $worksheet['nama_lartas[]'] ?>"
-    );
+    $(".select2-lartas").each(function () {
+        const oldText = $(this).find("option:selected").text().trim();
+
+        initSelect2Edit(
+            this,
+            BASE_URL + "/worksheet/master-search/lartas",
+            "Cari Lartas...",
+            oldText
+        );
+    });
+
+    $(".select2-fasilitas").each(function () {
+        const oldText = $(this).find("option:selected").text().trim();
+
+        initSelect2Edit(
+            this,
+            BASE_URL + "/worksheet/master-search/fasilitas",
+            "Cari Fasilitas...",
+            oldText
+        );
+
+        // Auto isi tipe_fasilitas dari data-tipe (edit mode)
+        const tipe = $(this).data("tipe");
+        $(this).closest("tr").find(".tipe-fasilitas-input").val(tipe);
+    });
+
+    $(document).on("select2:select", ".select2-fasilitas", function (e) {
+        const data = e.params.data;
+        const tr = $(this).closest("tr");
+
+        // Auto isi tipe fasilitas dari JSON endpoint
+        tr.find(".tipe-fasilitas-input").val(data.tipe_fasilitas);
+    });
 
 
 
@@ -1031,23 +1078,36 @@
     }
 
     // Tambah baris Lartas
-    document.getElementById('addLartasRow').addEventListener('click', function() {
+    document.getElementById('addLartasRow').addEventListener('click', function () {
         const tbody = document.querySelector('#lartasTable tbody');
         const row = document.createElement('tr');
         row.innerHTML = `
-<td class="text-center nomor"></td>
-<td><input type="text" name="nama_lartas[]" class="form-control" placeholder="Masukkan nama lartas"></td>
-<td><input type="text" name="no_lartas[]" class="form-control" placeholder="Masukkan nomor lartas"></td>
-<td><input type="date" name="tgl_lartas[]" class="form-control"></td>
-<td class="text-center">
-    <button type="button" class="btn btn-danger btn-sm removeLartasRow" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus baris ini">
-        <i class="bi bi-trash"></i>
-    </button>
-</td>
-`;
+            <td class="text-center nomor"></td>
+            <td>
+                <select name="nama_lartas[]" class="form-select select2-lartas">
+                    <option></option> <!-- kosong, nanti diisi select2 -->
+                </select>
+            </td>
+            <td><input type="text" name="no_lartas[]" class="form-control" placeholder="Masukkan nomor lartas"></td>
+            <td><input type="date" name="tgl_lartas[]" class="form-control"></td>
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm removeLartasRow" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus baris ini">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
         tbody.appendChild(row);
         updateLartasNumbers();
+
+        // INIT SELECT2 untuk row yang baru saja dibuat
+        const lastSelect = $(tbody).find('.select2-lartas').last();
+        initSelect2Edit(
+            lastSelect,
+            BASE_URL + "/worksheet/master-search/lartas",
+            "Cari Lartas..."
+        );
     });
+
 
     // Hapus baris Lartas
     document.addEventListener('click', function(e) {
@@ -1077,32 +1137,58 @@
     });
 
     // ==================== Pengurusan Fasilitas ==========================
-    // Fungsi: Update nomor urut otomatis
     function updateFasilitasNumbers() {
         document.querySelectorAll('#fasilitasTable tbody tr').forEach((tr, index) => {
             tr.querySelector('.nomor').textContent = index + 1;
         });
     }
 
-    // Tambah baris Fasilitas
-    document.getElementById('addFasilitasRow').addEventListener('click', function() {
+        document.getElementById('addFasilitasRow').addEventListener('click', function () {
         const tbody = document.querySelector('#fasilitasTable tbody');
         const row = document.createElement('tr');
+
         row.innerHTML = `
-<td class="text-center nomor"></td>
-<td><input type="text" name="tipe_fasilitas[]" class="form-control" placeholder="COO / ECOO"></td>
-<td><input type="text" name="nama_fasilitas[]" class="form-control" placeholder="Nama Fasilitas"></td>
-<td><input type="text" name="no_fasilitas[]" class="form-control" placeholder="Nomor Fasilitas"></td>
-<td><input type="date" name="tgl_fasilitas[]" class="form-control"></td>
-<td class="text-center">
-    <button type="button" class="btn btn-danger btn-sm removeFasilitasRow">
-        <i class="bi bi-trash"></i>
-    </button>
-</td>
-`;
+            <td class="text-center nomor"></td>
+
+            <td>
+                <select name="nama_fasilitas[]" class="form-select select2-fasilitas">
+                    <option></option>
+                </select>
+            </td>
+
+            <td>
+                <input type="text" name="tipe_fasilitas[]" class="form-control tipe-fasilitas-input" placeholder="Tipe">
+            </td>
+
+            <td>
+                <input type="text" name="no_fasilitas[]" class="form-control" placeholder="Nomor Fasilitas">
+            </td>
+
+            <td>
+                <input type="date" name="tgl_fasilitas[]" class="form-control">
+            </td>
+
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm removeFasilitasRow">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+
         tbody.appendChild(row);
         updateFasilitasNumbers();
+
+        // INIT Select2 untuk baris baru (tetap pakai initSelect2Edit)
+        const selectBaru = $(tbody).find('.select2-fasilitas').last();
+
+        initSelect2Edit(
+            selectBaru,
+            BASE_URL + "/worksheet/master-search/fasilitas",
+            "Cari Fasilitas..."
+        );
     });
+
+
 
     // Hapus baris Fasilitas
     document.addEventListener('click', function(e) {

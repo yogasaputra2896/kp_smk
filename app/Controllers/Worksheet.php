@@ -2498,7 +2498,13 @@ class Worksheet extends BaseController
         // ============================
         // QUERY
         // ============================
-        $model->select('id, ' . $textField);
+        if ($type === 'fasilitas') {
+            // WAJIB: ambil tipe_fasilitas juga
+            $model->select('id, nama_fasilitas, tipe_fasilitas');
+        } else {
+            $model->select('id, ' . $textField);
+        }
+
 
         if ($q) {
             $model->groupStart();
@@ -2513,11 +2519,22 @@ class Worksheet extends BaseController
         // ============================
         // FORMAT SELECT2
         // ============================
-        $results = array_map(fn($row) => [
-            'id'   => $row['id'],
-            'text' => $row[$textField]
-        ], $data);
+        $results = array_map(function($row) use ($type, $textField) {
 
+            $item = [
+                'id'   => $row['id'],
+                'text' => $row[$textField]
+            ];
+        
+            if ($type === 'fasilitas') {
+                $item['tipe_fasilitas'] = $row['tipe_fasilitas']; // SUDAH ADA
+            }
+        
+            return $item;
+        
+        }, $data);
+        
+        
         return $this->response->setJSON($results);
     }
 }
